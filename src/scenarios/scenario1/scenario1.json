@@ -1,0 +1,10 @@
+[
+  {
+    "chats": [{ "sender": "George Clooney", "message": "Hello, World!" }],
+    "endRepoID": "end1"
+  },
+  {
+    "chats": [{ "sender": "George Clooney", "message": "Good Job!" }],
+    "endRepoID": "end2"
+  }
+]
