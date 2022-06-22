@@ -1,7 +1,7 @@
 import React from "react";
 import { styled } from "@mui/material/styles";
 import { Button, buttonClasses } from "@mui/material";
-import theme from "../../utils/Theme";
+import theme from "../../theme";
 
 // Basis for the custom button.
 const CustomStyledButton = styled(Button)(({ theme }) => ({
