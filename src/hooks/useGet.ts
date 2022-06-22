@@ -8,7 +8,7 @@ function useGet<DataType>(url: string, initialState: DataType | null = null) {
   useEffect(() => {
     async function fetchData() {
       setLoading(true);
-      const response = await axios.get(url);
+      const response = await axios.get<DataType>(url);
       setData(response.data);
       setLoading(false);
     }
