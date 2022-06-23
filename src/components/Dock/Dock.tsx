@@ -33,7 +33,6 @@ const DockContainer = styled("div")({
   padding: "1rem 2rem",
   marginBottom: 24,
   width: "max-content",
-  height: "2rem",
 });
 
 const DummyTextPlacer = styled(Typography)({
@@ -86,7 +85,7 @@ function Dock() {
         <DockItemImage alt="launchpad" src={launchpadIcon} />
         {dockItems.map((item, index) => (
           <Link
-            id={`dockItem-${index}-${item.link}`}
+            key={`dockItem-${index}-${item.link}`}
             style={{ textDecoration: "none", color: "black" }}
             to={item.link}
           >
