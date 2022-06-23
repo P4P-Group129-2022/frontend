@@ -3,6 +3,7 @@ import Dock from "../components/Dock";
 import DemoPage from "../pages/DemoPage/DemoPage";
 import HomePage from "../pages/HomePage/HomePage";
 import TerminalPage from "../pages/TerminalPage/TerminalPage";
+import VSCodePage from "../pages/VSCodePage/VSCodePage";
 
 function Routes() {
   return (
@@ -13,6 +14,7 @@ function Routes() {
         <Route path="play" element={<Dock />}>
           <Route path="demo" element={<DemoPage />} />
           <Route path="terminal" element={<TerminalPage />} />
+          <Route path="vscode" element={<VSCodePage />} />
           {/* All unregistered routes inside play direct to play page. */}
           <Route path="*" element={<Navigate to="/play" />} />
         </Route>
