@@ -31,12 +31,12 @@ const WindowContainer = styled(Box)({
   margin: "0.5vw",
   flexGrow: 1,
   boxShadow: "0px 0px 4px 4px rgba(0,0,0,0.20)",
-  border: "1px solid #DDDDDD80",
+  border: "1px solid #FFFFFF40",
   backgroundColor: "#FFFFFF",
 });
 
 const DockContainer = styled("div")({
-  border: "2 solid black",
+  border: "1px solid #FFFFFF40",
   backgroundColor: "#00000023",
   borderRadius: 21,
   display: "flex",
@@ -61,12 +61,26 @@ const DockItemLink = styled(Link)({
   alignItems: "center",
 });
 
+const DockDivider = styled(Divider)({
+  backgroundColor: "#FFFFFF30",
+  width: "1.5px",
+  margin: "1vh 20px"
+});
+
 type DockItem = {
   link: string;
   imgSrc: string;
 };
 
 const dockItems: DockItem[] = [
+  {
+    link: "",
+    imgSrc: finderIcon,
+  },
+  {
+    link: "",
+    imgSrc: launchpadIcon,
+  },
   {
     link: "chrome",
     imgSrc: chromeIcon,
@@ -87,31 +101,26 @@ const dockItems: DockItem[] = [
 
 function Dock() {
   return (
+    // order is bottom-up due to "column-reverse" styling.
     <MainPageContainer>
-      {/* order is reversed due to "column-reverse" styling. */}
       <DockContainer>
-        <DockItemLink to="demo">
-          <DockItemImage alt="finder" src={finderIcon} />
-        </DockItemLink>
-        <DockItemImage alt="launchpad" src={launchpadIcon} />
         {dockItems.map((item, index) => (
           <DockItemLink
             key={`dockItem-${index}-${item.link}`}
-            style={{ textDecoration: "none", color: "black" }}
             to={item.link}
           >
             <DockItemImage alt={item.link} src={item.imgSrc} />
           </DockItemLink>
         ))}
 
-        <Divider
+        <DockDivider
           orientation="vertical"
           flexItem
-          sx={{ bgcolor: "#FFFFFF30", width: "1.5px", margin: "10px 20px" }}
         />
 
         <DockItemImage alt="trash" src={trashIcon} />
       </DockContainer>
+
       <WindowContainer>
         <Outlet />
       </WindowContainer>
