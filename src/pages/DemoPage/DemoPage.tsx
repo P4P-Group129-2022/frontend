@@ -1,17 +1,19 @@
 import axios from "axios";
-import React, { useContext } from "react";
+import { useContext, useEffect, useState } from "react";
 import { ScenarioContext } from "../../contexts/ScenarioContextProvider";
 import useGet from "../../hooks/useGet";
+import { Button } from "@mui/material";
+import useNotifications from "../../hooks/useNotifications";
 
 function DemoPage() {
-  const [greeting, setGreeting] = React.useState<string | undefined>(undefined);
+  const [greeting, setGreeting] = useState<string | undefined>(undefined);
   const { data, isLoading } = useGet<string>("http://localhost:8080/api/git");
-  const [initRepoResult, setInitRepoResult] = React.useState<any>(undefined);
+  const [initRepoResult, setInitRepoResult] = useState<any>(undefined);
 
   const { currentScenario, checkAndAdvanceScenario } =
     useContext(ScenarioContext);
 
-  React.useEffect(() => {
+  useEffect(() => {
     data && setGreeting(JSON.stringify(data));
   }, [data]);
 
@@ -29,6 +31,8 @@ function DemoPage() {
       `Status: ${res.status} || Data: ${JSON.stringify(res.data.log)}`
     );
   };
+
+  const { showNotification } = useNotifications();
 
   return (
     <div>
@@ -57,6 +61,12 @@ function DemoPage() {
       >
         fulfil scenario completion
       </button>
+
+      <Button variant="outlined" onClick={() => {
+        showNotification({ title: "Hello", message: "World", imageSrc: "icons/terminal.png" });
+      }}>
+        launch notification.
+      </Button>
     </div>
   );
 }
