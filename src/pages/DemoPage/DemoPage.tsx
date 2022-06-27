@@ -63,7 +63,13 @@ function DemoPage() {
       </button>
 
       <Button variant="outlined" onClick={() => {
-        showNotification({ title: "Hello", message: "World", imageSrc: "icons/terminal.png" });
+        showNotification({
+          title: "Hello",
+          message: "Lorem ipsum dolor sit amet, consectetur adipiscing elit. " +
+            "In ex erat, laoreet nec mi a, placerat mattis diam. Proin venenatis sagittis est, " +
+            "a mattis tellus auctor sed.",
+          imageSrc: "icons/terminal.png"
+        });
       }}>
         launch notification.
       </Button>
