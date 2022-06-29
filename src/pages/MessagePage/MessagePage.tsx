@@ -1,12 +1,14 @@
 import { Card, CardContent, Divider, Typography } from "@mui/material";
 import { useContext } from "react";
 import { MessageContext } from "../../contexts/MessageContextProvider";
+import AppWindowFrame from "../../components/AppWindowFrame";
+import { SLACK_COLORS } from "../../theme/colors";
 
 function MessagePage() {
   const { messages } = useContext(MessageContext);
 
   return (
-    <div>
+    <AppWindowFrame frameColor={SLACK_COLORS.darkPurple}>
       <Typography variant="h1">Messages</Typography>
       <Divider />
       {messages.map((message, index) => (
@@ -17,7 +19,7 @@ function MessagePage() {
           </CardContent>
         </Card>
       ))}
-    </div>
+    </AppWindowFrame>
   );
 }
 
