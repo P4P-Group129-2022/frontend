@@ -23,7 +23,6 @@ type Props = {
 function NotificationContextProvider({ children }: Props) {
   const [notifications, setNotifications] = useState<NotificationContent[]>([]);
 
-
   const activeNotificationIds = notifications.map((notification, index) => `notify${index}-${notification.title}`).join(",");
   useEffect(() => {
     if (activeNotificationIds.length > 0) {
