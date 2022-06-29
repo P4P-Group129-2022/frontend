@@ -43,6 +43,7 @@ function ScenarioContextProvider({ children }: Props) {
     const shouldAdvance = true;
 
     if (shouldAdvance) {
+      // TODO: Process each chats into messages screen.
       nextScenarioSegment.chats.forEach((chatDialog) => {
         console.log(
           "Message from: ",
