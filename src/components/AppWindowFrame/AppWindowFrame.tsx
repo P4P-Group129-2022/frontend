@@ -44,7 +44,9 @@ const Title = styled(Typography)({
 });
 
 const MainContentsContainer = styled(Box)({
+  display: "flex",
   flexGrow: 1,
+  flexDirection: "row"
 });
 
 const redButtonColor = "#EE695E";
