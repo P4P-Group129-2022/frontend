@@ -4,6 +4,7 @@ import { ScenarioContext } from "../../contexts/ScenarioContextProvider";
 import useGet from "../../hooks/useGet";
 import { Button } from "@mui/material";
 import useNotifications from "../../hooks/useNotifications";
+import AppWindowFrame from "../../components/AppWindowFrame";
 
 function DemoPage() {
   const [greeting, setGreeting] = useState<string | undefined>(undefined);
@@ -35,7 +36,7 @@ function DemoPage() {
   const { showNotification } = useNotifications();
 
   return (
-    <div>
+    <AppWindowFrame frameColor={"#270C29"} title={"Demo Page"} >
       <h1>HomePage</h1>
       <h3>{greeting ?? "greeting"}</h3>
       <button onClick={handleInitRepo} style={{ margin: 10 }}>
@@ -73,7 +74,7 @@ function DemoPage() {
       }}>
         launch notification.
       </Button>
-    </div>
+    </AppWindowFrame>
   );
 }
 
