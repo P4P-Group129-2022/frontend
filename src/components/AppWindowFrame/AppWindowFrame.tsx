@@ -17,6 +17,7 @@ const Frame = styled(Box)({
   width: "100%",
   height: "2rem",
   minHeight: "2rem",
+  // position: "fixed",   // Fix frame to stick to top of screen.
 });
 
 const FrameSection = styled(Box)({
