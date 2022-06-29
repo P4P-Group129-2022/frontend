@@ -31,8 +31,7 @@ const WindowContainer = styled(Box)({
   margin: "0.5vw",
   flexGrow: 1,
   boxShadow: "0px 0px 4px 4px rgba(0,0,0,0.20)",
-  border: "1px solid #FFFFFF40",
-  backgroundColor: "#FFFFFF",
+  border: "0.5px solid #FFFFFF40",
 });
 
 const DockContainer = styled("div")({
