@@ -8,18 +8,18 @@ import { MessageContextProvider } from "./contexts/MessageContextProvider";
 
 function App() {
   return (
-    <ScenarioContextProvider>
-      <MessageContextProvider>
-        <NotificationContextProvider>
+    <MessageContextProvider>
+      <NotificationContextProvider>
+        <ScenarioContextProvider>
           <ThemeProvider theme={theme}>
             <CssBaseline />
             <BrowserRouter>
               <Routes />
             </BrowserRouter>
           </ThemeProvider>
-        </NotificationContextProvider>
-      </MessageContextProvider>
-    </ScenarioContextProvider>
+        </ScenarioContextProvider>
+      </NotificationContextProvider>
+    </MessageContextProvider>
   );
 }
 

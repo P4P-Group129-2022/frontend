@@ -1,16 +1,9 @@
 import { Card, CardContent, Divider, Typography } from "@mui/material";
-import React, { useContext, useEffect, useState } from "react";
-import { ScenarioContext } from "../../contexts/ScenarioContextProvider";
-import { useChatState } from "../../hooks/usePersistedState";
+import { useContext } from "react";
+import { MessageContext } from "../../contexts/MessageContextProvider";
 
 function MessagePage() {
-  const [messages, setMessages] = useChatState([]);
-
-  const { currentScenario } = useContext(ScenarioContext);
-
-  useEffect(() => {
-    setMessages([...messages, ...currentScenario.chats]);
-  }, [currentScenario]);
+  const { messages } = useContext(MessageContext);
 
   return (
     <div>

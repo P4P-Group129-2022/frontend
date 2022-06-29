@@ -1,6 +1,8 @@
-import { createContext, FC, useState } from "react";
+import { createContext, FC, useContext, useState } from "react";
 import { ScenarioSegment } from "../types/ScenarioTypes";
 import scenario1 from "../scenarios/scenario1/scenario1.json";
+import { MessageContext } from "./MessageContextProvider";
+import { NotificationContext } from "./NotificationContextProvider";
 
 type ScenarioContextType = {
   currentScenario: ScenarioSegment;
@@ -29,6 +31,9 @@ function ScenarioContextProvider({ children }: Props) {
   const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0);
   // let currentScenarioSegment = scenarios[currentScenarioIndex];
 
+  const { addMessage } = useContext(MessageContext);
+  const { showNotification } = useContext(NotificationContext);
+
   function checkAndAdvanceScenario(): boolean {
     const nextScenarioIndex = currentScenarioIndex + 1;
 
@@ -45,6 +50,8 @@ function ScenarioContextProvider({ children }: Props) {
           " || ",
           chatDialog.message
         );
+        addMessage(chatDialog);
+        showNotification({ message: chatDialog.message, title: `Message from: ${chatDialog.sender}` });
       });
 
       setCurrentScenarioIndex(nextScenarioIndex);

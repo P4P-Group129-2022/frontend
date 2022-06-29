@@ -1,5 +1,6 @@
 import { createContext, useState } from "react";
 import { ChatDialog } from "../types/ScenarioTypes";
+import { useChatState } from "../hooks/usePersistedState";
 
 type MessageContextType = {
   addMessage: (message: ChatDialog) => void;
@@ -16,9 +17,10 @@ const MessageContext = createContext<MessageContextType>({
 });
 
 function MessageContextProvider({ children }: Props) {
-  const [messages, setMessages] = useState<ChatDialog[]>([]);
+  const [messages, setMessages] = useChatState([]);
 
   const addMessage = (message: ChatDialog) => {
+    console.log('Message added', message);
     setMessages([...messages, message]);
   };
 
