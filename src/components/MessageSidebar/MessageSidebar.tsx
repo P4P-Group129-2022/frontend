@@ -1,7 +1,8 @@
 import React from "react";
 import { Box, Divider, Typography } from "@mui/material";
-import MessageSidebarItem from "../MessageSidebarItem/MessageSidebarItem";
+import MessageSidebarItem from "../MessageSidebarItem";
 import { SLACK_COLORS } from "../../theme/colors";
+import { styled } from "@mui/material/styles";
 
 import MenuIcon from "@mui/icons-material/Menu";
 import EditOutlinedIcon from "@mui/icons-material/EditOutlined";
@@ -11,7 +12,6 @@ import ArrowDownwardOutlinedIcon from "@mui/icons-material/ArrowDownwardOutlined
 import KeyboardArrowDownOutlinedIcon from "@mui/icons-material/KeyboardArrowDownOutlined";
 import TagOutlinedIcon from "@mui/icons-material/TagOutlined";
 import AddBoxOutlinedIcon from "@mui/icons-material/AddBoxOutlined";
-import { styled } from "@mui/material/styles";
 
 const SidebarDivider = styled(Divider)({
   backgroundColor: "#FFFFFF20",
