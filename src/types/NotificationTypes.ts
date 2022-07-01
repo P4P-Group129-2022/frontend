@@ -1,6 +1,5 @@
 export type NotificationContent = {
-  name: string;
-  header: string;
-  body: string;
-  iconImageUrl?: string;
+  message: string;
+  title: string;
+  imageSrc?: string;
 }
