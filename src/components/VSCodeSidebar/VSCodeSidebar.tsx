@@ -1,9 +1,14 @@
 import React from "react";
 import { Box } from "@mui/material";
 
-import FileCopyIcon from "@mui/icons-material/FileCopy";
-import SearchIcon from "@mui/icons-material/Search";
 import { VSCODE_COLORS } from "../../theme/colors";
+import VSCodeIcon from "../VSCodeIcon";
+
+const VSCodeIconStyle: React.CSSProperties = {
+  padding: "0.8rem 0",
+  width: "100%",
+  fontSize: "1.5rem",
+};
 
 function VsCodeSidebar() {
   return (
@@ -11,13 +16,22 @@ function VsCodeSidebar() {
       display={"flex"}
       flexDirection={"column"}
       alignItems={"center"}
-      width={"5rem"}
-      padding={"1rem"}
+      width={"3.5rem"}
       bgcolor={VSCODE_COLORS.lightGrey}
       color={VSCODE_COLORS.sidebarIcon}
     >
-      <FileCopyIcon fontSize={"large"} />
-      <SearchIcon fontSize={"large"} />
+      <VSCodeIcon iconName={"files"} style={{ ...VSCodeIconStyle, color: "white", borderLeft: "2px solid white" }} />
+      <VSCodeIcon iconName={"search"} style={VSCodeIconStyle} />
+      <VSCodeIcon iconName={"source-control"} style={VSCodeIconStyle} />
+      <VSCodeIcon iconName={"debug-alt"} style={VSCodeIconStyle} />
+      <VSCodeIcon iconName={"remote-explorer"} style={VSCodeIconStyle} />
+      <VSCodeIcon iconName={"extensions"} style={VSCodeIconStyle} />
+
+      {/* Placeholder for empty space in between. */}
+      <Box flexGrow={1}></Box>
+
+      <VSCodeIcon iconName={"account"} style={VSCodeIconStyle} />
+      <VSCodeIcon iconName={"settings-gear"} style={VSCodeIconStyle} />
     </Box>
   );
 }
