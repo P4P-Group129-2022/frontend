@@ -9,12 +9,12 @@ import {useNavigate} from "react-router-dom";
 function HomePage() {
     const navigate = useNavigate();
 
-    const onPlaySoloClick = () => {
-        navigate("/solo");
+    const handleStartModule = () => {
+        navigate("/play");
     };
 
-    const onPlayMultiplayerClick = () => {
-        navigate("/multiplayer");
+    const handleStartTests = () => {
+        navigate("/tests");
     };
 
     return (
@@ -25,10 +25,10 @@ function HomePage() {
                 </Typography>
             </MainContentsContainer>
             <div className={classes.ButtonContainer}>
-                <CustomButton onClick={onPlaySoloClick}>
+                <CustomButton onClick={handleStartModule}>
                     Start Module
                 </CustomButton>
-                <CustomButton onClick={onPlayMultiplayerClick}>
+                <CustomButton onClick={handleStartTests}>
                     Start Tests
                 </CustomButton>
             </div>
