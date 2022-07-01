@@ -14,7 +14,7 @@ const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: `"Inter", "Roboto Mono", "Roboto", "sans-serif", "Arial"`,
+    fontFamily: `Inter, Roboto Mono, Roboto, sans-serif, Arial`,
     fontSize: 12,
   },
 });
