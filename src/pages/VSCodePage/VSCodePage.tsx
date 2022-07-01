@@ -58,6 +58,9 @@ function VSCodePage() {
     <Typography key={2} color={"inherit"}>{fileName}</Typography>
   ];
 
+  const preventSave = (e: React.KeyboardEvent<HTMLDivElement>) =>
+    e.key === "s" && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey) && e.preventDefault();
+
   return (
     <AppWindowFrame frameColor={VSCODE_COLORS.frame} title={`${fileName} — LGI Codebase`}>
       <VSCodeSidebar />
@@ -69,6 +72,7 @@ function VSCodePage() {
         flexGrow={1}
         color={"white"}
         bgcolor={VSCODE_COLORS.textarea}
+        onKeyDown={preventSave}
       >
         <Box
           display={"flex"}
