@@ -1,57 +1,41 @@
 import React from "react";
 import {
-  Accordion,
-  AccordionDetails,
-  AccordionProps,
-  AccordionSummary,
-  AccordionSummaryProps,
   Box,
   Typography
 } from "@mui/material";
 import { VSCODE_COLORS } from "../../theme/colors";
-import MoreHorizIcon from "@mui/icons-material/MoreHoriz";
-import ArrowForwardIosSharpIcon from "@mui/icons-material/ArrowForwardIosSharp";
 import { styled } from "@mui/material/styles";
+import VSCodeIcon from "../VSCodeIcon";
+import { File } from "../../types/FileTypes";
+import VSCodeExplorerFiles from "./VSCodeExplorerFiles";
 
 type Props = {
-//  So far, no props but add when need rises at a later date.
+  files?: File[];
 };
 
-const ExplorerSectionContainer = styled((props: AccordionProps) => (
-  <Accordion square disableGutters elevation={0} {...props} />
-))(({ theme }) => ({
-  backgroundColor: "inherit",
-  color: "inherit",
-  border: `1px solid ${theme.palette.divider}`,
-  "&:not(:last-child)": {
-    borderBottom: 0,
-  },
-  "&:before": {
-    display: "none",
-  },
-}));
-
-const ExplorerSectionSummary = styled((props: AccordionSummaryProps) => (
-  <AccordionSummary
-    expandIcon={<ArrowForwardIosSharpIcon
-      fontSize={"small"}
-      sx={{ color: VSCODE_COLORS.explorerText }}
-    />}
-    {...props}
-  />
-))(({ theme }) => ({
+const ExplorerSectionSummary = styled(Box)({
   display: "flex",
   alignItems: "center",
-  flexDirection: "row-reverse",
-  "& .MuiAccordionSummary-expandIconWrapper.Mui-expanded": {
-    transform: "rotate(90deg)",
-  },
-  "& .MuiAccordionSummary-content": {
-    marginLeft: theme.spacing(1),
-  },
-}));
+  flexDirection: "row",
+  justifyContent: "flex-start",
+  borderTop: `1px solid ${VSCODE_COLORS.explorerDivider}`,
+  padding: "0.1rem 0",
+});
 
-function VSCodeExplorer({}: Props) {
+const ExplorerSectionSummaryHeader = styled(Typography)({
+  fontSize: "0.75rem",
+  fontWeight: 800,
+  marginRight: 1,
+  color: VSCODE_COLORS.explorerText,
+  textTransform: "uppercase",
+  userSelect: "none",
+});
+
+const ExplorerSectionSummaryIconStyle = {
+  width: "1.2rem",
+};
+
+function VSCodeExplorer({ files }: Props) {
   return (
     <Box
       display={"flex"}
@@ -61,34 +45,50 @@ function VSCodeExplorer({}: Props) {
       bgcolor={VSCODE_COLORS.explorerGrey}
       color={VSCODE_COLORS.explorerText}
     >
+
+      {/*  Explorer title section  */}
       <Box
         display={"flex"}
-        padding={"0.5rem 1rem"}
+        padding={"0.5rem 1.2rem"}
         justifyContent={"space-between"}
       >
         <Typography
-          variant={"caption"}
-          fontSize={"1rem"}
+          fontSize={"0.75rem"}
           textTransform={"uppercase"}
+          fontWeight={500}
         >
           Explorer
         </Typography>
-        <MoreHorizIcon fontSize={"medium"} />
+        <VSCodeIcon iconName={"ellipsis"} />
       </Box>
-      <ExplorerSectionContainer>
-        <ExplorerSectionSummary>
-          <Typography
-            variant={"caption"}
-            fontSize={"1rem"}
-            textTransform={"uppercase"}
-          >
-            Open Editors
-          </Typography>
-        </ExplorerSectionSummary>
-        <AccordionDetails>
-          <Typography>Main.java</Typography>
-        </AccordionDetails>
-      </ExplorerSectionContainer>
+
+      {/*  source folder  */}
+      <ExplorerSectionSummary>
+        <VSCodeIcon iconName={"chevron-down"} style={ExplorerSectionSummaryIconStyle} />
+        <ExplorerSectionSummaryHeader>
+          Open Editors
+        </ExplorerSectionSummaryHeader>
+      </ExplorerSectionSummary>
+
+      {/*  source folder contents  */}
+      <VSCodeExplorerFiles files={files}/>
+
+      {/*  outline  */}
+      <ExplorerSectionSummary>
+        <VSCodeIcon iconName={"chevron-right"} style={ExplorerSectionSummaryIconStyle} />
+        <ExplorerSectionSummaryHeader>
+          Outline
+        </ExplorerSectionSummaryHeader>
+      </ExplorerSectionSummary>
+
+      {/*  timeline  */}
+      <ExplorerSectionSummary>
+        <VSCodeIcon iconName={"chevron-right"} style={ExplorerSectionSummaryIconStyle} />
+        <ExplorerSectionSummaryHeader>
+          Timeline
+        </ExplorerSectionSummaryHeader>
+      </ExplorerSectionSummary>
+
     </Box>
   );
 }
