@@ -16,6 +16,7 @@ const VSCODE_COLORS = {
   explorerText: "#CCCCCC",
   changedText: "#E2C08D",
   breadcrumbsText: "#A9A9A9",
+  explorerDivider: "#454545",
 };
 
 export { SLACK_COLORS, VSCODE_COLORS };
