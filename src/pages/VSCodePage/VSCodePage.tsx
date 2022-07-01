@@ -7,31 +7,61 @@ import VSCodeExplorer from "../../components/VSCodeExplorer";
 import { Box, Breadcrumbs, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import { File } from "../../types/FileTypes";
+
+const dummyfiles: File[] = [
+  {
+    name: "new folder",
+    isFolder: true,
+    folderContents: [
+      {
+        name: "new folder2",
+        isFolder: true,
+        folderContents: [
+          {
+            name: "new file3.md",
+            isFolder: false,
+            contents: "hhehe",
+          }
+        ]
+      },
+      {
+        name: "new file.md",
+        isFolder: false,
+        contents: "hhehe",
+      },
+      {
+        name: "new file2.md",
+        isFolder: false,
+        contents: "hhehe",
+      },
+    ],
+  },
+  {
+    name: "dummy.txt",
+    isFolder: false,
+    contents: "hehe xd hello world",
+  },
+  {
+    name: "main.py",
+    isFolder: false,
+    contents: "def main():\n    print('hello world')",
+  }
+];
 
 function VSCodePage() {
-  const [code, setCode] = useState(`class Solution {
-    public boolean isSubsequence(String s, String t) {
-        if (s.length() == 0) return true;
-        int i = 0;
-        for (int j = 0; j < t.length(); j++) {
-            if (s.charAt(i) == t.charAt(j)) {
-                i++;
-                if (i >= s.length()) return true;
-            }
-        }
-        return false;
-    }
-}`);
+  const [code, setCode] = useState(dummyfiles[2].contents);
+  const [fileName, setFileName] = useState("main.py");
 
   const breadcrumbs = [
     <Typography key={1} color={"inherit"}>codebase</Typography>,
-    <Typography key={2} color={"inherit"}>Main.java</Typography>
+    <Typography key={2} color={"inherit"}>{fileName}</Typography>
   ];
 
   return (
-    <AppWindowFrame frameColor={VSCODE_COLORS.frame} title={"Main.java — LGI Codebase"}>
+    <AppWindowFrame frameColor={VSCODE_COLORS.frame} title={`${fileName} — LGI Codebase`}>
       <VSCodeSidebar />
-      <VSCodeExplorer />
+      <VSCodeExplorer files={dummyfiles} />
       <Box
         display={"flex"}
         flexDirection={"column"}
@@ -45,20 +75,21 @@ function VSCodePage() {
           flexDirection={"row"}
           justifyContent={"left"}
           alignItems={"center"}
+          bgcolor={VSCODE_COLORS.explorerGrey}
         >
           <Box
             display={"flex"}
             justifyContent={"center"}
             alignItems={"center"}
             padding={"0.5rem 1rem"}
+            bgcolor={VSCODE_COLORS.textarea}
           >
             <Typography
-              variant={"caption"}
-              fontSize={"0.75rem"}
-              fontWeight={500}
+              fontSize={"0.8rem"}
+              fontWeight={600}
               marginRight={1}
             >
-              Main.java
+              {fileName}
             </Typography>
 
             <CloseIcon fontSize={"small"} />
@@ -81,7 +112,7 @@ function VSCodePage() {
             fontSize: "14px",
           }}
           height="100%"
-          defaultLanguage="java"
+          defaultLanguage="python"
           theme="vs-dark"
           defaultValue={code}
           onChange={(value) => value && setCode(value)}
