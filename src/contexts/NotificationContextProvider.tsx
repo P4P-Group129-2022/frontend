@@ -1,6 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 import Notification from "../components/Notification/Notification";
 import { NotificationContent } from "../types/NotificationTypes";
+import { getNotificationByName } from "../api/Api";
 
 const AUTO_HIDE_DURATION = 3000;  // when snackbar will auto hide
 // const AUTO_HIDE_DURATION = 1000000000; // for debug purposes
@@ -8,11 +9,13 @@ const DISMISS_DURATION = AUTO_HIDE_DURATION + 200;  // when notification will be
 
 type NotificationContextType = {
   showNotification: (content: NotificationContent) => void;
+  showNotificationByName: (notificationName: string) => void;
   AUTO_HIDE_DURATION: number;
 };
 
 const NotificationContext = createContext<NotificationContextType>({
   showNotification: () => {},
+  showNotificationByName: () => {},
   AUTO_HIDE_DURATION
 });
 
@@ -39,8 +42,15 @@ function NotificationContextProvider({ children }: Props) {
     setNotifications([...notifications, newNotificationContent]);
   };
 
+  const showNotificationByName = (notificationName: string) => {
+    getNotificationByName(notificationName).then((notification) => {
+      setNotifications([...notifications, notification.data.notification]);
+    });
+  };
+
   const context = {
     showNotification,
+    showNotificationByName,
     AUTO_HIDE_DURATION
   };
 
