@@ -31,20 +31,32 @@ function MessagePage() {
 
         <Divider />
 
-        <Box
-          display={"flex"}
+        <Box    // Box that allows us to scroll in the chat window
+          id={"scrollable-chat-container"}
           flexGrow={1}
-          flexDirection={"column-reverse"}
-          overflow={"auto"}
+          minHeight={0}
         >
-          {messages.map((message, index) => (
-            <Card key={`message-${index}`} sx={{ margin: 2 }}>
-              <CardContent>
+          <Box    // Box that displays every chat window
+            id={"chat-container"}
+            display={"flex"}
+            flexDirection={"column-reverse"}
+            overflow={"auto scroll"}
+            height={"100%"}
+          >
+            {messages.map((message, index) => (
+              <Box key={`message-${index}`} sx={{
+                display: "flex",
+                flexDirection: "column",
+                border: "1px solid #ccccccbb",
+                boxShadow: "3px 3px 8px 0px #e7e7e7",
+                margin: 1,
+                padding: 2,
+              }}>
                 <Typography variant="h4">{index + " - " + message.message}</Typography>
                 <Typography variant="h6">By: {message.sender}</Typography>
-              </CardContent>
-            </Card>
-          ))}
+              </Box>
+            ))}
+          </Box>
         </Box>
 
         <Divider />

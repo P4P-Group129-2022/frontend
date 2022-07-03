@@ -28,6 +28,7 @@ const WindowContainer = styled(Box)({
   overflow: "auto",
   borderRadius: 12,
   width: "99vw",
+  minHeight: "0px",
   margin: "0.5vw",
   flexGrow: 1,
   boxShadow: "0px 0px 4px 4px rgba(0,0,0,0.20)",
