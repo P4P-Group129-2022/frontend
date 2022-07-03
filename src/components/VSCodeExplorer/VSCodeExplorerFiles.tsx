@@ -10,7 +10,7 @@ import {
 } from "@mui/material";
 import VSCodeExplorerFileItem from "./VSCodeExplorerFileItem";
 import { styled } from "@mui/material/styles";
-import VsCodeIcon from "../VSCodeIcon";
+import VSCodeIcon from "../VSCodeIcon";
 import { VSCODE_COLORS } from "../../theme/colors";
 
 type Props = {
@@ -27,7 +27,7 @@ const ExplorerSectionContainer = styled((props: AccordionProps) => (
 
 const ExplorerSectionSummary = styled((props: AccordionSummaryProps) => (
   <AccordionSummary
-    expandIcon={<VsCodeIcon iconName={"chevron-right"} style={{ color: VSCODE_COLORS.explorerText }} />}
+    expandIcon={<VSCodeIcon iconName={"chevron-right"} style={{ color: VSCODE_COLORS.explorerText }} />}
     {...props}
   />
 ))(({ theme }) => ({
