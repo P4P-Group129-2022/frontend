@@ -6,11 +6,8 @@ import { TERMINAL_COLORS } from "../../theme/colors";
 import { styled } from "@mui/material/styles";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
-
-type ConsolePrint = {
-  input: string;
-  output: string;
-}
+import { ConsolePrint } from "../../types/TerminalTypes";
+import { processCommands } from "../../utils/TerminalCommandProcessor";
 
 const TerminalDivider = styled(Divider)({
   margin: "0.5rem 0",
@@ -82,10 +79,14 @@ function TerminalPage() {
   const userProfile = "User@MacBook-Pro";
   const cwd = "~/Documents/project1";
 
-  const handleOnGitPushClick = () => {
-    // possibly handle push request to api as well?
-    checkAndAdvanceScenario();
-  };
+  // const handleOnGitPushClick = () => {
+  //   // possibly handle push request to api as well?
+  //   checkAndAdvanceScenario();
+  // };
+
+  const addConsolePrint = (print: ConsolePrint) => {
+    setConsolePrints([...consolePrints, print]);
+  }
 
   const handleOnInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value);
@@ -94,10 +95,17 @@ function TerminalPage() {
   const handleOnInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter" && input.length > 0) {
       // TODO: Process inputs into appropriate git commands and change accordingly.
-      const output = `Entered: ${input}\n`;
-      setConsolePrints([...consolePrints, { input, output }]);
+      // const output = `Entered: ${input}\n`;
+      // setConsolePrints([...consolePrints, { input, output }]);
+
+      const print = processCommands(input);
+      addConsolePrint(print);
       setInput("");
     }
+  };
+
+  const addConsoleLog = (input: string, output: string) => {
+    setConsolePrints([...consolePrints, { input, output }]);
   };
 
   return (
