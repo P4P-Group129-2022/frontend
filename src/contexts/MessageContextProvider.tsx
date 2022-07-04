@@ -21,7 +21,7 @@ function MessageContextProvider({ children }: Props) {
 
   const addMessage = (message: ChatDialog) => {
     console.log('Message added', message);
-    setMessages([...messages, message]);
+    setMessages([message, ...messages]);
   };
 
   const context = {

@@ -46,7 +46,8 @@ const Title = styled(Typography)({
 const MainContentsContainer = styled(Box)({
   display: "flex",
   flexGrow: 1,
-  flexDirection: "row"
+  flexDirection: "row",
+  minHeight: 0, // This is needed to make any internal components be scrollable on its own.
 });
 
 const redButtonColor = "#EE695E";

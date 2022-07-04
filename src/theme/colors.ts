@@ -19,4 +19,13 @@ const VSCODE_COLORS = {
   explorerDivider: "#454545",
 };
 
-export { SLACK_COLORS, VSCODE_COLORS };
+const TERMINAL_COLORS = {
+  frame: "#FFFFFF",
+  background: "#252525",
+  text: "#FFFFFF",
+  divider: "#C4C4C4",
+  green: "#5ff967",
+  blue: "#6871ff",
+}
+
+export { SLACK_COLORS, VSCODE_COLORS, TERMINAL_COLORS };
