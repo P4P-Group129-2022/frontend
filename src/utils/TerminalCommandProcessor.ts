@@ -29,22 +29,17 @@ export function processCommands(command: string): ConsolePrint {
     switch (gitCommand) {
       case "status":
         return processGitStatus();
-      // break;
       case "add":
         return processGitAdd(args);
-      // break;
       case "commit":
         return processGitCommit(args);
-      // break;
       case "push":
         return processGitPush(args);
-      // break;
       default:
         return {
           input: command,
           output: `"${commandType} ${gitCommand}" is either not a valid git command or it hasn't been implemented yet.`
         };
-      // break;
     }
   }
 }

@@ -79,11 +79,6 @@ function TerminalPage() {
   const userProfile = "User@MacBook-Pro";
   const cwd = "~/Documents/project1";
 
-  // const handleOnGitPushClick = () => {
-  //   // possibly handle push request to api as well?
-  //   checkAndAdvanceScenario();
-  // };
-
   const addConsolePrint = (print: ConsolePrint) => {
     setConsolePrints([...consolePrints, print]);
   }
@@ -94,18 +89,10 @@ function TerminalPage() {
 
   const handleOnInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter" && input.length > 0) {
-      // TODO: Process inputs into appropriate git commands and change accordingly.
-      // const output = `Entered: ${input}\n`;
-      // setConsolePrints([...consolePrints, { input, output }]);
-
       const print = processCommands(input);
       addConsolePrint(print);
       setInput("");
     }
-  };
-
-  const addConsoleLog = (input: string, output: string) => {
-    setConsolePrints([...consolePrints, { input, output }]);
   };
 
   return (
