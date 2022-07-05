@@ -5,13 +5,14 @@ import AppWindowFrame from "../../components/AppWindowFrame";
 import { SLACK_COLORS } from "../../theme/colors";
 import MessageSidebar from "../../components/MessageSidebar";
 import MessageInput from "../../components/MessageInput";
+import MessageBlock from "../../components/MessageBlock";
 
 function MessagePage() {
   const { messages, addMessage } = useContext(MessageContext);
 
   const handleSend = (message: string) => {
     console.log(message);
-    addMessage({ sender: "sender", message });
+    addMessage({ senderId: "user", message, timestamp: new Date() });
   };
 
   return (
@@ -43,19 +44,17 @@ function MessagePage() {
             overflow={"auto scroll"}
             height={"100%"}
           >
-            {messages.map((message, index) => (
-              <Box key={`message-${index}`} sx={{
-                display: "flex",
-                flexDirection: "column",
-                border: "1px solid #ccccccbb",
-                boxShadow: "3px 3px 8px 0px #e7e7e7",
-                margin: 1,
-                padding: 2,
-              }}>
-                <Typography variant="h4">{index + " - " + message.message}</Typography>
-                <Typography variant="h6">By: {message.sender}</Typography>
-              </Box>
-            ))}
+            {messages.map((message, index) => {
+              return <MessageBlock
+                key={`message-${index}`}
+                sender={{
+                  name: message.senderId,
+                  profileImgUrl: "https://i.pravatar.cc/300"
+                }}
+                messages={[message.message]}
+                timestamp={new Date()}
+              />;
+            })}
           </Box>
         </Box>
 
