@@ -51,7 +51,7 @@ function DemoPage() {
       <h3>Current Chats</h3>
       {currentScenario.chats.map((chat, index) => (
         <h5 key={`chat_${index}`}>
-          "{chat.message}" by {chat.sender}
+          "{chat.message}" by {chat.senderId}
         </h5>
       ))}
 
