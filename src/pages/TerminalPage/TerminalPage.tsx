@@ -98,12 +98,12 @@ function TerminalPage() {
   return (
     <AppWindowFrame frameColor={TERMINAL_COLORS.frame} title={`${userProfile}:${cwd}`}>
       <MainContainer>
-        <Typography variant={"h4"} fontFamily={"inherit"} marginBottom={"0.3rem"}>
-          <span style={{ fontWeight: 700, marginRight: "0.5rem" }}>Task:</span>
-          Commit changes to git repository
-        </Typography>
+        {/*<Typography variant={"h4"} fontFamily={"inherit"} marginBottom={"0.3rem"}>*/}
+        {/*  <span style={{ fontWeight: 700, marginRight: "0.5rem" }}>Task:</span>*/}
+        {/*  Commit changes to git repository*/}
+        {/*</Typography>*/}
 
-        <TerminalDivider />
+        {/*<TerminalDivider />*/}
 
         <InputContainer>
           <Typography fontSize={"1rem"} marginRight={"0.5rem"} fontFamily={"inherit"}>
