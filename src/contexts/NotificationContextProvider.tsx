@@ -42,10 +42,10 @@ function NotificationContextProvider({ children }: Props) {
     setNotifications([...notifications, newNotificationContent]);
   };
 
-  const showNotificationByName = (notificationName: string) => {
-    getNotificationByName(notificationName).then((notification) => {
-      setNotifications([...notifications, notification.data.notification]);
-    });
+  const showNotificationByName = async (notificationName: string) => {
+    const notification = await getNotificationByName(notificationName);
+    console.log(notification);
+    setNotifications([...notifications, ...notification.data.notificationFromDB]);
   };
 
   const context = {
