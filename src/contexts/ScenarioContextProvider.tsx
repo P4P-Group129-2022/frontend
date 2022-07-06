@@ -5,17 +5,20 @@ import { MessageContext } from "./MessageContextProvider";
 import { NotificationContext } from "./NotificationContextProvider";
 
 type ScenarioContextType = {
-  currentScenario: ScenarioSegment;
+  currentScenario?: ScenarioSegment;
+  setScenario: (scenario: ScenarioSegment[]) => void;
   checkAndAdvanceScenario: () => boolean;
 };
 
 const dummyScenarioSegment: ScenarioSegment = {
   chats: [],
+  notification: [],
   endRepoID: "",
 };
 
 const ScenarioContext = createContext<ScenarioContextType>({
   currentScenario: dummyScenarioSegment,
+  setScenario: () => {},
   checkAndAdvanceScenario: () => false,
 });
 
@@ -24,23 +27,24 @@ type Props = {
 };
 
 function ScenarioContextProvider({ children }: Props) {
-  // For now, just use scenario 1.
-  const scenario: ScenarioSegment[] = scenario1.map((segment) => ({
-    ...segment,
-    chats: segment.chats.map((chat) => ({ ...chat, timestamp: new Date(chat.timestamp) }))
-  }));
-
-  const [scenarios, setScenarios] = useState<ScenarioSegment[]>(scenario);
+  const [scenario, setScenario] = useState<ScenarioSegment[]>();
   const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0);
-  // let currentScenarioSegment = scenarios[currentScenarioIndex];
 
   const { addMessage } = useContext(MessageContext);
   const { showNotification } = useContext(NotificationContext);
 
+  // For now, just use scenario 1.
+  // const scenarios: ScenarioSegment[] = scenario1.map((segment) => ({
+  //   ...segment,
+  //   chats: segment.chats.map((chat) => ({ ...chat, timestamp: new Date(chat.timestamp) }))
+  // }));
+
   function checkAndAdvanceScenario(): boolean {
+    if (!scenario) return false;
+
     const nextScenarioIndex = currentScenarioIndex + 1;
 
-    const nextScenarioSegment = scenarios[nextScenarioIndex];
+    const nextScenarioSegment = scenario[nextScenarioIndex];
 
     // TODO: Check whether we should advance to the new scenario segment.
     const shouldAdvance = true;
@@ -64,8 +68,14 @@ function ScenarioContextProvider({ children }: Props) {
     return shouldAdvance;
   }
 
+  const setScenarioContext = (scenario: ScenarioSegment[]) => {
+    setCurrentScenarioIndex(0);
+    setScenario(scenario);
+  };
+
   const context: ScenarioContextType = {
-    currentScenario: scenarios[currentScenarioIndex],
+    currentScenario: scenario?.[currentScenarioIndex],
+    setScenario: setScenarioContext,
     checkAndAdvanceScenario,
   };
 

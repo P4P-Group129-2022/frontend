@@ -2,21 +2,14 @@
   {
     "chats": [
       {
-        "senderId": "George Clooney",
-        "message": "Hello, World!",
-        "timestamp": "2022-07-05T00:00:00.000Z"
+        "nameId": "test"
+      }
+    ],
+    "notifications": [
+      {
+        "nameId": "test"
       }
     ],
     "endRepoID": "end1"
-  },
-  {
-    "chats": [
-      {
-        "senderId": "George Clooney",
-        "message": "Good Job!",
-        "timestamp": "2018-01-01T00:00:12.531Z"
-      }
-    ],
-    "endRepoID": "end2"
   }
 ]
