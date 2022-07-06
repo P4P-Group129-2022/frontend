@@ -25,7 +25,10 @@ type Props = {
 
 function ScenarioContextProvider({ children }: Props) {
   // For now, just use scenario 1.
-  const scenario: ScenarioSegment[] = scenario1;
+  const scenario: ScenarioSegment[] = scenario1.map((segment) => ({
+    ...segment,
+    chats: segment.chats.map((chat) => ({ ...chat, timestamp: new Date(chat.timestamp) }))
+  }));
 
   const [scenarios, setScenarios] = useState<ScenarioSegment[]>(scenario);
   const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0);
@@ -47,12 +50,12 @@ function ScenarioContextProvider({ children }: Props) {
       nextScenarioSegment.chats.forEach((chatDialog) => {
         console.log(
           "Message from: ",
-          chatDialog.sender,
+          chatDialog.senderId,
           " || ",
           chatDialog.message
         );
         addMessage(chatDialog);
-        showNotification({ message: chatDialog.message, title: `Message from: ${chatDialog.sender}` });
+        showNotification({ message: chatDialog.message, title: `Message from: ${chatDialog.senderId}` });
       });
 
       setCurrentScenarioIndex(nextScenarioIndex);
