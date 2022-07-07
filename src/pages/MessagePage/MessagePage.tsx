@@ -44,7 +44,7 @@ function MessagePage() {
 
   const handleSend = (message: string) => {
     console.log(message);
-    addMessage({ senderId: "user", message, timestamp: new Date() });
+    addMessage({ sender: { name: "user", nameId: "user", profileImgUrl: "https://i.pravatar.cc/300" }, content: message, timestamp: new Date() });
   };
 
   return (
@@ -121,7 +121,7 @@ function MessagePage() {
               return <MessageBlock
                 key={`message-${index}`}
                 sender={sender ?? { name: "", profileImgUrl: "" }}
-                messages={[message.message]}
+                messages={[message.content]}
                 timestamp={new Date()}
               />;
             })}
