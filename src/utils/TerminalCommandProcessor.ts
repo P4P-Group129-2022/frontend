@@ -1,9 +1,19 @@
 import { ConsolePrint } from "../types/TerminalTypes";
-import { getRepoStatusForScenario } from "../api/Api";
+import {
+  commitRepo,
+  getRepoStatusForScenario,
+  stageAllAndCommitRepo,
+  stageAllFilesInRepo,
+  stageFileInRepo
+} from "../api/Api";
 import { TERMINAL_COLORS } from "../theme/colors";
+import HTTPStatusCode from "../constants/HTTPStatusCode";
+
+const username = "testUser";
+const noOutput = { value: "No output.", color: TERMINAL_COLORS.grey };
 
 async function processGitStatus(): Promise<ConsolePrint> {
-  const response = await getRepoStatusForScenario("test1");
+  const response = await getRepoStatusForScenario(username);
 
   const onBranchMain = `On branch main`;
   const nothingToCommit = `nothing to commit, working tree clean`;
@@ -58,13 +68,90 @@ async function processGitStatus(): Promise<ConsolePrint> {
 }
 
 async function processGitAdd(fileNames: string[]): Promise<ConsolePrint> {
-  // please implement these when you connect it with the backend.
-  return { input: "git add", output: [{ value: `"git add" not implemented yet.` }] };
+  const input = `git add ${fileNames.join(" ")}`;
+
+  if (fileNames.length === 0) {
+    return {
+      input,
+      output: [
+        { value: "Nothing specified, nothing added." },
+        { value: "hint: Maybe you wanted to say 'git add .'?" },
+        { value: "hint: Turn this message off by running" },
+        { value: "hint: \"git config advice.addEmptyPathspec false\"" },
+      ]
+    };
+  } else if (fileNames.length === 1 && fileNames[0] === ".") {
+    const response = await stageAllFilesInRepo(username);
+
+    return {
+      input,
+      output: response.status === HTTPStatusCode.NO_CONTENT ? [noOutput] : [{
+        value: "Error staging files.",
+        color: TERMINAL_COLORS.red
+      }]
+    };
+  } else {
+    const responses = await Promise.all(fileNames.map(async (fileName) => stageFileInRepo(username, fileName)));
+    const failedRequests = responses.filter(response => response.status !== HTTPStatusCode.NO_CONTENT);
+
+    return {
+      input,
+      output: failedRequests.length === 0 ? [noOutput] : [{
+        value: "Error staging files.",
+        color: TERMINAL_COLORS.red
+      }, {
+        value: `Failed to stage ${failedRequests.length} files.`,
+        color: TERMINAL_COLORS.red
+      }, {
+        value: `Failed files: ${failedRequests.map(response => response.data?.fileName).join(", ")}`,
+      }]
+    };
+  }
 }
 
 async function processGitCommit(args: string[]): Promise<ConsolePrint> {
-  // please implement these when you connect it with the backend.
-  return { input: "git commit", output: [{ value: `"git commit" not implemented yet.` }] };
+  const [commitArgs, ...rest] = args;
+  const author = { name: "testUser", email: "hpar461@auckland.ac.nz" };
+  const branchName = "main";
+
+  if (commitArgs === "-m" || commitArgs === "-am") {
+    // Automatically assume that the following argument is the commit message.
+    const message = rest[0];
+    const request = commitArgs === "-m" ? commitRepo : stageAllAndCommitRepo;
+    const response = await request(username, message, author);
+
+    const { commitId, stats } = response.data;
+    const shortCommitId = commitId.substring(0, 7);
+    const plural = (n: number) => n === 1 ? "" : "s";
+    const statsString = [" " + stats.file + " file" + plural(stats.file)];
+    if (stats.plus) {
+      statsString.push(`${stats.plus} insertion${plural(stats.plus)}(+)`);
+    }
+    if (stats.minus) {
+      statsString.push(`${stats.minus} deletion${plural(stats.minus)}(-)`);
+    }
+
+    return {
+      input: `git commit ${args.join(" ")}`,
+      output: response.status === HTTPStatusCode.CREATED ? [
+        { value: `[${branchName} ${shortCommitId}] ${message.substring(1, message.length - 1)}` },
+        { value: statsString.join(", ") },
+      ] : [
+        { value: "Error committing files." }
+      ]
+    };
+  } else {
+    return {
+      input: "git commit",
+      output: [
+        commitArgs.includes("-") || commitArgs.includes("--")
+          ? { value: "Unknown commit argument." }
+          : { value: "No commit option specified." },
+        { value: "hint: Use 'git commit -m' followed by a commit message to commit." },
+        { value: "hint: Use 'git commit -am' followed by a commit message to stage all files and commit." },
+      ]
+    };
+  }
 }
 
 async function processGitPush(args: string[]): Promise<ConsolePrint> {
