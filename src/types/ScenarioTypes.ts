@@ -12,3 +12,7 @@ export type ScenarioContent = {
   name: string;
   segments: ScenarioSegment[];
 }
+
+export type ScenarioResponse = {
+  scenarioFromDB: ScenarioContent
+}
