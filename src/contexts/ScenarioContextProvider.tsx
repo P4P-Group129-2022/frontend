@@ -3,11 +3,12 @@ import { ScenarioSegment } from "../types/ScenarioTypes";
 import scenario1 from "../scenarios/scenario1/scenario1.json";
 import { MessageContext } from "./MessageContextProvider";
 import { NotificationContext } from "./NotificationContextProvider";
+import { TaskType } from "../utils/TaskType";
 
 type ScenarioContextType = {
   currentScenario?: ScenarioSegment;
   setScenario: (scenario: ScenarioSegment[]) => void;
-  checkAndAdvanceScenario: () => boolean;
+  checkAndAdvanceScenario: (taskType: TaskType) => boolean;
 };
 
 const dummyScenarioSegment: ScenarioSegment = {
@@ -39,15 +40,17 @@ function ScenarioContextProvider({ children }: Props) {
   //   chats: segment.chats.map((chat) => ({ ...chat, timestamp: new Date(chat.timestamp) }))
   // }));
 
-  function checkAndAdvanceScenario(): boolean {
+  function checkAndAdvanceScenario(taskType: TaskType): boolean {
     if (!scenario) return false;
 
     const nextScenarioIndex = currentScenarioIndex + 1;
 
     const nextScenarioSegment = scenario[nextScenarioIndex];
 
-    // TODO: Check whether we should advance to the new scenario segment.
-    const shouldAdvance = true;
+    let shouldAdvance = false;
+    if (taskType === scenario[currentScenarioIndex].endRepoID) {
+      const shouldAdvance = true;
+    }
 
     if (shouldAdvance) {
       // TODO: Process each chats into messages screen.
