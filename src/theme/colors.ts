@@ -24,8 +24,11 @@ const TERMINAL_COLORS = {
   background: "#252525",
   text: "#FFFFFF",
   divider: "#C4C4C4",
+  red: "#c91b00",
   green: "#5ff967",
   blue: "#6871ff",
-}
+  yellow: "#fefb67",
+  grey: "#808080",
+};
 
 export { SLACK_COLORS, VSCODE_COLORS, TERMINAL_COLORS };

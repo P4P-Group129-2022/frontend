@@ -1,4 +1,4 @@
-import { Box, Divider, InputBase, Typography } from "@mui/material";
+import { Box, Divider, InputBase, SxProps, Theme, Typography } from "@mui/material";
 import React, { useContext } from "react";
 import { ScenarioContext } from "../../contexts/ScenarioContextProvider";
 import AppWindowFrame from "../../components/AppWindowFrame";
@@ -53,23 +53,35 @@ const ConsoleOutputContainer = styled(Box)({
   flexDirection: "column",
 });
 
-const ConsoleLine = styled(Box)({
+const ConsoleLineContainer = styled(Box)({
   display: "flex",
   flexDirection: "row",
   justifyContent: "flex-start",
-  alignItems: "center",
-  fontFamily: "inherit",
-  fontSize: "1rem",
+  alignItems: "flex-start",
   marginLeft: "-0.5rem",
 });
 
-const ConsoleInput = styled(ConsoleLine)({
+const ConsoleInputLineContainer = styled(ConsoleLineContainer)({
   color: TERMINAL_COLORS.green,
 });
 
-const ConsoleOutput = styled(ConsoleLine)({
+const ConsoleOutputLineContainer = styled(ConsoleLineContainer)({
   color: TERMINAL_COLORS.text,
 });
+
+const ConsoleLineText = styled(Typography)({
+  fontFamily: "inherit",
+  fontSize: "1rem",
+});
+
+const ConsoleOutputLineText = styled(ConsoleLineText)({
+  whiteSpace: "pre",
+});
+
+const ConsoleIOIcons: SxProps<Theme> = {
+  marginTop: "3px",
+  marginRight: "0.5rem",
+};
 
 function TerminalPage() {
   const { checkAndAdvanceScenario } = useContext(ScenarioContext);
@@ -81,15 +93,15 @@ function TerminalPage() {
 
   const addConsolePrint = (print: ConsolePrint) => {
     setConsolePrints([...consolePrints, print]);
-  }
+  };
 
   const handleOnInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value);
   };
 
-  const handleOnInputKeyDown = (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleOnInputKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter" && input.length > 0) {
-      const print = processCommands(input);
+      const print = await processCommands(input);
       addConsolePrint(print);
       setInput("");
     }
@@ -125,20 +137,37 @@ function TerminalPage() {
         <ConsoleOutputsContainer>
           {consolePrints.map((consolePrint, index) => (
             <ConsoleOutputContainer key={index}>
-              <ConsoleInput>
+              <ConsoleInputLineContainer>
                 <ChevronRightIcon
                   fontSize={"medium"}
-                  sx={{ marginRight: "0.5rem" }}
+                  sx={ConsoleIOIcons}
                 />
-                {consolePrint.input}
-              </ConsoleInput>
-              <ConsoleOutput>
+                <ConsoleLineText>
+                  {consolePrint.input}
+                </ConsoleLineText>
+              </ConsoleInputLineContainer>
+              <ConsoleOutputLineContainer>
                 <ChevronLeftIcon
                   fontSize={"medium"}
-                  sx={{ marginRight: "0.5rem" }}
+                  sx={ConsoleIOIcons}
                 />
-                {consolePrint.output}
-              </ConsoleOutput>
+                <Box
+                  display={"flex"}
+                  flexDirection={"column"}
+                  justifyContent={"flex-start"}
+                  alignItems={"flex-start"}
+                  marginBottom={"1rem"}
+                >
+                  {consolePrint.output.map((output, index) => (
+                    <ConsoleOutputLineText
+                      sx={output.color ? { color: output.color } : undefined}
+                      key={`${consolePrint.input}-output-${index}`}
+                    >
+                      {output.value}
+                    </ConsoleOutputLineText>
+                  ))}
+                </Box>
+              </ConsoleOutputLineContainer>
             </ConsoleOutputContainer>
           ))}
         </ConsoleOutputsContainer>

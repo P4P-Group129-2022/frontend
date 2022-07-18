@@ -1,24 +1,25 @@
-import { createContext, FC, useContext, useState } from "react";
+import { createContext, FC, useContext, useEffect, useState } from "react";
 import { ScenarioSegment } from "../types/ScenarioTypes";
 import scenario1 from "../scenarios/scenario1/scenario1.json";
 import { MessageContext } from "./MessageContextProvider";
 import { NotificationContext } from "./NotificationContextProvider";
 import { TaskType } from "../utils/TaskType";
+import { getScenarioByNameId } from "../api/Api";
 
 type ScenarioContextType = {
-  currentScenario?: ScenarioSegment;
+  currentSegment?: ScenarioSegment;
   setScenario: (scenario: ScenarioSegment[]) => void;
   checkAndAdvanceScenario: (taskType: TaskType) => boolean;
 };
 
 const dummyScenarioSegment: ScenarioSegment = {
   chats: [],
-  notification: [],
+  notifications: [],
   endRepoID: "",
 };
 
 const ScenarioContext = createContext<ScenarioContextType>({
-  currentScenario: dummyScenarioSegment,
+  currentSegment: dummyScenarioSegment,
   setScenario: () => {},
   checkAndAdvanceScenario: () => false,
 });
@@ -29,10 +30,15 @@ type Props = {
 
 function ScenarioContextProvider({ children }: Props) {
   const [scenario, setScenario] = useState<ScenarioSegment[]>();
-  const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0);
+  const [currentFragmentIndex, setCurrentFragmentIndex] = useState(-1);
 
   const { addMessage } = useContext(MessageContext);
   const { showNotification } = useContext(NotificationContext);
+
+  useEffect(() => {
+    console.log("scenario changed:", scenario);
+    checkAndAdvanceScenario(TaskType.INITIAL);
+  }, [scenario]);
 
   // For now, just use scenario 1.
   // const scenarios: ScenarioSegment[] = scenario1.map((segment) => ({
@@ -43,12 +49,12 @@ function ScenarioContextProvider({ children }: Props) {
   function checkAndAdvanceScenario(taskType: TaskType): boolean {
     if (!scenario) return false;
 
-    const nextScenarioIndex = currentScenarioIndex + 1;
+    const nextScenarioIndex = currentFragmentIndex + 1;
 
     const nextScenarioSegment = scenario[nextScenarioIndex];
 
     let shouldAdvance = false;
-    if (taskType === scenario[currentScenarioIndex].endRepoID) {
+    if (taskType === scenario[currentFragmentIndex].endRepoID) {
       const shouldAdvance = true;
     }
 
@@ -57,27 +63,30 @@ function ScenarioContextProvider({ children }: Props) {
       nextScenarioSegment.chats.forEach((chatDialog) => {
         console.log(
           "Message from: ",
-          chatDialog.senderId,
+          chatDialog.sender.name,
           " || ",
-          chatDialog.message
+          chatDialog.content
         );
         addMessage(chatDialog);
-        showNotification({ message: chatDialog.message, title: `Message from: ${chatDialog.senderId}` });
       });
 
-      setCurrentScenarioIndex(nextScenarioIndex);
+      nextScenarioSegment.notifications.forEach(({ message, title }) => {
+        showNotification({ message, title });
+      });
+
+      setCurrentFragmentIndex(nextScenarioIndex);
     }
 
     return shouldAdvance;
   }
 
   const setScenarioContext = (scenario: ScenarioSegment[]) => {
-    setCurrentScenarioIndex(0);
+    setCurrentFragmentIndex(-1);
     setScenario(scenario);
   };
 
   const context: ScenarioContextType = {
-    currentScenario: scenario?.[currentScenarioIndex],
+    currentSegment: scenario?.[currentFragmentIndex],
     setScenario: setScenarioContext,
     checkAndAdvanceScenario,
   };

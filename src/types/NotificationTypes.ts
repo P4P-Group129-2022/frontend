@@ -3,3 +3,7 @@ export type NotificationContent = {
   title: string;
   imageSrc?: string;
 }
+
+export type NotificationResponse = {
+  notificationFromDB: NotificationContent[]
+}

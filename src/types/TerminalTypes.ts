@@ -1,4 +1,4 @@
 export type ConsolePrint = {
   input: string;
-  output: string;
+  output: { value: string, color?: string }[];
 }
