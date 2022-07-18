@@ -30,14 +30,14 @@ type Props = {
 
 function ScenarioContextProvider({ children }: Props) {
   const [scenario, setScenario] = useState<ScenarioSegment[]>();
-  const [currentFragmentIndex, setCurrentFragmentIndex] = useState(-1);
+  const [currentSegmentIndex, setCurrentSegmentIndex] = useState(-1);
 
   const { addMessage } = useContext(MessageContext);
   const { showNotification } = useContext(NotificationContext);
 
   useEffect(() => {
     console.log("scenario changed:", scenario);
-    checkAndAdvanceScenario(TaskType.INITIAL);
+    checkAndAdvanceScenarioSegment(TaskType.INITIAL);
   }, [scenario]);
 
   // For now, just use scenario 1.
@@ -46,15 +46,17 @@ function ScenarioContextProvider({ children }: Props) {
   //   chats: segment.chats.map((chat) => ({ ...chat, timestamp: new Date(chat.timestamp) }))
   // }));
 
-  function checkAndAdvanceScenario(taskType: TaskType): boolean {
+  function checkAndAdvanceScenarioSegment(taskType: TaskType): boolean {
     if (!scenario) return false;
 
-    const nextScenarioIndex = currentFragmentIndex + 1;
+    const nextSegmentIndex = currentSegmentIndex + 1;
 
-    const nextScenarioSegment = scenario[nextScenarioIndex];
+    const nextScenarioSegment = scenario[nextSegmentIndex];
 
     let shouldAdvance = false;
-    if (taskType === scenario[currentFragmentIndex].endRepoID) {
+    if (currentSegmentIndex === -1) {
+      shouldAdvance = true;
+    } else if (taskType === scenario[currentSegmentIndex].endRepoID) {
       const shouldAdvance = true;
     }
 
@@ -74,21 +76,21 @@ function ScenarioContextProvider({ children }: Props) {
         showNotification({ message, title });
       });
 
-      setCurrentFragmentIndex(nextScenarioIndex);
+      setCurrentSegmentIndex(nextSegmentIndex);
     }
 
     return shouldAdvance;
   }
 
   const setScenarioContext = (scenario: ScenarioSegment[]) => {
-    setCurrentFragmentIndex(-1);
+    setCurrentSegmentIndex(-1);
     setScenario(scenario);
   };
 
   const context: ScenarioContextType = {
-    currentSegment: scenario?.[currentFragmentIndex],
+    currentSegment: scenario?.[currentSegmentIndex],
     setScenario: setScenarioContext,
-    checkAndAdvanceScenario,
+    checkAndAdvanceScenario: checkAndAdvanceScenarioSegment,
   };
 
   return (
