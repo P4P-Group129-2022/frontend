@@ -1,4 +1,4 @@
-import { createContext, FC, useContext, useState } from "react";
+import { createContext, FC, useContext, useEffect, useState } from "react";
 import { ScenarioSegment } from "../types/ScenarioTypes";
 import scenario1 from "../scenarios/scenario1/scenario1.json";
 import { MessageContext } from "./MessageContextProvider";
@@ -12,7 +12,7 @@ type ScenarioContextType = {
 
 const dummyScenarioSegment: ScenarioSegment = {
   chats: [],
-  notification: [],
+  notifications: [],
   endRepoID: "",
 };
 
@@ -28,10 +28,15 @@ type Props = {
 
 function ScenarioContextProvider({ children }: Props) {
   const [scenario, setScenario] = useState<ScenarioSegment[]>();
-  const [currentScenarioIndex, setCurrentScenarioIndex] = useState(0);
+  const [currentScenarioIndex, setCurrentScenarioIndex] = useState(-1);
 
   const { addMessage } = useContext(MessageContext);
   const { showNotification } = useContext(NotificationContext);
+
+  useEffect(() => {
+    console.log("scenario changed:", scenario);
+    checkAndAdvanceScenario();
+  }, [scenario]);
 
   // For now, just use scenario 1.
   // const scenarios: ScenarioSegment[] = scenario1.map((segment) => ({
@@ -40,6 +45,7 @@ function ScenarioContextProvider({ children }: Props) {
   // }));
 
   function checkAndAdvanceScenario(): boolean {
+    console.log("scenario", scenario);
     if (!scenario) return false;
 
     const nextScenarioIndex = currentScenarioIndex + 1;
@@ -54,12 +60,15 @@ function ScenarioContextProvider({ children }: Props) {
       nextScenarioSegment.chats.forEach((chatDialog) => {
         console.log(
           "Message from: ",
-          chatDialog.senderId,
+          chatDialog.sender,
           " || ",
-          chatDialog.message
+          chatDialog.content
         );
         addMessage(chatDialog);
-        showNotification({ message: chatDialog.message, title: `Message from: ${chatDialog.senderId}` });
+      });
+
+      nextScenarioSegment.notifications.forEach(({ message, title }) => {
+        showNotification({ message, title });
       });
 
       setCurrentScenarioIndex(nextScenarioIndex);
@@ -69,7 +78,7 @@ function ScenarioContextProvider({ children }: Props) {
   }
 
   const setScenarioContext = (scenario: ScenarioSegment[]) => {
-    setCurrentScenarioIndex(0);
+    setCurrentScenarioIndex(-1);
     setScenario(scenario);
   };
 

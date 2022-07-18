@@ -4,8 +4,9 @@ import useGet from "../../hooks/useGet";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { ScenarioContext } from "../../contexts/ScenarioContextProvider";
-import { ScenarioSegment } from "../../types/ScenarioTypes";
+import { ScenarioContent, ScenarioSegment } from "../../types/ScenarioTypes";
 import axios from "axios";
+import { getScenarioByNameId } from "../../api/Api";
 
 const ScenarioBoxSkeleton = styled((props) => <Skeleton
     variant={"rectangular"}
@@ -36,15 +37,16 @@ const ScenarioContainer = styled(Box)({
 
 function ScenarioSelectPage() {
   const [scenarioList, setScenarioList] = React.useState<{ name: string, nameId: string }[]>([]);
-  const { isLoading, data } = useGet<{ name: string, nameId: string }[]>("http://localhost:8080/api/scenarios");
+  const { isLoading, data } = useGet<{ name: string, nameId: string }[]>("http://localhost:8080/api/scenario");
   const navigate = useNavigate();
   const { setScenario } = useContext(ScenarioContext);
 
   React.useEffect(() => {
-    setScenarioList(data ?? [
+    // setScenarioList(data ?? []);
+    setScenarioList([
       {
         name: "Scenario 1",
-        nameId: "scenario-1"
+        nameId: "test"
       },
       {
         name: "Scenario 2",
@@ -55,8 +57,9 @@ function ScenarioSelectPage() {
 
   const handleSelectScenario = async (nameId: string) => {
     // TODO: Get scenario from server and set it in context.
-    // const retrievedScenario = await axios.get<ScenarioSegment[]>(`http://localhost:8080/api/scenarios/${nameId}`);
-    // setScenario(retrievedScenario.data);
+    const retrievedScenario = await getScenarioByNameId(nameId);
+    console.log("retrievedScenario", retrievedScenario);
+    setScenario(retrievedScenario.data.scenarioFromDB.segments);
     navigate(`/scenario/slack`);
   };
 
@@ -79,7 +82,10 @@ function ScenarioSelectPage() {
               }}
             >
               <CardActionArea
-                onClick={async () => handleSelectScenario(scenario.nameId)}
+                onClick={async () => {
+                  await handleSelectScenario(scenario.nameId);
+                  console.log("onclick event finished");
+                }}
               >
                 <CardContent>
                   <Typography variant={"h3"}>{scenario.name}</Typography>

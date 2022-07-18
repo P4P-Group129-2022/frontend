@@ -1,5 +1,7 @@
+import { Colleague } from "./ColleagueTypes";
+
 export type ChatDialog = {
-  senderId: string;
-  message: string;
+  sender: Colleague;
+  content: string;
   timestamp: Date;
 };

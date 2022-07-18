@@ -10,7 +10,7 @@ function useGet<DataType>(url: string, initialState: DataType | null = null) {
     async function fetchData() {
       setLoading(true);
       try {
-        await new Promise((resolve) => setTimeout(resolve, 10000));
+        await new Promise((resolve) => setTimeout(resolve, 500));
         const response = await axios.get<DataType>(url);
         setData(response.data);
       } catch (e: unknown) {
