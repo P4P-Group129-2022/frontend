@@ -11,7 +11,7 @@ function DemoPage() {
     const {data, isLoading} = useGet<string>("http://localhost:8080/api/git");
     const [initRepoResult, setInitRepoResult] = useState<any>(undefined);
 
-    const {currentScenario, checkAndAdvanceScenario} =
+    const {currentSegment, checkAndAdvanceScenario} =
         useContext(ScenarioContext);
 
     useEffect(() => {
@@ -57,7 +57,7 @@ function DemoPage() {
 
             <button
                 onClick={() => {
-                    checkAndAdvanceScenario();
+                    //checkAndAdvanceScenario();
                 }}
             >
                 fulfil scenario completion
