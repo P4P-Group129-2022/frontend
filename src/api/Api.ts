@@ -15,7 +15,7 @@ export const getScenarioByNameId = async (scenarioNameId: string) =>
 export const retrieveFile = async (username: string) =>
   await axios.get<File[]>(`${API_ENDPOINT}/api/file/retrieve?username=${username}`);
 
-export const modifyFile = async (username: string, filepath: string, content: string) =>
+export const modifyFile = async (username: string, content: string) =>
   await axios.post(`${API_ENDPOINT}/api/file/modify`, {
     username,
     content

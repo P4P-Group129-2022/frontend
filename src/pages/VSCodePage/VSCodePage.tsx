@@ -4,11 +4,12 @@ import AppWindowFrame from "../../components/AppWindowFrame";
 import { VSCODE_COLORS } from "../../theme/colors";
 import VSCodeSidebar from "../../components/VSCodeSidebar";
 import VSCodeExplorer from "../../components/VSCodeExplorer";
-import { Box, Breadcrumbs, Typography } from "@mui/material";
+import { Alert, Box, Breadcrumbs, Snackbar, Typography } from "@mui/material";
 import CloseIcon from "@mui/icons-material/Close";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import { File } from "../../types/FileTypes";
-import { retrieveFile } from "../../api/Api";
+import { modifyFile, retrieveFile } from "../../api/Api";
+import HTTPStatusCode from "../../constants/HTTPStatusCode";
 
 // const dummyfiles: File[] = [
 //   {
@@ -51,6 +52,8 @@ import { retrieveFile } from "../../api/Api";
 // ];
 
 function VSCodePage() {
+  const [modified, setModified] = useState(false);
+  const [saveFailSnackbarOpen, setSaveFailSnackbarOpen] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [code, setCode] = useState<string>();
   const [fileName, setFileName] = useState<string>();
@@ -71,11 +74,38 @@ function VSCodePage() {
     <Typography key={2} color={"inherit"}>{fileName}</Typography>
   ];
 
-  const preventSave = (e: React.KeyboardEvent<HTMLDivElement>) => {
+  const preventSave = async (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "s" && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
       e.preventDefault();
 
+      if (code) {
+        try {
+          const res = await modifyFile("testUser", code);
+          if (res.status === HTTPStatusCode.NO_CONTENT) {
+            setModified(false);
+            console.log("file saved to the backend repo.");
+          } else {
+            console.log("file save failed.");
+            console.log("status: ", res.status);
+            setSaveFailSnackbarOpen(true);
+          }
+        } catch (err) {
+          console.log("file save failed.");
+          console.log("error: ", err);
+          setSaveFailSnackbarOpen(true);
+        }
+      }
+    } else {
+      !modified && setModified(true);
     }
+  };
+
+  const handleSaveFailSnackbarClose = (event?: React.SyntheticEvent | Event, reason?: string) => {
+    if (reason === "clickaway") {
+      return;
+    }
+
+    setSaveFailSnackbarOpen(false);
   };
 
   return (
@@ -138,6 +168,21 @@ function VSCodePage() {
           defaultValue={code}
           onChange={(value) => value && setCode(value)}
         />
+
+        <Snackbar
+          open={saveFailSnackbarOpen}
+          autoHideDuration={3000}
+          onClose={handleSaveFailSnackbarClose}
+          anchorOrigin={{ vertical: "bottom", horizontal: "right" }}
+        >
+          <Alert
+            severity={"error"}
+            onClose={handleSaveFailSnackbarClose}
+            sx={{ width: "100%" }}
+          >
+            File save failed! Please try again.
+          </Alert>
+        </Snackbar>
       </Box>
     </AppWindowFrame>
   );
