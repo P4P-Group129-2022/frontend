@@ -1,55 +1,15 @@
 import React, { useEffect, useState } from "react";
+import { Alert, Box, Breadcrumbs, Snackbar, Typography } from "@mui/material";
+import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import CloseIcon from "@mui/icons-material/Close";
 import Editor from "@monaco-editor/react";
 import AppWindowFrame from "../../components/AppWindowFrame";
-import { VSCODE_COLORS } from "../../theme/colors";
 import VSCodeSidebar from "../../components/VSCodeSidebar";
 import VSCodeExplorer from "../../components/VSCodeExplorer";
-import { Alert, Box, Breadcrumbs, Snackbar, Typography } from "@mui/material";
-import CloseIcon from "@mui/icons-material/Close";
-import NavigateNextIcon from "@mui/icons-material/NavigateNext";
-import { File } from "../../types/FileTypes";
-import { modifyFile, retrieveFile } from "../../api/Api";
 import HTTPStatusCode from "../../constants/HTTPStatusCode";
-
-// const dummyfiles: File[] = [
-//   {
-//     name: "new folder",
-//     isFolder: true,
-//     folderContents: [
-//       {
-//         name: "new folder2",
-//         isFolder: true,
-//         folderContents: [
-//           {
-//             name: "new file3.md",
-//             isFolder: false,
-//             contents: "hhehe",
-//           }
-//         ]
-//       },
-//       {
-//         name: "new file.md",
-//         isFolder: false,
-//         contents: "hhehe",
-//       },
-//       {
-//         name: "new file2.md",
-//         isFolder: false,
-//         contents: "hhehe",
-//       },
-//     ],
-//   },
-//   {
-//     name: "dummy.txt",
-//     isFolder: false,
-//     contents: "hehe xd hello world",
-//   },
-//   {
-//     name: "main.py",
-//     isFolder: false,
-//     contents: "def main():\n    print('hello world')",
-//   }
-// ];
+import { modifyFile, retrieveFile } from "../../api/Api";
+import { VSCODE_COLORS } from "../../theme/colors";
+import { File } from "../../types/FileTypes";
 
 function VSCodePage() {
   const [modified, setModified] = useState(false);
