@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Alert, Box, Breadcrumbs, Snackbar, Typography } from "@mui/material";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
+import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
 import CloseIcon from "@mui/icons-material/Close";
 import Editor from "@monaco-editor/react";
 import AppWindowFrame from "../../components/AppWindowFrame";
@@ -13,6 +14,7 @@ import { File } from "../../types/FileTypes";
 
 function VSCodePage() {
   const [modified, setModified] = useState(false);
+  const [saved, setSaved] = useState(true);
   const [saveFailSnackbarOpen, setSaveFailSnackbarOpen] = useState(false);
   const [files, setFiles] = useState<File[]>([]);
   const [code, setCode] = useState<string>();
@@ -34,7 +36,7 @@ function VSCodePage() {
     <Typography key={2} color={"inherit"}>{fileName}</Typography>
   ];
 
-  const preventSave = async (e: React.KeyboardEvent<HTMLDivElement>) => {
+  const handleSave = async (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "s" && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
       e.preventDefault();
 
@@ -42,7 +44,8 @@ function VSCodePage() {
         try {
           const res = await modifyFile("testUser", code);
           if (res.status === HTTPStatusCode.NO_CONTENT) {
-            setModified(false);
+            setModified(code !== files[0].contents);
+            setSaved(true);
             console.log("file saved to the backend repo.");
           } else {
             console.log("file save failed.");
@@ -55,8 +58,13 @@ function VSCodePage() {
           setSaveFailSnackbarOpen(true);
         }
       }
-    } else {
-      !modified && setModified(true);
+    }
+  };
+
+  const handleChange = (newValue: string | undefined) => {
+    if (newValue) {
+      setCode(newValue);
+      setSaved(false);
     }
   };
 
@@ -79,7 +87,7 @@ function VSCodePage() {
         flexGrow={1}
         color={"white"}
         bgcolor={VSCODE_COLORS.textarea}
-        onKeyDown={preventSave}
+        onKeyDown={handleSave}
       >
         <Box
           display={"flex"}
@@ -99,11 +107,19 @@ function VSCodePage() {
               fontSize={"0.8rem"}
               fontWeight={600}
               marginRight={1}
+              color={modified ? VSCODE_COLORS.changedText : VSCODE_COLORS.explorerText}
             >
               {fileName}
+              {modified && (
+                <span style={{ color: `${VSCODE_COLORS.changedText}BB`, fontWeight: "bold", marginLeft: "0.4rem" }}>M</span>
+              )}
             </Typography>
 
-            <CloseIcon fontSize={"small"} />
+            {saved ? (
+              <CloseIcon fontSize={"small"} />
+            ) : (
+              <FiberManualRecordIcon sx={{ width: "0.75rem", height: "0.75rem" }} />
+            )}
           </Box>
         </Box>
 
@@ -126,7 +142,7 @@ function VSCodePage() {
           defaultLanguage="python"
           theme="vs-dark"
           defaultValue={code}
-          onChange={(value) => value && setCode(value)}
+          onChange={handleChange}
         />
 
         <Snackbar
