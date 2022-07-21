@@ -1,10 +1,9 @@
-import { createContext, FC, useContext, useEffect, useState } from "react";
-import { ScenarioSegment } from "../types/ScenarioTypes";
-import scenario1 from "../scenarios/scenario1/scenario1.json";
-import { MessageContext } from "./MessageContextProvider";
-import { NotificationContext } from "./NotificationContextProvider";
-import { TaskType } from "../utils/TaskType";
-import { getScenarioByNameId } from "../api/Api";
+import {createContext, useContext, useEffect, useState} from "react";
+import {ScenarioSegment} from "../types/ScenarioTypes";
+import {MessageContext} from "./MessageContextProvider";
+import {NotificationContext} from "./NotificationContextProvider";
+import {TaskType} from "../utils/TaskType";
+import {checkPR} from "../api/Api";
 
 type ScenarioContextType = {
   currentSegment?: ScenarioSegment;
