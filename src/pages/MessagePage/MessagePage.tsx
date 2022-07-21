@@ -8,7 +8,7 @@ import MessageInput from "../../components/MessageInput";
 import MessageBlock from "../../components/MessageBlock";
 import { styled } from "@mui/material/styles";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { ScenarioContextProvider } from "../../contexts/ScenarioContextProvider";
+import {ScenarioContext, ScenarioContextProvider} from "../../contexts/ScenarioContextProvider";
 
 const GitHubUrlSubstring = "github.com";
 const PRUrlSubstring = "pull";
@@ -38,6 +38,7 @@ const ChatContainer = styled(Box)({
 function MessagePage() {
   const [sender, setSender] = useState<{ name: string; profileImgUrl: string }>();
   const { messages, addMessage } = useContext(MessageContext);
+  const { checkIfPRIsCorrectlyMade } = useContext(ScenarioContext);
 
   useEffect(() => {
     setTimeout(() => {
@@ -50,7 +51,7 @@ function MessagePage() {
     console.log(message);
 
     if (checkIfPRMessage(message)) {
-      ScenarioContextProvider.checkIfValidPR(message.substring(message.lastIndexOf('/') + 1));
+      checkIfPRIsCorrectlyMade(message.substring(message.lastIndexOf('/') + 1));
     }
 
     addMessage({ sender: { name: "user", nameId: "user", profileImgUrl: "https://i.pravatar.cc/300" }, content: message, timestamp: new Date() });

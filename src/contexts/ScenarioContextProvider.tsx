@@ -9,6 +9,7 @@ type ScenarioContextType = {
   currentSegment?: ScenarioSegment;
   setScenario: (scenario: ScenarioSegment[]) => void;
   checkAndAdvanceScenario: (taskType: TaskType) => boolean;
+  checkIfPRIsCorrectlyMade: (pullNumber: string) => void;
 };
 
 const dummyScenarioSegment: ScenarioSegment = {
@@ -21,6 +22,7 @@ const ScenarioContext = createContext<ScenarioContextType>({
   currentSegment: dummyScenarioSegment,
   setScenario: () => {},
   checkAndAdvanceScenario: () => false,
+  checkIfPRIsCorrectlyMade: () => {},
 });
 
 type Props = {
@@ -36,7 +38,8 @@ function ScenarioContextProvider({ children }: Props) {
 
   useEffect(() => {
     console.log("scenario changed:", scenario);
-    checkAndAdvanceScenarioSegment(TaskType.INITIAL);
+    //checkAndAdvanceScenarioSegment(TaskType.INITIAL);
+    checkAndAdvanceScenarioSegment();
   }, [scenario]);
 
   // For now, just use scenario 1.
@@ -45,19 +48,26 @@ function ScenarioContextProvider({ children }: Props) {
   //   chats: segment.chats.map((chat) => ({ ...chat, timestamp: new Date(chat.timestamp) }))
   // }));
 
-  function checkAndAdvanceScenarioSegment(taskType: TaskType): boolean {
+  async function checkIfPRIsCorrectlyMade(pullNumber: string) {
+    const isPRCorrectlyMade = await checkPR(pullNumber);
+    if (isPRCorrectlyMade.data.isPRCorrectlyMade) {
+      checkAndAdvanceScenarioSegment();
+    }
+  }
+
+  function checkAndAdvanceScenarioSegment(): boolean {
     if (!scenario) return false;
 
     const nextSegmentIndex = currentSegmentIndex + 1;
 
     const nextScenarioSegment = scenario[nextSegmentIndex];
 
-    let shouldAdvance = false;
-    if (currentSegmentIndex === -1) {
-      shouldAdvance = true;
-    } else if (taskType === scenario[currentSegmentIndex].endRepoID) {
-      const shouldAdvance = true;
-    }
+    let shouldAdvance = true;
+    // if (currentSegmentIndex === -1) {
+    //   shouldAdvance = true;
+    // } else if (taskType === scenario[currentSegmentIndex].endRepoID) {
+    //   const shouldAdvance = true;
+    // }
 
     if (shouldAdvance) {
       // TODO: Process each chats into messages screen.
@@ -90,6 +100,7 @@ function ScenarioContextProvider({ children }: Props) {
     currentSegment: scenario?.[currentSegmentIndex],
     setScenario: setScenarioContext,
     checkAndAdvanceScenario: checkAndAdvanceScenarioSegment,
+    checkIfPRIsCorrectlyMade: checkIfPRIsCorrectlyMade,
   };
 
   return (
