@@ -8,7 +8,7 @@ import {checkPR} from "../api/Api";
 type ScenarioContextType = {
   currentSegment?: ScenarioSegment;
   setScenario: (scenario: ScenarioSegment[]) => void;
-  checkAndAdvanceScenario: () => boolean;
+  checkAndAdvanceScenario: (taskType: TaskType) => boolean;
   checkIfPRIsCorrectlyMade: (pullNumber: string) => void;
 };
 
@@ -39,7 +39,7 @@ function ScenarioContextProvider({ children }: Props) {
   useEffect(() => {
     console.log("scenario changed:", scenario);
     //checkAndAdvanceScenarioSegment(TaskType.INITIAL);
-    checkAndAdvanceScenarioSegment();
+    checkAndAdvanceScenarioSegment(TaskType.INITIAL);
   }, [scenario]);
 
   // For now, just use scenario 1.
@@ -51,18 +51,24 @@ function ScenarioContextProvider({ children }: Props) {
   async function checkIfPRIsCorrectlyMade(pullNumber: string) {
     const isPRCorrectlyMade = await checkPR(pullNumber);
     if (isPRCorrectlyMade.data.isPRCorrectlyMade) {
-      checkAndAdvanceScenarioSegment();
+      checkAndAdvanceScenarioSegment(TaskType.PR);
     }
   }
 
-  function checkAndAdvanceScenarioSegment(): boolean {
+  function checkAndAdvanceScenarioSegment(taskType: TaskType): boolean {
     if (!scenario) return false;
 
     const nextSegmentIndex = currentSegmentIndex + 1;
 
     const nextScenarioSegment = scenario[nextSegmentIndex];
 
-    let shouldAdvance = true;
+    let shouldAdvance = false;
+    if (taskType === TaskType.INITIAL) {
+      shouldAdvance = true;
+    } else if (scenario[currentSegmentIndex].endRepoID === taskType) {
+      console.log("!!!!HELLO!!!!");
+      shouldAdvance = true;
+    }
     // if (currentSegmentIndex === -1) {
     //   shouldAdvance = true;
     // } else if (taskType === scenario[currentSegmentIndex].endRepoID) {

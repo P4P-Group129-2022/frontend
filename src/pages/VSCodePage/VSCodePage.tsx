@@ -12,6 +12,7 @@ import { modifyFile, retrieveFile } from "../../api/Api";
 import { VSCODE_COLORS } from "../../theme/colors";
 import { File } from "../../types/FileTypes";
 import {ScenarioContext, ScenarioContextProvider} from "../../contexts/ScenarioContextProvider";
+import {TaskType} from "../../utils/TaskType";
 
 function VSCodePage() {
   const [modified, setModified] = useState(false);
@@ -61,7 +62,7 @@ function VSCodePage() {
         }
       }
 
-      checkAndAdvanceScenario();
+      checkAndAdvanceScenario(TaskType.SAVE);
     }
   };
 
