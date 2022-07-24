@@ -45,8 +45,8 @@ function ScenarioSelectPage() {
     // setScenarioList(data ?? []);
     setScenarioList([
       {
-        name: "Scenario 1",
-        nameId: "test"
+        name: "scenario-1",
+        nameId: "scenario-1"
       },
       {
         name: "Scenario 2",

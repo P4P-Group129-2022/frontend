@@ -8,6 +8,10 @@ import MessageInput from "../../components/MessageInput";
 import MessageBlock from "../../components/MessageBlock";
 import { styled } from "@mui/material/styles";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
+import {ScenarioContext, ScenarioContextProvider} from "../../contexts/ScenarioContextProvider";
+
+const GitHubUrlSubstring = "github.com";
+const PRUrlSubstring = "pull";
 
 const MainChatContainer = styled(Box)({
   display: "flex",
@@ -34,6 +38,7 @@ const ChatContainer = styled(Box)({
 function MessagePage() {
   const [sender, setSender] = useState<{ name: string; profileImgUrl: string }>();
   const { messages, addMessage } = useContext(MessageContext);
+  const { checkIfPRIsCorrectlyMade } = useContext(ScenarioContext);
 
   useEffect(() => {
     setTimeout(() => {
@@ -44,8 +49,20 @@ function MessagePage() {
 
   const handleSend = (message: string) => {
     console.log(message);
+
+    if (checkIfPRMessage(message)) {
+      checkIfPRIsCorrectlyMade(message.substring(message.lastIndexOf('/') + 1));
+    }
+
     addMessage({ sender: { name: "user", nameId: "user", profileImgUrl: "https://i.pravatar.cc/300" }, content: message, timestamp: new Date() });
   };
+
+  const checkIfPRMessage = (message: string) => {
+    if (message.includes(GitHubUrlSubstring) && message.includes(PRUrlSubstring)) {
+      return true;
+    }
+    return false;
+  }
 
   return (
     <AppWindowFrame frameColor={SLACK_COLORS.darkPurple}>

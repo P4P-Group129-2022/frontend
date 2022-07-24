@@ -2,6 +2,7 @@ import axios from "axios";
 import { NotificationResponse } from "../types/NotificationTypes";
 import { ScenarioResponse } from "../types/ScenarioTypes";
 import { Author, CommitResponse, StageResponse, StatusResponse } from "../types/GitTypes";
+import {GitHubResponse} from "../types/GitHubTypes";
 import { File } from "../types/FileTypes";
 
 const API_ENDPOINT = `${process.env.REACT_APP_BACKEND_ENDPOINT}`;
@@ -48,3 +49,6 @@ export const stageAllAndCommitRepo = async (username: string, message: string, a
     message,
     author
   });
+
+export const checkPR = async (pullNumber: string) =>
+    await axios.get<GitHubResponse>(`${API_ENDPOINT}/api/github/${pullNumber}`);

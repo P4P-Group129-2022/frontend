@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useContext, useEffect, useState} from "react";
 import { Alert, Box, Breadcrumbs, Snackbar, Typography } from "@mui/material";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
@@ -11,6 +11,7 @@ import HTTPStatusCode from "../../constants/HTTPStatusCode";
 import { modifyFile, retrieveFile } from "../../api/Api";
 import { VSCODE_COLORS } from "../../theme/colors";
 import { File } from "../../types/FileTypes";
+import {ScenarioContext, ScenarioContextProvider} from "../../contexts/ScenarioContextProvider";
 
 function VSCodePage() {
   const [modified, setModified] = useState(false);
@@ -19,6 +20,7 @@ function VSCodePage() {
   const [files, setFiles] = useState<File[]>([]);
   const [code, setCode] = useState<string>();
   const [fileName, setFileName] = useState<string>();
+  const { checkAndAdvanceScenario } = useContext(ScenarioContext);
 
   useEffect(() => {
     retrieveFile("testUser")
@@ -58,6 +60,8 @@ function VSCodePage() {
           setSaveFailSnackbarOpen(true);
         }
       }
+
+      checkAndAdvanceScenario();
     }
   };
 

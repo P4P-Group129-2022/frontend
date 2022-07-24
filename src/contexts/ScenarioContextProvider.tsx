@@ -1,13 +1,15 @@
-import { createContext, FC, useContext, useEffect, useState } from "react";
-import { ScenarioSegment } from "../types/ScenarioTypes";
-import scenario1 from "../scenarios/scenario1/scenario1.json";
-import { MessageContext } from "./MessageContextProvider";
-import { NotificationContext } from "./NotificationContextProvider";
+import {createContext, useContext, useEffect, useState} from "react";
+import {ScenarioSegment} from "../types/ScenarioTypes";
+import {MessageContext} from "./MessageContextProvider";
+import {NotificationContext} from "./NotificationContextProvider";
+import {TaskType} from "../utils/TaskType";
+import {checkPR} from "../api/Api";
 
 type ScenarioContextType = {
-  currentScenario?: ScenarioSegment;
+  currentSegment?: ScenarioSegment;
   setScenario: (scenario: ScenarioSegment[]) => void;
   checkAndAdvanceScenario: () => boolean;
+  checkIfPRIsCorrectlyMade: (pullNumber: string) => void;
 };
 
 const dummyScenarioSegment: ScenarioSegment = {
@@ -17,9 +19,10 @@ const dummyScenarioSegment: ScenarioSegment = {
 };
 
 const ScenarioContext = createContext<ScenarioContextType>({
-  currentScenario: dummyScenarioSegment,
+  currentSegment: dummyScenarioSegment,
   setScenario: () => {},
   checkAndAdvanceScenario: () => false,
+  checkIfPRIsCorrectlyMade: () => {},
 });
 
 type Props = {
@@ -28,14 +31,15 @@ type Props = {
 
 function ScenarioContextProvider({ children }: Props) {
   const [scenario, setScenario] = useState<ScenarioSegment[]>();
-  const [currentScenarioIndex, setCurrentScenarioIndex] = useState(-1);
+  const [currentSegmentIndex, setCurrentSegmentIndex] = useState(-1);
 
   const { addMessage } = useContext(MessageContext);
   const { showNotification } = useContext(NotificationContext);
 
   useEffect(() => {
     console.log("scenario changed:", scenario);
-    checkAndAdvanceScenario();
+    //checkAndAdvanceScenarioSegment(TaskType.INITIAL);
+    checkAndAdvanceScenarioSegment();
   }, [scenario]);
 
   // For now, just use scenario 1.
@@ -44,23 +48,33 @@ function ScenarioContextProvider({ children }: Props) {
   //   chats: segment.chats.map((chat) => ({ ...chat, timestamp: new Date(chat.timestamp) }))
   // }));
 
-  function checkAndAdvanceScenario(): boolean {
-    console.log("scenario", scenario);
+  async function checkIfPRIsCorrectlyMade(pullNumber: string) {
+    const isPRCorrectlyMade = await checkPR(pullNumber);
+    if (isPRCorrectlyMade.data.isPRCorrectlyMade) {
+      checkAndAdvanceScenarioSegment();
+    }
+  }
+
+  function checkAndAdvanceScenarioSegment(): boolean {
     if (!scenario) return false;
 
-    const nextScenarioIndex = currentScenarioIndex + 1;
+    const nextSegmentIndex = currentSegmentIndex + 1;
 
-    const nextScenarioSegment = scenario[nextScenarioIndex];
+    const nextScenarioSegment = scenario[nextSegmentIndex];
 
-    // TODO: Check whether we should advance to the new scenario segment.
-    const shouldAdvance = true;
+    let shouldAdvance = true;
+    // if (currentSegmentIndex === -1) {
+    //   shouldAdvance = true;
+    // } else if (taskType === scenario[currentSegmentIndex].endRepoID) {
+    //   const shouldAdvance = true;
+    // }
 
     if (shouldAdvance) {
       // TODO: Process each chats into messages screen.
       nextScenarioSegment.chats.forEach((chatDialog) => {
         console.log(
           "Message from: ",
-          chatDialog.sender,
+          chatDialog.sender.name,
           " || ",
           chatDialog.content
         );
@@ -71,21 +85,22 @@ function ScenarioContextProvider({ children }: Props) {
         showNotification({ message, title });
       });
 
-      setCurrentScenarioIndex(nextScenarioIndex);
+      setCurrentSegmentIndex(nextSegmentIndex);
     }
 
     return shouldAdvance;
   }
 
   const setScenarioContext = (scenario: ScenarioSegment[]) => {
-    setCurrentScenarioIndex(-1);
+    setCurrentSegmentIndex(-1);
     setScenario(scenario);
   };
 
   const context: ScenarioContextType = {
-    currentScenario: scenario?.[currentScenarioIndex],
+    currentSegment: scenario?.[currentSegmentIndex],
     setScenario: setScenarioContext,
-    checkAndAdvanceScenario,
+    checkAndAdvanceScenario: checkAndAdvanceScenarioSegment,
+    checkIfPRIsCorrectlyMade: checkIfPRIsCorrectlyMade,
   };
 
   return (
