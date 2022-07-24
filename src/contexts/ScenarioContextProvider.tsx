@@ -66,7 +66,6 @@ function ScenarioContextProvider({ children }: Props) {
     if (taskType === TaskType.INITIAL) {
       shouldAdvance = true;
     } else if (scenario[currentSegmentIndex].endRepoID === taskType) {
-      console.log("!!!!HELLO!!!!");
       shouldAdvance = true;
     }
     // if (currentSegmentIndex === -1) {
