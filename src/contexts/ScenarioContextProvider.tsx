@@ -8,7 +8,7 @@ import {checkPR} from "../api/Api";
 type ScenarioContextType = {
   currentSegment?: ScenarioSegment;
   setScenario: (scenario: ScenarioSegment[]) => void;
-  checkAndAdvanceScenario: (taskType: TaskType) => boolean;
+  checkAndAdvanceScenario: () => boolean;
   checkIfPRIsCorrectlyMade: (pullNumber: string) => void;
 };
 
