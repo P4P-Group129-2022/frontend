@@ -4,9 +4,8 @@ import useGet from "../../hooks/useGet";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { ScenarioContext } from "../../contexts/ScenarioContextProvider";
-import { ScenarioContent, ScenarioSegment } from "../../types/ScenarioTypes";
-import axios from "axios";
-import { getScenarioByNameId } from "../../api/Api";
+import { getScenarioByNameId, initRepoForScenario } from "../../api/Api";
+import { MessageContext } from "../../contexts/MessageContextProvider";
 
 const ScenarioBoxSkeleton = styled((props) => <Skeleton
     variant={"rectangular"}
@@ -35,31 +34,52 @@ const ScenarioContainer = styled(Box)({
   margin: "2rem auto",
 });
 
+type Scenarios = { name: string, nameId: string, description: string }[]
+
 function ScenarioSelectPage() {
-  const [scenarioList, setScenarioList] = React.useState<{ name: string, nameId: string }[]>([]);
-  const { isLoading, data } = useGet<{ name: string, nameId: string }[]>("http://localhost:8080/api/scenario");
+  const [scenarioList, setScenarioList] = React.useState<Scenarios>([]);
+  const { isLoading, data } = useGet<Scenarios>("http://localhost:8080/api/scenario");
   const navigate = useNavigate();
   const { setScenario } = useContext(ScenarioContext);
+  const { clearMessage } = useContext(MessageContext);
 
   React.useEffect(() => {
     // setScenarioList(data ?? []);
     setScenarioList([
       {
-        name: "scenario-1",
-        nameId: "scenario-1"
+        name: "Scenario 1 - The Beginning",
+        nameId: "scenario-1",
+        description: `
+        You are starting as a new software developer intern at LGI Inc. 
+        You are given a task to complete and various git commands to complete alongside it.
+        
+        Git commands taught: git status, add, commit, push`
       },
       {
-        name: "Scenario 2",
-        nameId: "scenario-2"
+        name: "Scenario 2 - Interruptions",
+        nameId: "test",
+        description: `
+        Developing in a team often means your teammate has pushed a change while you were working on your branch.
+        You need to handle this interruptions and make sure you merge to the main branch without any problem.
+        
+        Git commands taught: git checkout, branch, rebase
+        `
       }
     ]);
   }, [data]);
 
   const handleSelectScenario = async (nameId: string) => {
-    // TODO: Get scenario from server and set it in context.
+    // Get scenario from server and set it in context.
     const retrievedScenario = await getScenarioByNameId(nameId);
     console.log("retrievedScenario", retrievedScenario);
     setScenario(retrievedScenario.data.scenarioFromDB.segments);
+
+    // Set up repository to handle in the backend.
+    await initRepoForScenario("hehexd", nameId);
+
+    // Clear any existing messages.
+    clearMessage();
+
     navigate(`/scenario/slack`);
   };
 
@@ -88,8 +108,12 @@ function ScenarioSelectPage() {
                 }}
               >
                 <CardContent>
-                  <Typography variant={"h3"}>{scenario.name}</Typography>
-                  <Typography variant={"h5"}>{scenario.nameId}</Typography>
+                  <Typography variant={"h4"}>
+                    {scenario.name}
+                  </Typography>
+                  <Typography variant={"body1"} sx={{ whiteSpace: "pre-line" }}>
+                    {scenario.description}
+                  </Typography>
                 </CardContent>
               </CardActionArea>
             </Card>

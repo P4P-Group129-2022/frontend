@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Alert, Box, Breadcrumbs, Snackbar, Typography } from "@mui/material";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
@@ -11,7 +11,7 @@ import HTTPStatusCode from "../../constants/HTTPStatusCode";
 import { modifyFile, retrieveFile } from "../../api/Api";
 import { VSCODE_COLORS } from "../../theme/colors";
 import { File } from "../../types/FileTypes";
-import {ScenarioContext, ScenarioContextProvider} from "../../contexts/ScenarioContextProvider";
+import { ScenarioContext } from "../../contexts/ScenarioContextProvider";
 
 function VSCodePage() {
   const [modified, setModified] = useState(false);
@@ -23,7 +23,7 @@ function VSCodePage() {
   const { checkAndAdvanceScenario } = useContext(ScenarioContext);
 
   useEffect(() => {
-    retrieveFile("testUser")
+    retrieveFile("hehexd")
       .then(res => res.data)
       .then(data => {
         console.log(data);
@@ -115,7 +115,14 @@ function VSCodePage() {
             >
               {fileName}
               {modified && (
-                <span style={{ color: `${VSCODE_COLORS.changedText}BB`, fontWeight: "bold", marginLeft: "0.4rem" }}>M</span>
+                <span
+                  style={{
+                    color: `${VSCODE_COLORS.changedText}BB`,
+                    fontWeight: "bold",
+                    marginLeft: "0.4rem"
+                  }}>
+                  M
+                </span>
               )}
             </Typography>
 
