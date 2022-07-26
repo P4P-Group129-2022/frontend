@@ -13,6 +13,8 @@ import { VSCODE_COLORS } from "../../theme/colors";
 import { File } from "../../types/FileTypes";
 import { ScenarioContext } from "../../contexts/ScenarioContextProvider";
 
+const username = "testUser";
+
 function VSCodePage() {
   const [modified, setModified] = useState(false);
   const [saved, setSaved] = useState(true);
@@ -23,7 +25,8 @@ function VSCodePage() {
   const { checkAndAdvanceScenario } = useContext(ScenarioContext);
 
   useEffect(() => {
-    retrieveFile("hehexd")
+    console.log("retrieving file from the backend local repo...");
+    retrieveFile(username)
       .then(res => res.data)
       .then(data => {
         console.log(data);
@@ -41,10 +44,13 @@ function VSCodePage() {
   const handleSave = async (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "s" && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
       e.preventDefault();
+      console.log("save pressed.");
 
       if (code) {
         try {
-          const res = await modifyFile("testUser", code);
+          console.log("saving changes to the backend repo...");
+
+          const res = await modifyFile(username, code);
           if (res.status === HTTPStatusCode.NO_CONTENT) {
             setModified(code !== files[0].contents);
             setSaved(true);
@@ -153,6 +159,7 @@ function VSCodePage() {
           defaultLanguage="python"
           theme="vs-dark"
           defaultValue={code}
+          value={code}
           onChange={handleChange}
         />
 

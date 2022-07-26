@@ -75,7 +75,7 @@ function ScenarioSelectPage() {
     setScenario(retrievedScenario.data.scenarioFromDB.segments);
 
     // Set up repository to handle in the backend.
-    await initRepoForScenario("hehexd", nameId);
+    await initRepoForScenario("testUser", nameId);
 
     // Clear any existing messages.
     clearMessage();
