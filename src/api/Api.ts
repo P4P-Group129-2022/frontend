@@ -2,7 +2,7 @@ import axios from "axios";
 import { NotificationResponse } from "../types/NotificationTypes";
 import { ScenarioResponse } from "../types/ScenarioTypes";
 import { Author, CommitResponse, StageResponse, StatusResponse } from "../types/GitTypes";
-import {GitHubResponse} from "../types/GitHubTypes";
+import { GitHubResponse } from "../types/GitHubTypes";
 import { File } from "../types/FileTypes";
 
 const API_ENDPOINT = `${process.env.REACT_APP_BACKEND_ENDPOINT}`;
@@ -20,6 +20,12 @@ export const modifyFile = async (username: string, content: string) =>
   await axios.post(`${API_ENDPOINT}/api/file/modify`, {
     username,
     content
+  });
+
+export const initRepoForScenario = async (username: string, scenarioNameId: string) =>
+  await axios.post(`${API_ENDPOINT}/api/git/init`, {
+    username,
+    scenarioNameId
   });
 
 export const getRepoStatusForScenario = async (username: string) =>
@@ -51,4 +57,4 @@ export const stageAllAndCommitRepo = async (username: string, message: string, a
   });
 
 export const checkPR = async (pullNumber: string) =>
-    await axios.get<GitHubResponse>(`${API_ENDPOINT}/api/github/${pullNumber}`);
+  await axios.get<GitHubResponse>(`${API_ENDPOINT}/api/github/${pullNumber}`);
