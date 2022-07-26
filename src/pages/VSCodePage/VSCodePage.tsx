@@ -1,4 +1,4 @@
-import React, {useContext, useEffect, useState} from "react";
+import React, { useContext, useEffect, useState } from "react";
 import { Alert, Box, Breadcrumbs, Snackbar, Typography } from "@mui/material";
 import NavigateNextIcon from "@mui/icons-material/NavigateNext";
 import FiberManualRecordIcon from "@mui/icons-material/FiberManualRecord";
@@ -11,7 +11,9 @@ import HTTPStatusCode from "../../constants/HTTPStatusCode";
 import { modifyFile, retrieveFile } from "../../api/Api";
 import { VSCODE_COLORS } from "../../theme/colors";
 import { File } from "../../types/FileTypes";
-import {ScenarioContext, ScenarioContextProvider} from "../../contexts/ScenarioContextProvider";
+import { ScenarioContext } from "../../contexts/ScenarioContextProvider";
+
+const username = "testUser";
 
 function VSCodePage() {
   const [modified, setModified] = useState(false);
@@ -23,7 +25,8 @@ function VSCodePage() {
   const { checkAndAdvanceScenario } = useContext(ScenarioContext);
 
   useEffect(() => {
-    retrieveFile("testUser")
+    console.log("retrieving file from the backend local repo...");
+    retrieveFile(username)
       .then(res => res.data)
       .then(data => {
         console.log(data);
@@ -41,10 +44,13 @@ function VSCodePage() {
   const handleSave = async (e: React.KeyboardEvent<HTMLDivElement>) => {
     if (e.key === "s" && (navigator.platform.match("Mac") ? e.metaKey : e.ctrlKey)) {
       e.preventDefault();
+      console.log("save pressed.");
 
       if (code) {
         try {
-          const res = await modifyFile("testUser", code);
+          console.log("saving changes to the backend repo...");
+
+          const res = await modifyFile(username, code);
           if (res.status === HTTPStatusCode.NO_CONTENT) {
             setModified(code !== files[0].contents);
             setSaved(true);
@@ -115,7 +121,14 @@ function VSCodePage() {
             >
               {fileName}
               {modified && (
-                <span style={{ color: `${VSCODE_COLORS.changedText}BB`, fontWeight: "bold", marginLeft: "0.4rem" }}>M</span>
+                <span
+                  style={{
+                    color: `${VSCODE_COLORS.changedText}BB`,
+                    fontWeight: "bold",
+                    marginLeft: "0.4rem"
+                  }}>
+                  M
+                </span>
               )}
             </Typography>
 
@@ -146,6 +159,7 @@ function VSCodePage() {
           defaultLanguage="python"
           theme="vs-dark"
           defaultValue={code}
+          value={code}
           onChange={handleChange}
         />
 
