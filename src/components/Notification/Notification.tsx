@@ -46,7 +46,7 @@ function Notification({ title, message, imageSrc }: NotificationContent) {
             <NotificationBody>
               {message}
               <span>
-                {imageSrc && <img src={require(`../../assets/${imageSrc}`)} alt={imageSrc} height="52px" />}
+                {imageSrc && <img src={require(`../../../public/assets/${imageSrc}`)} alt={imageSrc} height="52px" />}
               </span>
             </NotificationBody>
           </>
