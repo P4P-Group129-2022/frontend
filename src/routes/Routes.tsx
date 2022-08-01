@@ -6,6 +6,7 @@ import MessagePage from "../pages/MessagePage/MessagePage";
 import TerminalPage from "../pages/TerminalPage/TerminalPage";
 import VSCodePage from "../pages/VSCodePage/VSCodePage";
 import ScenarioSelectPage from "../pages/ScenarioSelectPage/ScenarioSelectPage";
+import OrgInvitePage from "../pages/OrgInvitePage/OrgInvitePage";
 
 function Routes() {
   return (
@@ -15,6 +16,7 @@ function Routes() {
         <Route path="scenario-select" element={<ScenarioSelectPage />} />
 
         <Route path="scenario" element={<Dock />}>
+          <Route path="orginvite" element={<OrgInvitePage />} />
           <Route path="demo" element={<DemoPage />} />
           <Route path="terminal" element={<TerminalPage />} />
           <Route path="vscode" element={<VSCodePage />} />
