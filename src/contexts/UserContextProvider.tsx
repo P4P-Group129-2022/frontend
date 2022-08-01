@@ -1,7 +1,5 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext } from "react";
 import { User } from "../types/UserTypes";
-import { User as FbUser, onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase/config";
 import { RestEndpointMethodTypes } from "@octokit/rest";
 import { useAccessTokenState, useUserState } from "../hooks/usePersistedState";
 
