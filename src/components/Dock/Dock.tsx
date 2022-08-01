@@ -2,14 +2,14 @@ import { styled } from "@mui/material/styles";
 import { Box, Divider } from "@mui/material";
 import { Link, Outlet } from "react-router-dom";
 
-import backgroundImage from "../../../public/assets/wallpaper.png";
-import finderIcon from "../../../public/assets/icons/finder.png";
-import launchpadIcon from "../../../public/assets/icons/launchpad.png";
-import slackIcon from "../../../public/assets/icons/slack.png";
-import vscodeIcon from "../../../public/assets/icons/vscode.png";
-import terminalIcon from "../../../public/assets/icons/terminal.png";
-import chromeIcon from "../../../public/assets/icons/chrome.png";
-import trashIcon from "../../../public/assets/icons/trash.png";
+import backgroundImage from "../../assets/wallpaper.png";
+import finderIcon from "../../assets/icons/finder.png";
+import launchpadIcon from "../../assets/icons/launchpad.png";
+import slackIcon from "../../assets/icons/slack.png";
+import vscodeIcon from "../../assets/icons/vscode.png";
+import terminalIcon from "../../assets/icons/terminal.png";
+import chromeIcon from "../../assets/icons/chrome.png";
+import trashIcon from "../../assets/icons/trash.png";
 
 const MainPageContainer = styled("div")({
   display: "flex",
