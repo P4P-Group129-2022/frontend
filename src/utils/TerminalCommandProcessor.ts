@@ -118,7 +118,7 @@ async function processGitCommit(args: string[]): Promise<ConsolePrint> {
 
   if (commitArgs === "-m" || commitArgs === "-am") {
     // Automatically assume that the following argument is the commit message.
-    const message = rest[0];
+    const message = rest[0].slice(1, -1);
     const request = commitArgs === "-m" ? commitRepo : stageAllAndCommitRepo;
     const response = await request(username, message, author);
 
