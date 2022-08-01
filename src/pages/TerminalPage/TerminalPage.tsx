@@ -8,6 +8,7 @@ import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { ConsolePrint } from "../../types/TerminalTypes";
 import { processCommands } from "../../utils/TerminalCommandProcessor";
+import { UserContext } from "../../contexts/UserContextProvider";
 
 const TerminalDivider = styled(Divider)({
   margin: "0.5rem 0",
@@ -85,6 +86,7 @@ const ConsoleIOIcons: SxProps<Theme> = {
 
 function TerminalPage() {
   const { checkAndAdvanceScenario } = useContext(ScenarioContext);
+  const { accessToken } = useContext(UserContext);
   const [consolePrints, setConsolePrints] = React.useState<ConsolePrint[]>([]);
   const [input, setInput] = React.useState("");
 
@@ -101,7 +103,7 @@ function TerminalPage() {
 
   const handleOnInputKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter" && input.length > 0) {
-      const print = await processCommands(input);
+      const print = await processCommands(input, accessToken);
       addConsolePrint(print);
       setInput("");
     }
