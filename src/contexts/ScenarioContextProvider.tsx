@@ -2,7 +2,6 @@ import {createContext, useContext, useEffect, useState} from "react";
 import {ScenarioSegment} from "../types/ScenarioTypes";
 import {MessageContext} from "./MessageContextProvider";
 import {NotificationContext} from "./NotificationContextProvider";
-import {TaskType} from "../utils/TaskType";
 import {checkPR} from "../api/Api";
 
 type ScenarioContextType = {
@@ -50,7 +49,7 @@ function ScenarioContextProvider({ children }: Props) {
 
   async function checkIfPRIsCorrectlyMade(pullNumber: string) {
     const isPRCorrectlyMade = await checkPR(pullNumber);
-    if (isPRCorrectlyMade.data.isPRCorrectlyMade) {
+    if (isPRCorrectlyMade.data.isSuccessful) {
       checkAndAdvanceScenarioSegment();
     }
   }
