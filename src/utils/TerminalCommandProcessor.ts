@@ -1,13 +1,15 @@
 import { ConsolePrint } from "../types/TerminalTypes";
 import {
   commitRepo,
-  getRepoStatusForScenario,
+  getRepoStatusForScenario, pushRepo,
   stageAllAndCommitRepo,
   stageAllFilesInRepo,
   stageFileInRepo
 } from "../api/Api";
 import { TERMINAL_COLORS } from "../theme/colors";
 import HTTPStatusCode from "../constants/HTTPStatusCode";
+import { useContext } from "react";
+import { UserContext } from "../contexts/UserContextProvider";
 
 const username = "testUser";
 const noOutput = { value: "No output.", color: TERMINAL_COLORS.grey };
@@ -154,12 +156,64 @@ async function processGitCommit(args: string[]): Promise<ConsolePrint> {
   }
 }
 
-async function processGitPush(args: string[]): Promise<ConsolePrint> {
-  // please implement these when you connect it with the backend.
-  return { input: "git push", output: [{ value: `"git push" not implemented yet.` }] };
+async function processGitPush(args: string[], accessToken?: string): Promise<ConsolePrint> {
+  const [remote, branch] = args;
+  console.log("args", args);
+  console.log("remote", remote);
+  console.log("branch", branch);
+
+  const enumeratingObjects = `Enumerating objects: 5, done.`;
+  const countingObjects = `Counting objects: 100% (5/5), done.`;
+  const deltaCompression = `Delta compression using up to 8 threads`;
+  const compressingObjects = `Compressing objects: 100% (2/2), done.`;
+  const writingObjects = `Writing objects: 100% (3/3), 309 bytes | 309.00 KiB/s, done.`;
+  const total = `Total 3 (delta 1), reused 0 (delta 0), pack-reused 0`;
+  const remoteResolving = `remote: Resolving deltas: 100% (1/1), completed with 1 local object.`;
+  const ToRemote = `To https://github.com/P4P-Group129-2022/${username}.git`;
+  const commits = `   15c4907..a05853a  main -> main`;
+
+  if (!accessToken) {
+    return {
+      input: `git push ${args.join(" ")}`,
+      output: [
+        { value: "An error has occurred while authenticating you." },
+        { value: "Please go to the main website to re-login and resume scenarios." },
+        { value: "Or contact the administrator for assistance, through the email here: hpar461@aucklanduni.ac.nz" },
+      ]
+    };
+  }
+
+  if (!branch || !remote) {
+    return {
+      input: `git push ${args.join(" ")}`,
+      output: [
+        { value: "Unknown git push arguments." },
+        { value: "Currently, the system only supports pushing to the 'origin' remote and existing branches." },
+        { value: "hint: Use 'git push origin main' to push to the main branch." },
+      ]
+    };
+  }
+
+  const response = await pushRepo(username, remote, branch, accessToken);
+  return {
+    input: `git push ${args.join(" ")}`,
+    output: response.status === HTTPStatusCode.NO_CONTENT ? [
+      { value: enumeratingObjects },
+      { value: countingObjects },
+      { value: deltaCompression },
+      { value: compressingObjects },
+      { value: writingObjects },
+      { value: total },
+      { value: remoteResolving },
+      { value: ToRemote },
+      { value: commits },
+    ] : [
+      { value: "Error pushing files.", color: TERMINAL_COLORS.red },
+    ]
+  };
 }
 
-export async function processCommands(command: string): Promise<ConsolePrint> {
+export async function processCommands(command: string, accessToken?: string): Promise<ConsolePrint> {
   const [commandType, gitCommand, ...args] = command.split(/\s+(?=(?:[^'"]*['"][^'"]*['"])*[^'"]*$)/);
 
   if (commandType !== "git") {
@@ -173,7 +227,7 @@ export async function processCommands(command: string): Promise<ConsolePrint> {
       case "commit":
         return processGitCommit(args);
       case "push":
-        return processGitPush(args);
+        return processGitPush(args, accessToken);
       default:
         return {
           input: command,
