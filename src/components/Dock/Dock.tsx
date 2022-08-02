@@ -68,21 +68,18 @@ const DockDivider = styled(Divider)({
 });
 
 type DockItem = {
-  link: string;
+  link?: string;
   imgSrc: string;
 };
 
 const dockItems: DockItem[] = [
   {
-    link: "",
     imgSrc: finderIcon,
   },
   {
-    link: "",
     imgSrc: launchpadIcon,
   },
   {
-    link: "chrome",
     imgSrc: chromeIcon,
   },
   {
@@ -104,14 +101,18 @@ function Dock() {
     // order is bottom-up due to "column-reverse" styling.
     <MainPageContainer>
       <DockContainer>
-        {dockItems.map((item, index) => (
-          <DockItemLink
-            key={`dockItem-${index}-${item.link}`}
-            to={item.link}
-          >
-            <DockItemImage alt={item.link} src={item.imgSrc} />
-          </DockItemLink>
-        ))}
+        {dockItems.map((item, index) =>
+          item.link ? (
+            <DockItemLink
+              key={`dockItem-${index}-${item.link}`}
+              to={item.link}
+            >
+              <DockItemImage alt={item.link} src={item.imgSrc} />
+            </DockItemLink>
+          ) : (
+            <DockItemImage key={`dockItem-${index}`} alt={item.link} src={item.imgSrc} />
+          )
+        )}
 
         <DockDivider
           orientation="vertical"

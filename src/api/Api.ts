@@ -56,5 +56,13 @@ export const stageAllAndCommitRepo = async (username: string, message: string, a
     author
   });
 
+export const pushRepo = async (username: string, remote: string, branch: string, accessToken: string) =>
+  await axios.post<void>(`${API_ENDPOINT}/api/git/push`, {
+    username,
+    remote,
+    branch,
+    accessToken
+  });
+
 export const checkPR = async (pullNumber: string) =>
   await axios.get<GitHubResponse>(`${API_ENDPOINT}/api/github/${pullNumber}`);
