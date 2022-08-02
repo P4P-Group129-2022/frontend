@@ -16,7 +16,7 @@ function Routes() {
         <Route path="scenario-select" element={<ScenarioSelectPage />} />
 
         <Route path="scenario" element={<Dock />}>
-          <Route path="orginvite" element={<OrgInvitePage />} />
+          <Route path="invite" element={<OrgInvitePage />} />
           <Route path="demo" element={<DemoPage />} />
           <Route path="terminal" element={<TerminalPage />} />
           <Route path="vscode" element={<VSCodePage />} />
