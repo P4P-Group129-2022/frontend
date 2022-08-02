@@ -110,7 +110,7 @@ function Dock() {
               <DockItemImage alt={item.link} src={item.imgSrc} />
             </DockItemLink>
           ) : (
-            <DockItemImage alt={item.link} src={item.imgSrc} />
+            <DockItemImage key={`dockItem-${index}`} alt={item.link} src={item.imgSrc} />
           )
         )}
 

@@ -3,7 +3,7 @@ import { ChatDialog } from "../types/ChatTypes";
 import { useChatState } from "../hooks/usePersistedState";
 
 type MessageContextType = {
-  addMessage: (message: ChatDialog) => void;
+  addMessages: (messages: ChatDialog[]) => void;
   clearMessage: () => void;
   messages: ChatDialog[];
 }
@@ -13,7 +13,7 @@ type Props = {
 }
 
 const MessageContext = createContext<MessageContextType>({
-  addMessage: () => {},
+  addMessages: () => {},
   clearMessage: () => {},
   messages: [],
 });
@@ -21,17 +21,19 @@ const MessageContext = createContext<MessageContextType>({
 function MessageContextProvider({ children }: Props) {
   const [messages, setMessages] = useChatState([]);
 
-  const addMessage = (message: ChatDialog) => {
-    console.log("Message added", message);
-    setMessages([message, ...messages]);
+  const addMessages = (newMessages: ChatDialog[]) => {
+    console.log("Message added", newMessages);
+    setMessages([...newMessages, ...messages]);
   };
+
+  console.log("messages in context", messages);
 
   const clearMessage = () => {
     setMessages([]);
   }
 
   const context = {
-    addMessage,
+    addMessages,
     clearMessage,
     messages: messages.map((chat) => ({ ...chat, timestamp: new Date(chat.timestamp) })),
   };
