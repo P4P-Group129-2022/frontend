@@ -72,7 +72,7 @@ function ScenarioContextProvider({ children }: Props) {
     if (shouldAdvance) {
       // TODO: Process each chats into messages screen.
       console.log("chats to add", nextScenarioSegment.chats);
-      addMessages(nextScenarioSegment.chats.map((chat) => ({ ...chat, timestamp: new Date() })));
+      addMessages(nextScenarioSegment.chats.map((chat) => ({ ...chat, timestamp: new Date() })).reverse());
 
       nextScenarioSegment.notifications.forEach(({ message, title }) => {
         showNotification({ message, title });
