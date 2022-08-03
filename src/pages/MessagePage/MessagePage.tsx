@@ -145,7 +145,7 @@ function MessagePage() {
                 key={`message-${index}`}
                 sender={sender ?? { name: "", profileImgUrl: "" }}
                 messages={[message.content]}
-                timestamp={new Date()}
+                timestamp={message.timestamp}
               />;
             })}
           </ChatContainer>

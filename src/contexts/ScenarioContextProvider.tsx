@@ -1,9 +1,9 @@
-import {createContext, useContext, useEffect, useState} from "react";
-import {ScenarioSegment} from "../types/ScenarioTypes";
-import {MessageContext} from "./MessageContextProvider";
-import {NotificationContext} from "./NotificationContextProvider";
-import {TaskType} from "../utils/TaskType";
-import {checkPR} from "../api/Api";
+import { createContext, useContext, useEffect, useState } from "react";
+import { ScenarioSegment } from "../types/ScenarioTypes";
+import { MessageContext } from "./MessageContextProvider";
+import { NotificationContext } from "./NotificationContextProvider";
+import { TaskType } from "../utils/TaskType";
+import { checkPR } from "../api/Api";
 
 type ScenarioContextType = {
   currentSegment?: ScenarioSegment;
@@ -72,16 +72,7 @@ function ScenarioContextProvider({ children }: Props) {
     if (shouldAdvance) {
       // TODO: Process each chats into messages screen.
       console.log("chats to add", nextScenarioSegment.chats);
-      addMessages(nextScenarioSegment.chats);
-      // nextScenarioSegment.chats.forEach((chatDialog) => {
-      //   console.log(
-      //     "Message from: ",
-      //     chatDialog.sender.name,
-      //     " || ",
-      //     chatDialog.content
-      //   );
-      //   addMessage(chatDialog);
-      // });
+      addMessages(nextScenarioSegment.chats.map((chat) => ({ ...chat, timestamp: new Date() })));
 
       nextScenarioSegment.notifications.forEach(({ message, title }) => {
         showNotification({ message, title });

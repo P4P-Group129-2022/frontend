@@ -86,7 +86,7 @@ function MessageBlock({ sender, messages, timestamp, isSentByUser }: Props) {
           <NameContainer>
             <Name>{sender.name}</Name>
             <SentTime variant={"subtitle1"}>
-              {timestamp.toLocaleTimeString()}
+              {timestamp.toLocaleTimeString("en-NZ", { hour: "numeric", minute: "numeric" })}
             </SentTime>
           </NameContainer>
           <Box id={"MessageContainer"}>
