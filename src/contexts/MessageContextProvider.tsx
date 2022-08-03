@@ -30,12 +30,12 @@ function MessageContextProvider({ children }: Props) {
 
   const clearMessage = () => {
     setMessages([]);
-  }
+  };
 
   const context = {
     addMessages,
     clearMessage,
-    messages: messages.map((chat) => ({ ...chat, timestamp: new Date(chat.timestamp) })),
+    messages
   };
 
   return (

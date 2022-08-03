@@ -6,11 +6,14 @@ type Props = {
 };
 
 function MessageInput({ onSend }: Props) {
-
   const [message, setMessage] = React.useState("");
 
   const handleMessageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setMessage(event.target.value);
+  };
+
+  const handleEnterKey = (event: React.KeyboardEvent<HTMLDivElement>) => {
+    if (event.key === "Enter") handleSend();
   };
 
   const handleSend = () => {
@@ -29,9 +32,9 @@ function MessageInput({ onSend }: Props) {
         id={"message-input-field"}
         label={"Enter chat..."}
         variant={"outlined"}
-        multiline maxRows={2}
         value={message}
         onChange={handleMessageChange}
+        onKeyDown={handleEnterKey}
         fullWidth
         sx={{
           marginRight: 2,
