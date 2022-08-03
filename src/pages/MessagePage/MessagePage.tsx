@@ -1,5 +1,13 @@
-import { Avatar, Badge, Box, Button, Card, CardContent, Divider, Skeleton, TextField, Typography } from "@mui/material";
-import { useContext, useEffect, useState } from "react";
+import {
+  Avatar,
+  Badge,
+  Box,
+  Chip,
+  Divider as MuiDivider,
+  Skeleton,
+  Typography
+} from "@mui/material";
+import React, { useContext } from "react";
 import { MessageContext } from "../../contexts/MessageContextProvider";
 import AppWindowFrame from "../../components/AppWindowFrame";
 import { SLACK_COLORS } from "../../theme/colors";
@@ -8,7 +16,8 @@ import MessageInput from "../../components/MessageInput";
 import MessageBlock from "../../components/MessageBlock";
 import { styled } from "@mui/material/styles";
 import ExpandMoreIcon from "@mui/icons-material/ExpandMore";
-import { ScenarioContext, ScenarioContextProvider } from "../../contexts/ScenarioContextProvider";
+import { ScenarioContext } from "../../contexts/ScenarioContextProvider";
+import { UserContext } from "../../contexts/UserContextProvider";
 
 const GitHubUrlSubstring = "github.com";
 const PRUrlSubstring = "pull";
@@ -35,40 +44,48 @@ const ChatContainer = styled(Box)({
   height: "100%",
 });
 
+const Divider = styled(MuiDivider)({
+  "& .MuiDivider-wrapper": {
+    padding: 0,
+  }
+});
+
+const DividerDate = styled(Chip)({
+  backgroundColor: "#FFFFFF",
+  border: "1px solid #e0e0e0",
+  fontSize: "0.7rem",
+  fontWeight: "700",
+  height: "fit-content",
+  padding: "0.25rem 0.5rem",
+});
+
 function MessagePage() {
-  const [sender, setSender] = useState<{ name: string; profileImgUrl: string }>();
   const { messages, addMessages } = useContext(MessageContext);
   const { checkIfPRIsCorrectlyMade } = useContext(ScenarioContext);
+  const { user } = useContext(UserContext);
 
-  useEffect(() => {
-    setTimeout(() => {
-      // TODO: Fetch sender details from server
-      setSender({ name: "George Clooney", profileImgUrl: "https://i.pravatar.cc/300" });
-    }, 0);
-  }, []);
+  // The very first sender of the chat is always the supervisor to chat with.
+  const sender = messages[messages.length - 1]?.sender;
 
   console.log("messages", messages);
+  console.log("message 1 date:", typeof messages[0]?.timestamp);
 
   const handleSend = (message: string) => {
     console.log(message);
 
-    if (checkIfPRMessage(message)) {
-      checkIfPRIsCorrectlyMade(message.substring(message.lastIndexOf("/") + 1));
-    }
-
+    if (checkIfPRMessage(message)) checkIfPRIsCorrectlyMade(message.substring(message.lastIndexOf("/") + 1));
     addMessages([{
-      sender: { name: "user", nameId: "user", profileImgUrl: "https://i.pravatar.cc/300" },
+      sender: {
+        name: !!user ? user.name : "player",
+        nameId: !!user ? user.username : "player",
+        profileImgUrl: !!user ? user.avatarUrl : "https://i.pravatar.cc/300?img=1"
+      },
       content: message,
       timestamp: new Date()
     }]);
   };
 
-  const checkIfPRMessage = (message: string) => {
-    if (message.includes(GitHubUrlSubstring) && message.includes(PRUrlSubstring)) {
-      return true;
-    }
-    return false;
-  };
+  const checkIfPRMessage = (message: string) => message.includes(GitHubUrlSubstring) && message.includes(PRUrlSubstring);
 
   return (
     <AppWindowFrame frameColor={SLACK_COLORS.darkPurple}>
@@ -140,14 +157,18 @@ function MessagePage() {
 
         <ScrollableChatContainer>
           <ChatContainer>
-            {messages.map((message, index) => {
-              return <MessageBlock
+            {messages.map((message, index) => <MessageBlock
                 key={`message-${index}`}
-                sender={sender ?? { name: "", profileImgUrl: "" }}
-                messages={[message.content]}
+                sender={message.sender}
+                message={message.content}
                 timestamp={message.timestamp}
-              />;
-            })}
+              />
+            )}
+            <Box>
+              <Divider>
+                <DividerDate label={"Today"} />
+              </Divider>
+            </Box>
           </ChatContainer>
         </ScrollableChatContainer>
 
