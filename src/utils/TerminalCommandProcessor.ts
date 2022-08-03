@@ -136,7 +136,7 @@ async function processGitCommit(args: string[]): Promise<ConsolePrint> {
     return {
       input: `git commit ${args.join(" ")}`,
       output: response.status === HTTPStatusCode.CREATED ? [
-        { value: `[${branchName} ${shortCommitId}] ${message.substring(1, message.length - 1)}` },
+        { value: `[${branchName} ${shortCommitId}] ${message}` },
         { value: statsString.join(", ") },
       ] : [
         { value: "Error committing files." }
