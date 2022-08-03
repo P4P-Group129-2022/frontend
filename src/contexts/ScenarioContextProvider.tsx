@@ -1,8 +1,8 @@
-import {createContext, useContext, useEffect, useState} from "react";
-import {ScenarioSegment} from "../types/ScenarioTypes";
-import {MessageContext} from "./MessageContextProvider";
-import {NotificationContext} from "./NotificationContextProvider";
-import {checkPR} from "../api/Api";
+import { createContext, useContext, useEffect, useState } from "react";
+import { ScenarioSegment } from "../types/ScenarioTypes";
+import { MessageContext } from "./MessageContextProvider";
+import { NotificationContext } from "./NotificationContextProvider";
+import { checkPR } from "../api/Api";
 
 type ScenarioContextType = {
   currentSegment?: ScenarioSegment;
@@ -32,7 +32,7 @@ function ScenarioContextProvider({ children }: Props) {
   const [scenario, setScenario] = useState<ScenarioSegment[]>();
   const [currentSegmentIndex, setCurrentSegmentIndex] = useState(-1);
 
-  const { addMessage } = useContext(MessageContext);
+  const { addMessages } = useContext(MessageContext);
   const { showNotification } = useContext(NotificationContext);
 
   useEffect(() => {
@@ -70,15 +70,8 @@ function ScenarioContextProvider({ children }: Props) {
 
     if (shouldAdvance) {
       // TODO: Process each chats into messages screen.
-      nextScenarioSegment.chats.forEach((chatDialog) => {
-        console.log(
-          "Message from: ",
-          chatDialog.sender.name,
-          " || ",
-          chatDialog.content
-        );
-        addMessage(chatDialog);
-      });
+      console.log("chats to add", nextScenarioSegment.chats);
+      addMessages(nextScenarioSegment.chats.map((chat) => ({ ...chat, timestamp: new Date() })).reverse());
 
       nextScenarioSegment.notifications.forEach(({ message, title }) => {
         showNotification({ message, title });
@@ -99,7 +92,7 @@ function ScenarioContextProvider({ children }: Props) {
     currentSegment: scenario?.[currentSegmentIndex],
     setScenario: setScenarioContext,
     checkAndAdvanceScenario: checkAndAdvanceScenarioSegment,
-    checkIfPRIsCorrectlyMade: checkIfPRIsCorrectlyMade,
+    checkIfPRIsCorrectlyMade,
   };
 
   return (

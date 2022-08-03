@@ -1,7 +1,5 @@
-import { createContext, useEffect, useState } from "react";
+import { createContext } from "react";
 import { User } from "../types/UserTypes";
-import { User as FbUser, onAuthStateChanged } from "firebase/auth";
-import { auth } from "../firebase/config";
 import { RestEndpointMethodTypes } from "@octokit/rest";
 import { useAccessTokenState, useUserState } from "../hooks/usePersistedState";
 
@@ -19,20 +17,20 @@ type Props = {
 type GitHubUser = RestEndpointMethodTypes["users"]["getAuthenticated"]["response"]["data"];
 
 const UserContext = createContext<UserContextType>({
-  user: { email: "", name: "", username: "" },
+  user: { email: "", name: "", username: "", avatarUrl: "" },
   accessToken: "",
   loginToContext: () => {},
   logoutFromContext: () => {},
 });
 
-const EMPTY_USER: User = { email: "", name: "", username: "" };
+const EMPTY_USER: User = { email: "", name: "", username: "", avatarUrl: "" };
 
 function UserContextProvider({ children }: Props) {
   const [user, setUser] = useUserState(EMPTY_USER);
   const [accessToken, setAccessToken] = useAccessTokenState();
 
-  const extractUserInformation = ({ login, name, }: GitHubUser, email: string): User =>
-    ({ email: email ?? "", name: name ?? login, username: login });
+  const extractUserInformation = ({ login, name, avatar_url }: GitHubUser, email: string): User =>
+    ({ email: email ?? "", name: name ?? login, username: login, avatarUrl: avatar_url });
 
   const loginToContext = (user: GitHubUser, email: string, accessToken: string) => {
     setAccessToken(accessToken);

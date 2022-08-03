@@ -17,9 +17,11 @@ export const useLogin = () => {
     setIsPending(true);
 
     try {
-      // provider.addScope("repo");
+      provider.addScope("repo");
       provider.addScope("user");
-      // provider.addScope("repo:status");
+      provider.addScope("admin:org");
+      // provider.addScope("admin:public_key");
+      // provider.addScope("admin:repo_hook");
 
       const res = await signInWithPopup(auth, provider);
       if (!res) throw new Error("Could not complete signup");

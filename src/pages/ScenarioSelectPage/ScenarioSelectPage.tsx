@@ -69,6 +69,9 @@ function ScenarioSelectPage() {
   }, [data]);
 
   const handleSelectScenario = async (nameId: string) => {
+    // Clear any existing messages.
+    clearMessage();
+
     // Get scenario from server and set it in context.
     const retrievedScenario = await getScenarioByNameId(nameId);
     console.log("retrievedScenario", retrievedScenario);
@@ -76,9 +79,6 @@ function ScenarioSelectPage() {
 
     // Set up repository to handle in the backend.
     await initRepoForScenario("testUser", nameId);
-
-    // Clear any existing messages.
-    clearMessage();
 
     navigate(`/scenario/slack`);
   };
