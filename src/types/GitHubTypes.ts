@@ -1,3 +1,3 @@
 export type GitHubResponse = {
-    isPRCorrectlyMade: boolean
+    isSuccessful: boolean
 }

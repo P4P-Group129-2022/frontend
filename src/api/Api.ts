@@ -66,3 +66,6 @@ export const pushRepo = async (username: string, remote: string, branch: string,
 
 export const checkPR = async (pullNumber: string) =>
   await axios.get<GitHubResponse>(`${API_ENDPOINT}/api/github/${pullNumber}`);
+
+export const inviteToOrganization = async (username: string) =>
+    await axios.get<GitHubResponse>(`${API_ENDPOINT}/api/github/invite/${username}`);
