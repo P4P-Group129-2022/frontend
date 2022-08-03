@@ -71,9 +71,10 @@ function MessagePage() {
   console.log("message 1 date:", typeof messages[0]?.timestamp);
 
   const handleSend = (message: string) => {
-    console.log(message);
+    console.log("sending message: ", message);
 
     if (checkIfPRMessage(message)) checkIfPRIsCorrectlyMade(message.substring(message.lastIndexOf("/") + 1));
+
     addMessages([{
       sender: {
         name: !!user ? user.name : "player",

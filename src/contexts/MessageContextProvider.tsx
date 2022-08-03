@@ -30,7 +30,7 @@ function MessageContextProvider({ children }: Props) {
 
   const clearMessage = () => {
     setMessages([]);
-  }
+  };
 
   const context = {
     addMessages,

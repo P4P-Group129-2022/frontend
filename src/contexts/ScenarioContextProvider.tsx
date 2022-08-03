@@ -93,7 +93,7 @@ function ScenarioContextProvider({ children }: Props) {
     currentSegment: scenario?.[currentSegmentIndex],
     setScenario: setScenarioContext,
     checkAndAdvanceScenario: checkAndAdvanceScenarioSegment,
-    checkIfPRIsCorrectlyMade: checkIfPRIsCorrectlyMade,
+    checkIfPRIsCorrectlyMade,
   };
 
   return (
