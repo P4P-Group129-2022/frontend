@@ -6,11 +6,13 @@ import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContextProvider";
 import { useLogin } from "../../hooks/useLogin";
 import { useLogout } from "../../hooks/useLogout";
+import LinkToTestsDialog from "../../components/LinkToTestsDialog";
 
 function HomePage() {
   const { user } = useContext(UserContext);
   const { login, error, isPending } = useLogin();
   const { logout } = useLogout();
+  const [open, setOpen] = React.useState(false);
 
   const navigate = useNavigate();
 
@@ -19,7 +21,11 @@ function HomePage() {
   };
 
   const handleStartTests = () => {
-    navigate("/tests");
+    setOpen(true);
+  };
+
+  const handleClose = () => {
+    setOpen(false);
   };
 
   console.log("user", user);
@@ -49,6 +55,7 @@ function HomePage() {
         <CustomButton onClick={handleStartTests}>
           Start Tests
         </CustomButton>
+        <LinkToTestsDialog open={open} onClose={handleClose} />
         <CustomButton onClick={login}>
           Login
         </CustomButton>
