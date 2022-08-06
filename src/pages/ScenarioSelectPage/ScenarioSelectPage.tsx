@@ -45,7 +45,7 @@ function ScenarioSelectPage() {
   const navigate = useNavigate();
   const { setScenario } = useContext(ScenarioContext);
   const { clearMessage } = useContext(MessageContext);
-  const { user } = useContext(UserContext);
+  const { user: { username } } = useContext(UserContext);
 
   React.useEffect(() => {
     // setScenarioList(data ?? []);
@@ -81,10 +81,8 @@ function ScenarioSelectPage() {
     console.log("retrievedScenario", retrievedScenario);
     setScenario(retrievedScenario.data.scenarioFromDB.segments);
 
-    if (user) {
-      await initRepoForScenario(user.username, nameId);
-      await addRemote(user.username, RemoteUrl + user.username + ".git");
-    }
+    await initRepoForScenario(username, nameId);
+    await addRemote(username, RemoteUrl + username + ".git");
 
     navigate(`/scenario/slack`);
   };
