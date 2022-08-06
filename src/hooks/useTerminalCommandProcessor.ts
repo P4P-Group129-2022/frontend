@@ -1,7 +1,8 @@
 import {ConsolePrint} from "../types/TerminalTypes";
 import {
     commitRepo,
-    getRepoStatusForScenario, pushRepo,
+    getRepoStatusForScenario,
+    pushRepo,
     stageAllAndCommitRepo,
     stageAllFilesInRepo,
     stageFileInRepo
@@ -11,6 +12,7 @@ import HTTPStatusCode from "../constants/HTTPStatusCode";
 import {useContext} from "react";
 import {UserContext} from "../contexts/UserContextProvider";
 import {ScenarioContext} from "../contexts/ScenarioContextProvider";
+import {TaskType} from "../utils/TaskType";
 
 export const useTerminalCommandProcessor = () => {
     const { user: { username, email } } = useContext(UserContext);
@@ -200,7 +202,7 @@ export const useTerminalCommandProcessor = () => {
 
         const response = await pushRepo(username, remote, branch, accessToken);
         if (response.status === HTTPStatusCode.NO_CONTENT) {
-            checkAndAdvanceScenario();
+            checkAndAdvanceScenario(TaskType.PUSH);
         }
         return {
             input: `git push ${args.join(" ")}`,

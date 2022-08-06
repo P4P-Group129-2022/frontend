@@ -40,7 +40,6 @@ function ScenarioContextProvider({children}: Props) {
 
     useEffect(() => {
         console.log("scenario changed:", scenario);
-        //checkAndAdvanceScenarioSegment(TaskType.INITIAL);
         checkAndAdvanceScenarioSegment(TaskType.INITIAL);
     }, [scenario]);
 
