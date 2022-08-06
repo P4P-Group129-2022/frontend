@@ -14,12 +14,12 @@ import { UserContext } from "../contexts/UserContextProvider";
 import { ScenarioContext } from "../contexts/ScenarioContextProvider";
 
 export const useTerminalCommandProcessor = () => {
-  const username = "testUser";
-  const { accessToken } = useContext(UserContext);
+  const { user: { username, name, email }, accessToken } = useContext(UserContext);
   const noOutput = { value: "No output.", color: TERMINAL_COLORS.grey };
   const { checkAndAdvanceScenario } = useContext(ScenarioContext);
 
   async function processGitStatus(): Promise<ConsolePrint> {
+    console.log(username);
     const response = await getRepoStatusForScenario(username);
 
     const onBranchMain = `On branch main`;
@@ -118,7 +118,7 @@ export const useTerminalCommandProcessor = () => {
 
   async function processGitCommit(args: string[]): Promise<ConsolePrint> {
     const [commitArgs, ...rest] = args;
-    const author = { name: "testUser", email: "hpar461@auckland.ac.nz" };
+    const author = { name, email };
     const branchName = "main";
 
     if (commitArgs === "-m" || commitArgs === "-am") {
