@@ -85,12 +85,12 @@ const ConsoleIOIcons: SxProps<Theme> = {
 
 function TerminalPage() {
   const { processCommands } = useTerminalCommandProcessor();
-  const { accessToken } = useContext(UserContext);
+  const { user } = useContext(UserContext);
   const [consolePrints, setConsolePrints] = React.useState<ConsolePrint[]>([]);
   const [input, setInput] = React.useState("");
 
-  const userProfile = "User@MacBook-Pro";
-  const cwd = "~/Documents/project1";
+  const userProfile = `${user?.name ?? "User"}@MacBook-Pro`;
+  const cwd = "~/Documents/LGI-project";
 
   const addConsolePrint = (print: ConsolePrint) => {
     setConsolePrints([...consolePrints, print]);
@@ -102,7 +102,7 @@ function TerminalPage() {
 
   const handleOnInputKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter" && input.length > 0) {
-      const print = await processCommands(input, accessToken);
+      const print = await processCommands(input);
       addConsolePrint(print);
       setInput("");
     }
@@ -111,17 +111,10 @@ function TerminalPage() {
   return (
     <AppWindowFrame frameColor={TERMINAL_COLORS.frame} title={`${userProfile}:${cwd}`}>
       <MainContainer>
-        {/*<Typography variant={"h4"} fontFamily={"inherit"} marginBottom={"0.3rem"}>*/}
-        {/*  <span style={{ fontWeight: 700, marginRight: "0.5rem" }}>Task:</span>*/}
-        {/*  Commit changes to git repository*/}
-        {/*</Typography>*/}
-
-        {/*<TerminalDivider />*/}
-
         <InputContainer>
           <Typography fontSize={"1rem"} marginRight={"0.5rem"} fontFamily={"inherit"}>
             {/* This mimics the zsh shell that default Mac terminal comes with. */}
-            <span style={{ color: TERMINAL_COLORS.green }}>{userProfile}</span>
+            <span style={{ color: TERMINAL_COLORS.green }}>{userProfile}{" "}</span>
             <span style={{ color: TERMINAL_COLORS.blue }}>{cwd}</span> %
           </Typography>
           <Input
