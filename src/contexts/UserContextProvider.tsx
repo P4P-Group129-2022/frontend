@@ -4,7 +4,7 @@ import { RestEndpointMethodTypes } from "@octokit/rest";
 import { useAccessTokenState, useUserState } from "../hooks/usePersistedState";
 
 type UserContextType = {
-  user: User | undefined,
+  user: User,
   accessToken: string | undefined,
   loginToContext: (user: GitHubUser, email: string, accessToken: string) => void,
   logoutFromContext: () => void,
