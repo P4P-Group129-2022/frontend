@@ -1,33 +1,17 @@
-import React, { useEffect } from "react";
-import { Avatar, Box, Chip, Divider as MuiDivider, Typography } from "@mui/material";
-import { ChatDialog } from "../../types/ChatTypes";
+import React from "react";
+import { Avatar, Box, Typography } from "@mui/material";
 import { styled } from "@mui/material/styles";
+import { Colleague } from "../../types/ColleagueTypes";
 
 type Props = {
-  sender: { name: string; profileImgUrl: string };
-  messages: string[];
-  timestamp: Date;
-  isSentByUser?: boolean;
+  sender: Colleague;
+  message: string;
+  timestamp: Date | string;
 };
 
 const MainContainer = styled(Box)({
   display: "flex",
   flexDirection: "column",
-});
-
-const Divider = styled(MuiDivider)({
-  "& .MuiDivider-wrapper": {
-    padding: 0,
-  }
-});
-
-const DividerDate = styled(Chip)({
-  backgroundColor: "#FFFFFF",
-  border: "1px solid #e0e0e0",
-  fontSize: "0.7rem",
-  fontWeight: "700",
-  height: "fit-content",
-  padding: "0.25rem 0.5rem",
 });
 
 const ChatSectionContainer = styled(Box)({
@@ -61,15 +45,13 @@ const MessageText = styled(Typography)({
   marginBottom: "0.5rem",
 });
 
-function MessageBlock({ sender, messages, timestamp, isSentByUser }: Props) {
+function MessageBlock({ sender, message, timestamp }: Props) {
+  // TODO: If chats were recovered from local storage, the timestamp could be string.
+  //  Change it later so that it is always a Date object.
+  typeof timestamp === "string" && (timestamp = new Date(timestamp));
+
   return (
     <MainContainer>
-      <Box>
-        <Divider>
-          <DividerDate label={"Today"} />
-        </Divider>
-      </Box>
-
       <ChatSectionContainer>
         <Avatar
           variant={"rounded"}
@@ -86,16 +68,14 @@ function MessageBlock({ sender, messages, timestamp, isSentByUser }: Props) {
           <NameContainer>
             <Name>{sender.name}</Name>
             <SentTime variant={"subtitle1"}>
-              {timestamp.toLocaleTimeString()}
+              {timestamp?.toLocaleTimeString("en-NZ", {
+                hour: "numeric",
+                minute: "numeric"
+              })}
             </SentTime>
           </NameContainer>
-          <Box id={"MessageContainer"}>
-            {messages.map((message, index) => (
-              <MessageText
-                key={`message-${index}-by-${sender.name}`}
-              >
-                {message}</MessageText>
-            ))}
+          <Box>
+            <MessageText>{message}</MessageText>
           </Box>
         </Box>
       </ChatSectionContainer>

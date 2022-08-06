@@ -13,8 +13,7 @@ import { VSCODE_COLORS } from "../../theme/colors";
 import { File } from "../../types/FileTypes";
 import {TaskType} from "../../utils/TaskType";
 import { ScenarioContext } from "../../contexts/ScenarioContextProvider";
-
-const username = "testUser";
+import {UserContext} from "../../contexts/UserContextProvider";
 
 function VSCodePage() {
   const [modified, setModified] = useState(false);
@@ -24,6 +23,7 @@ function VSCodePage() {
   const [code, setCode] = useState<string>();
   const [fileName, setFileName] = useState<string>();
   const { checkAndAdvanceScenario } = useContext(ScenarioContext);
+  const { user: { username } } = useContext(UserContext);
 
   useEffect(() => {
     console.log("retrieving file from the backend local repo...");

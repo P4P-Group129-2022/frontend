@@ -5,21 +5,24 @@ import Routes from "./routes";
 import { ScenarioContextProvider } from "./contexts/ScenarioContextProvider";
 import { NotificationContextProvider } from "./contexts/NotificationContextProvider";
 import { MessageContextProvider } from "./contexts/MessageContextProvider";
+import { UserContextProvider } from "./contexts/UserContextProvider";
 
 function App() {
   return (
-    <MessageContextProvider>
-      <NotificationContextProvider>
-        <ScenarioContextProvider>
-          <ThemeProvider theme={theme}>
-            <CssBaseline />
-            <BrowserRouter>
-              <Routes />
-            </BrowserRouter>
-          </ThemeProvider>
-        </ScenarioContextProvider>
-      </NotificationContextProvider>
-    </MessageContextProvider>
+    <UserContextProvider>
+      <MessageContextProvider>
+        <NotificationContextProvider>
+          <ScenarioContextProvider>
+            <ThemeProvider theme={theme}>
+              <CssBaseline />
+              <BrowserRouter>
+                <Routes />
+              </BrowserRouter>
+            </ThemeProvider>
+          </ScenarioContextProvider>
+        </NotificationContextProvider>
+      </MessageContextProvider>
+    </UserContextProvider>
   );
 }
 

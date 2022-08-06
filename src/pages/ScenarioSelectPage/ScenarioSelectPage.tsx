@@ -4,8 +4,9 @@ import useGet from "../../hooks/useGet";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { ScenarioContext } from "../../contexts/ScenarioContextProvider";
-import { getScenarioByNameId, initRepoForScenario } from "../../api/Api";
+import {addRemote, getScenarioByNameId, initRepoForScenario} from "../../api/Api";
 import { MessageContext } from "../../contexts/MessageContextProvider";
+import {UserContext} from "../../contexts/UserContextProvider";
 
 const ScenarioBoxSkeleton = styled((props) => <Skeleton
     variant={"rectangular"}
@@ -34,6 +35,8 @@ const ScenarioContainer = styled(Box)({
   margin: "2rem auto",
 });
 
+const RemoteUrl = "https://github.com/P4P-Group129-2022/";
+
 type Scenarios = { name: string, nameId: string, description: string }[]
 
 function ScenarioSelectPage() {
@@ -42,6 +45,7 @@ function ScenarioSelectPage() {
   const navigate = useNavigate();
   const { setScenario } = useContext(ScenarioContext);
   const { clearMessage } = useContext(MessageContext);
+  const { user: { username } } = useContext(UserContext);
 
   React.useEffect(() => {
     // setScenarioList(data ?? []);
@@ -69,16 +73,16 @@ function ScenarioSelectPage() {
   }, [data]);
 
   const handleSelectScenario = async (nameId: string) => {
+    // Clear any existing messages.
+    clearMessage();
+
     // Get scenario from server and set it in context.
     const retrievedScenario = await getScenarioByNameId(nameId);
     console.log("retrievedScenario", retrievedScenario);
     setScenario(retrievedScenario.data.scenarioFromDB.segments);
 
-    // Set up repository to handle in the backend.
-    await initRepoForScenario("testUser", nameId);
-
-    // Clear any existing messages.
-    clearMessage();
+    await initRepoForScenario(username, nameId);
+    await addRemote(username, RemoteUrl + username + ".git");
 
     navigate(`/scenario/slack`);
   };

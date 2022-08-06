@@ -1,13 +1,13 @@
 import { Box, Divider, InputBase, SxProps, Theme, Typography } from "@mui/material";
 import React, { useContext } from "react";
-import { ScenarioContext } from "../../contexts/ScenarioContextProvider";
 import AppWindowFrame from "../../components/AppWindowFrame";
 import { TERMINAL_COLORS } from "../../theme/colors";
 import { styled } from "@mui/material/styles";
 import ChevronRightIcon from "@mui/icons-material/ChevronRight";
 import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { ConsolePrint } from "../../types/TerminalTypes";
-import { processCommands } from "../../utils/TerminalCommandProcessor";
+import { useTerminalCommandProcessor } from "../../hooks/useTerminalCommandProcessor";
+import { UserContext } from "../../contexts/UserContextProvider";
 
 const TerminalDivider = styled(Divider)({
   margin: "0.5rem 0",
@@ -84,7 +84,8 @@ const ConsoleIOIcons: SxProps<Theme> = {
 };
 
 function TerminalPage() {
-  const { checkAndAdvanceScenario } = useContext(ScenarioContext);
+  const { processCommands } = useTerminalCommandProcessor();
+  const { accessToken } = useContext(UserContext);
   const [consolePrints, setConsolePrints] = React.useState<ConsolePrint[]>([]);
   const [input, setInput] = React.useState("");
 
@@ -101,7 +102,7 @@ function TerminalPage() {
 
   const handleOnInputKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter" && input.length > 0) {
-      const print = await processCommands(input);
+      const print = await processCommands(input, accessToken);
       addConsolePrint(print);
       setInput("");
     }

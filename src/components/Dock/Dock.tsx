@@ -2,14 +2,14 @@ import { styled } from "@mui/material/styles";
 import { Box, Divider } from "@mui/material";
 import { Link, Outlet } from "react-router-dom";
 
-import backgroundImage from "../../../public/assets/wallpaper.png";
-import finderIcon from "../../../public/assets/icons/finder.png";
-import launchpadIcon from "../../../public/assets/icons/launchpad.png";
-import slackIcon from "../../../public/assets/icons/slack.png";
-import vscodeIcon from "../../../public/assets/icons/vscode.png";
-import terminalIcon from "../../../public/assets/icons/terminal.png";
-import chromeIcon from "../../../public/assets/icons/chrome.png";
-import trashIcon from "../../../public/assets/icons/trash.png";
+import backgroundImage from "../../assets/wallpaper.png";
+import finderIcon from "../../assets/icons/finder.png";
+import launchpadIcon from "../../assets/icons/launchpad.png";
+import slackIcon from "../../assets/icons/slack.png";
+import vscodeIcon from "../../assets/icons/vscode.png";
+import terminalIcon from "../../assets/icons/terminal.png";
+import chromeIcon from "../../assets/icons/chrome.png";
+import trashIcon from "../../assets/icons/trash.png";
 
 const MainPageContainer = styled("div")({
   display: "flex",
@@ -68,21 +68,18 @@ const DockDivider = styled(Divider)({
 });
 
 type DockItem = {
-  link: string;
+  link?: string;
   imgSrc: string;
 };
 
 const dockItems: DockItem[] = [
   {
-    link: "",
     imgSrc: finderIcon,
   },
   {
-    link: "",
     imgSrc: launchpadIcon,
   },
   {
-    link: "chrome",
     imgSrc: chromeIcon,
   },
   {
@@ -104,14 +101,18 @@ function Dock() {
     // order is bottom-up due to "column-reverse" styling.
     <MainPageContainer>
       <DockContainer>
-        {dockItems.map((item, index) => (
-          <DockItemLink
-            key={`dockItem-${index}-${item.link}`}
-            to={item.link}
-          >
-            <DockItemImage alt={item.link} src={item.imgSrc} />
-          </DockItemLink>
-        ))}
+        {dockItems.map((item, index) =>
+          item.link ? (
+            <DockItemLink
+              key={`dockItem-${index}-${item.link}`}
+              to={item.link}
+            >
+              <DockItemImage alt={item.link} src={item.imgSrc} />
+            </DockItemLink>
+          ) : (
+            <DockItemImage key={`dockItem-${index}`} alt={item.link} src={item.imgSrc} />
+          )
+        )}
 
         <DockDivider
           orientation="vertical"
