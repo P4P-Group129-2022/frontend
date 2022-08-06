@@ -28,6 +28,12 @@ export const initRepoForScenario = async (username: string, scenarioNameId: stri
     scenarioNameId
   });
 
+export const addRemote = async (username: string, remoteUrl: string) =>
+    await axios.post(`${API_ENDPOINT}/api/git/add-remote`, {
+        username,
+        remoteUrl
+    });
+
 export const getRepoStatusForScenario = async (username: string) =>
   await axios.get<StatusResponse>(`${API_ENDPOINT}/api/git/status/${username}`);
 
