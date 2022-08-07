@@ -4,6 +4,7 @@ import {MessageContext} from "./MessageContextProvider";
 import {NotificationContext} from "./NotificationContextProvider";
 import {checkPR} from "../api/Api";
 import {TaskType} from "../utils/TaskType";
+import {UserContext} from "./UserContextProvider";
 
 type ScenarioContextType = {
     currentSegment?: ScenarioSegment;
@@ -34,6 +35,7 @@ type Props = {
 function ScenarioContextProvider({children}: Props) {
     const [scenario, setScenario] = useState<ScenarioSegment[]>();
     const [currentSegmentIndex, setCurrentSegmentIndex] = useState(-1);
+    const { user: {username} } = useContext(UserContext);
 
     const {addMessages} = useContext(MessageContext);
     const {showNotification} = useContext(NotificationContext);
@@ -50,8 +52,9 @@ function ScenarioContextProvider({children}: Props) {
     // }));
 
     async function checkIfPRIsCorrectlyMade(pullNumber: string) {
-        const isPRCorrectlyMade = await checkPR(pullNumber);
-        if (isPRCorrectlyMade.data.isSuccessful) {
+        const isPRCorrectlyMade = await checkPR(pullNumber, username);
+        if (isPRCorrectlyMade.data.isPRmade) {
+            console.log("Do I enter here?");
             checkAndAdvanceScenarioSegment(TaskType.PR);
         }
     }
@@ -80,8 +83,8 @@ function ScenarioContextProvider({children}: Props) {
             console.log("chats to add", nextScenarioSegment.chats);
             addMessages(nextScenarioSegment.chats.map((chat) => ({...chat, timestamp: new Date()})).reverse());
 
-            nextScenarioSegment.notifications.forEach(({message, title}) => {
-                showNotification({message, title});
+            nextScenarioSegment.notifications.forEach(({message, title, imageSrc}) => {
+                showNotification({message, title, imageSrc});
             });
 
             setCurrentSegmentIndex(nextSegmentIndex);

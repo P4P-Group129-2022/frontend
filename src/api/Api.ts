@@ -82,8 +82,8 @@ export const checkout = async (username: string, branch: string) =>
     branch
   });
 
-export const checkPR = async (pullNumber: string) =>
-  await axios.get<GitHubResponse>(`${API_ENDPOINT}/api/github/${pullNumber}`);
+export const checkPR = async (pullNumber: string, username: string) =>
+  await axios.get<GitHubResponse>(`${API_ENDPOINT}/api/github/${username}/${pullNumber}`);
 
 export const inviteToOrganization = async (username: string) =>
   await axios.get<GitHubResponse>(`${API_ENDPOINT}/api/github/invite/${username}`);

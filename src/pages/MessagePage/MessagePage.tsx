@@ -73,7 +73,9 @@ function MessagePage() {
   const handleSend = (message: string) => {
     console.log("sending message: ", message);
 
-    if (checkIfPRMessage(message)) checkIfPRIsCorrectlyMade(message.substring(message.lastIndexOf("/") + 1));
+    if (checkIfPRMessage(message)) {
+      checkIfPRIsCorrectlyMade(message.substring(message.lastIndexOf("/") + 1));
+    }
 
     addMessages([{
       sender: {
