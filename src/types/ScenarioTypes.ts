@@ -4,7 +4,7 @@ import { NotificationContent } from "./NotificationTypes";
 export type ScenarioSegment = {
   chats: ChatDialog[];
   notifications: NotificationContent[];
-  endRepoID: string /* ID of the comparing repository  */;
+  taskType: string /* ID of the comparing repository  */;
 };
 
 export type ScenarioContent = {

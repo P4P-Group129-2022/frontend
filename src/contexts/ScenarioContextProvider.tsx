@@ -15,7 +15,7 @@ type ScenarioContextType = {
 const dummyScenarioSegment: ScenarioSegment = {
     chats: [],
     notifications: [],
-    endRepoID: "",
+    taskType: "",
 };
 
 const ScenarioContext = createContext<ScenarioContextType>({
@@ -66,7 +66,7 @@ function ScenarioContextProvider({children}: Props) {
         let shouldAdvance = false;
         if (taskType === TaskType.INITIAL) {
             shouldAdvance = true;
-        } else if (scenario[currentSegmentIndex].endRepoID === taskType) {
+        } else if (scenario[currentSegmentIndex].taskType === taskType) {
             shouldAdvance = true;
         }
         // if (currentSegmentIndex === -1) {

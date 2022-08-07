@@ -1,5 +1,7 @@
 import {ConsolePrint} from "../types/TerminalTypes";
 import {
+    branch,
+    checkout,
     commitRepo,
     getRepoStatusForScenario,
     pushRepo,
@@ -9,13 +11,13 @@ import {
 } from "../api/Api";
 import {TERMINAL_COLORS} from "../theme/colors";
 import HTTPStatusCode from "../constants/HTTPStatusCode";
+import {TaskType} from "../utils/TaskType";
 import {useContext} from "react";
 import {UserContext} from "../contexts/UserContextProvider";
 import {ScenarioContext} from "../contexts/ScenarioContextProvider";
-import {TaskType} from "../utils/TaskType";
 
 export const useTerminalCommandProcessor = () => {
-    const { user: { username, email } } = useContext(UserContext);
+    const {user: {username, name, email}, accessToken} = useContext(UserContext);
     const noOutput = {value: "No output.", color: TERMINAL_COLORS.grey};
     const {checkAndAdvanceScenario} = useContext(ScenarioContext);
 
@@ -119,7 +121,7 @@ export const useTerminalCommandProcessor = () => {
 
     async function processGitCommit(args: string[]): Promise<ConsolePrint> {
         const [commitArgs, ...rest] = args;
-        const author = {name: username, email: email};
+        const author = {name, email};
         const branchName = "main";
 
         if (commitArgs === "-m" || commitArgs === "-am") {
@@ -222,8 +224,111 @@ export const useTerminalCommandProcessor = () => {
         };
     }
 
-    async function ProcessCommands(command: string, accessToken?: string): Promise<ConsolePrint> {
+    async function processGitBranch(args: string[]) {
+        const [branchName] = args;
 
+        if (branchName) {
+            if (branchName.startsWith("-") || branchName.startsWith("--")) {
+                return {
+                    input: "git branch",
+                    output: [
+                        {value: "Unknown git branch argument."},
+                        {value: "Currently, the system only supports creating branches."},
+                        {value: "hint: Use 'git branch <branchName>' to create a new branch."},
+                    ]
+                };
+            }
+
+            try {
+                await branch(username, branchName);
+
+                // Not sure whether branching should advance scenario.
+                // if (response.status === HTTPStatusCode.CREATED) {
+                //   checkAndAdvanceScenario();
+                // }
+
+                return {
+                    input: `git branch ${args.join(" ")}`,
+                    output: [noOutput]
+                };
+            } catch (e: any) {
+                console.log(e);
+                return {
+                    input: `git branch ${args.join(" ")}`,
+                    output: [
+                        {value: "Error creating branch.", color: TERMINAL_COLORS.red},
+                        // // @ts-ignore - temporary fix, it could possibly return a message if on error.
+                        ...(e.response.status === HTTPStatusCode.INTERNAL_SERVER_ERROR && e.response.data.message === "AlreadyExistsError" ? [
+                            {value: `Branch already exists.`, color: TERMINAL_COLORS.red},
+                            {
+                                value: `hint: Use "git checkout ${branchName}" to check out to that branch or try again with a different name.`,
+                                color: TERMINAL_COLORS.red
+                            },
+                        ] : [{
+                            value: "Unknown error occurred. Please try again.", color: TERMINAL_COLORS.red
+                        }])
+                    ]
+                };
+            }
+        } else {
+            return {
+                input: "git branch",
+                output: [
+                    {value: "In actual git interface, this would result in listing out currently available branches."},
+                    {value: "However, this feature is not implemented in this program."},
+                    {value: "hint: Use 'git branch <branchName>' to create a new branch."},
+                ]
+            };
+        }
+    }
+
+    async function processGitCheckout(args: string[]) {
+        const [branchName] = args;
+
+        if (branchName) {
+            try {
+                await checkout(username, branchName);
+
+                // Not sure whether branching should advance scenario.
+                // if (response.status === HTTPStatusCode.OK) {
+                //   checkAndAdvanceScenario();
+                // }
+
+                return {
+                    input: `git checkout ${args.join(" ")}`,
+                    output: [noOutput]
+                };
+            } catch (e: any) {
+                console.log(e.response.data.message);
+                return {
+                    input: `git checkout ${args.join(" ")}`,
+                    output: [
+                        {value: "Error checking out branch.", color: TERMINAL_COLORS.red},
+                        // // @ts-ignore - temporary fix, it could possibly return a message if on error.
+                        ...(e.response.status === HTTPStatusCode.INTERNAL_SERVER_ERROR && e.response.data.message === "NotFoundError" ? [
+                            {value: `Branch ${branchName} not found.`, color: TERMINAL_COLORS.red},
+                            {
+                                value: `hint: Use "git branch <branchName>" to first create a branch.`,
+                                color: TERMINAL_COLORS.red
+                            },
+                        ] : [{
+                            value: "Unknown error occurred. Please try again."
+                        }])
+                    ]
+                };
+            }
+        } else {
+            return {
+                input: "git checkout",
+                output: [
+                    {value: "No branch specified to checkout. Please specify an existing branch to checkout."},
+                    {value: "hint: Use 'git branch <branchName>' to first create a branch."},
+                ]
+            };
+        }
+    }
+
+    async function processCommands(command: string): Promise<ConsolePrint> {
         const [commandType, gitCommand, ...args] = command.split(/\s+(?=(?:[^'"]*['"][^'"]*['"])*[^'"]*$)/);
 
         if (commandType !== "git") {
@@ -238,6 +343,10 @@ export const useTerminalCommandProcessor = () => {
                     return processGitCommit(args);
                 case "push":
                     return processGitPush(args, accessToken);
+                case "branch":
+                    return processGitBranch(args);
+                case "checkout":
+                    return processGitCheckout(args);
                 default:
                     return {
                         input: command,
@@ -249,5 +358,5 @@ export const useTerminalCommandProcessor = () => {
         }
     }
 
-    return {processCommands: ProcessCommands};
+    return {processCommands: processCommands};
 };
