@@ -21,8 +21,6 @@ function Notification({ title, message, imageSrc }: NotificationContent) {
 
   console.log("notification open: ", { title, message, imageSrc });
 
-  imageSrc = "vscode";
-
   const closeNotification = () => setOpen(false);
   const imageUrl = (name: string) => `${process.env.PUBLIC_URL}/assets/icons/${name}.png`;
 

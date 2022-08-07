@@ -11,6 +11,7 @@ import HTTPStatusCode from "../../constants/HTTPStatusCode";
 import { modifyFile, retrieveFile } from "../../api/Api";
 import { VSCODE_COLORS } from "../../theme/colors";
 import { File } from "../../types/FileTypes";
+import {TaskType} from "../../utils/TaskType";
 import { ScenarioContext } from "../../contexts/ScenarioContextProvider";
 import {UserContext} from "../../contexts/UserContextProvider";
 
@@ -67,7 +68,7 @@ function VSCodePage() {
         }
       }
 
-      checkAndAdvanceScenario();
+      checkAndAdvanceScenario(TaskType.SAVE);
     }
   };
 

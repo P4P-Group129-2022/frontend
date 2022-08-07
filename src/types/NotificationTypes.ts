@@ -1,7 +1,7 @@
 export type NotificationContent = {
   message: string;
   title: string;
-  imageSrc?: string;
+  imageSrc: string;
 }
 
 export type NotificationResponse = {
