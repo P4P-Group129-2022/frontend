@@ -35,7 +35,7 @@ type Props = {
 function ScenarioContextProvider({children}: Props) {
     const [scenario, setScenario] = useState<ScenarioSegment[]>();
     const [currentSegmentIndex, setCurrentSegmentIndex] = useState(-1);
-    const { user: {username} } = useContext(UserContext);
+    const {user: {username}} = useContext(UserContext);
 
     const {addMessages} = useContext(MessageContext);
     const {showNotification} = useContext(NotificationContext);
