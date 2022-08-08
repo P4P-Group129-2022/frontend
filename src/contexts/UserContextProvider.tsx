@@ -2,14 +2,14 @@ import { createContext } from "react";
 import { User } from "../types/UserTypes";
 import { RestEndpointMethodTypes } from "@octokit/rest";
 import { useAccessTokenState, useUserState } from "../hooks/usePersistedState";
-import { checkCompletedPreTest } from "../api/Api";
+import { completePreTest as completePreTestInAPI } from "../api/Api";
 
 type UserContextType = {
   user: User,
   accessToken: string | undefined,
   loggedIn: boolean,
   completePreTest: () => Promise<void>,
-  loginToContext: (user: GitHubUser, email: string, accessToken: string) => void,
+  loginToContext: (user: GitHubUser, email: string, accessToken: string, completedPreTest: boolean) => void,
   logoutFromContext: () => void,
 }
 
@@ -40,23 +40,27 @@ function UserContextProvider({ children }: Props) {
   const [user, setUser] = useUserState(EMPTY_USER);
   const [accessToken, setAccessToken] = useAccessTokenState();
 
-  const extractUserInformation = ({ login, name, avatar_url }: GitHubUser, email: string): User =>
+  const extractUserInformation = ({
+    login,
+    name,
+    avatar_url
+  }: GitHubUser, email: string, completedPreTest: boolean): User =>
     ({
       email: email ?? "",
       name: name ?? login,
       username: login,
       avatarUrl: avatar_url,
-      completedPreTest: false
+      completedPreTest
     });
 
   const completePreTest = async () => {
     setUser({ ...user, completedPreTest: true });
-    await checkCompletedPreTest(user.username);
+    await completePreTestInAPI(user.username);
   };
 
-  const loginToContext = (user: GitHubUser, email: string, accessToken: string) => {
+  const loginToContext = (user: GitHubUser, email: string, accessToken: string, completedPreTest: boolean) => {
     setAccessToken(accessToken);
-    setUser(extractUserInformation(user, email));
+    setUser(extractUserInformation(user, email, completedPreTest));
   };
 
   const logoutFromContext = () => {
