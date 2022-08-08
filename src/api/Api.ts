@@ -99,3 +99,8 @@ export const checkPR = async (pullNumber: string, username: string) =>
 
 export const inviteToOrganization = async (username: string) =>
   await axios.get<GitHubResponse>(`${API_ENDPOINT}/api/github/invite/${username}`);
+
+export const checkCompletedPreTest = async (username: string) =>
+  await axios.post<void>(`${API_ENDPOINT}/api/user/check-completed-pre-test`, {
+    username
+  });

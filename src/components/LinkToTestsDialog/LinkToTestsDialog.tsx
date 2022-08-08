@@ -10,8 +10,8 @@ type Props = {
 function LinkToTestsDialog({ open, onClose }: Props) {
   const { completePreTest } = React.useContext(UserContext);
 
-  const handleCompletePreTest = () => {
-    completePreTest();
+  const handleCompletePreTest = async () => {
+    await completePreTest();
   };
 
   return (

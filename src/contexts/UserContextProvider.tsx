@@ -2,12 +2,13 @@ import { createContext } from "react";
 import { User } from "../types/UserTypes";
 import { RestEndpointMethodTypes } from "@octokit/rest";
 import { useAccessTokenState, useUserState } from "../hooks/usePersistedState";
+import { checkCompletedPreTest } from "../api/Api";
 
 type UserContextType = {
   user: User,
   accessToken: string | undefined,
   loggedIn: boolean,
-  completePreTest: () => void,
+  completePreTest: () => Promise<void>,
   loginToContext: (user: GitHubUser, email: string, accessToken: string) => void,
   logoutFromContext: () => void,
 }
@@ -30,7 +31,7 @@ const UserContext = createContext<UserContextType>({
   user: EMPTY_USER,
   accessToken: "",
   loggedIn: false,
-  completePreTest: () => {},
+  completePreTest: async () => {},
   loginToContext: () => {},
   logoutFromContext: () => {},
 });
@@ -48,9 +49,9 @@ function UserContextProvider({ children }: Props) {
       completedPreTest: false
     });
 
-  const completePreTest = () => {
+  const completePreTest = async () => {
     setUser({ ...user, completedPreTest: true });
-    // send api call here.
+    await checkCompletedPreTest(user.username);
   };
 
   const loginToContext = (user: GitHubUser, email: string, accessToken: string) => {
