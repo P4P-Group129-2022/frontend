@@ -4,7 +4,7 @@ import useGet from "../../hooks/useGet";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { ScenarioContext } from "../../contexts/ScenarioContextProvider";
-import {addRemote, getScenarioDetails, getScenarioByNameId, initRepoForScenario, retrieveFile} from "../../api/Api";
+import {addRemote, getScenarioByNameId, initRepoForScenario, retrieveFile} from "../../api/Api";
 import { MessageContext } from "../../contexts/MessageContextProvider";
 import {UserContext} from "../../contexts/UserContextProvider";
 import {ScenarioDetailsContent, ScenarioDetailsResponse} from "../../types/ScenarioTypes";

@@ -2,7 +2,7 @@ import { createContext } from "react";
 import { User } from "../types/UserTypes";
 import { RestEndpointMethodTypes } from "@octokit/rest";
 import { useAccessTokenState, useUserState } from "../hooks/usePersistedState";
-import { checkCompletedPreTest } from "../api/Api";
+import {getUserByUsername, checkCompletedPreTest} from "../api/Api";
 
 type UserContextType = {
   user: User,
@@ -25,6 +25,7 @@ const EMPTY_USER: User = {
   username: "",
   avatarUrl: "",
   completedPreTest: false,
+  currentScenario: 0,
 };
 
 const UserContext = createContext<UserContextType>({
@@ -46,7 +47,8 @@ function UserContextProvider({ children }: Props) {
       name: name ?? login,
       username: login,
       avatarUrl: avatar_url,
-      completedPreTest: false
+      completedPreTest: false,
+      currentScenario: 0,
     });
 
   const completePreTest = async () => {
@@ -63,6 +65,11 @@ function UserContextProvider({ children }: Props) {
     setUser(EMPTY_USER);
     setAccessToken("");
   };
+
+  const getUserProgressionStatus = async (username: string) => {
+    const user = await getUserByUsername(username);
+    return user.data.currentScenario;
+  }
 
   const context: UserContextType = {
     user,
