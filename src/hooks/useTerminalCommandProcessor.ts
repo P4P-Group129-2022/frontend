@@ -294,6 +294,8 @@ export const useTerminalCommandProcessor = () => {
         //   checkAndAdvanceScenario();
         // }
 
+        checkAndAdvanceScenario(TaskType.CHECKOUT);
+
         return {
           input: `git checkout ${args.join(" ")}`,
           output: [noOutput]
