@@ -5,7 +5,7 @@ import { auth } from "../firebase/config";
 import { useContext, useState } from "react";
 import { Octokit } from "@octokit/rest";
 import { UserContext } from "../contexts/UserContextProvider";
-import {inviteToOrganization} from "../api/Api";
+import {createUser, inviteToOrganization} from "../api/Api";
 
 export const useLogin = () => {
   const [error, setError] = useState<string>();
@@ -43,7 +43,8 @@ export const useLogin = () => {
       console.log("result from octokit", user);
 
       loginToContext(user, email ?? "", token);
-      await inviteToOrganization(user.login || "");
+      await createUser(user.login);
+      await inviteToOrganization(user.login);
     } catch (error: any) {
       console.log(error);
       setError(error.message);
