@@ -12,7 +12,12 @@ function LinkToTestsDialog({ open, onClose }: Props) {
 
   const handleCompletePreTest = async () => {
     await completePreTest();
+    onClose();
   };
+
+  const handleCompletePostTest = () => {
+    onClose();
+  }
 
   return (
     <Dialog open={open} onClose={onClose}>
@@ -39,6 +44,7 @@ function LinkToTestsDialog({ open, onClose }: Props) {
           color={"secondary"}
           size={"large"}
           target={"_blank"}
+          onClick={handleCompletePostTest}
           href={"https://forms.gle/CCBWppvFWhVwuZi46"}
         >
           Post-test
