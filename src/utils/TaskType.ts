@@ -5,4 +5,5 @@ export enum TaskType {
     PUSH = "PUSH",
     PR = "PR",
     CHECKOUT = "CHECKOUT",
+    REBASE = "REBASE",
 }

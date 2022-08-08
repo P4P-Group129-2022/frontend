@@ -295,7 +295,6 @@ export const useTerminalCommandProcessor = () => {
         // }
 
         checkAndAdvanceScenario(TaskType.CHECKOUT);
-
         return {
           input: `git checkout ${args.join(" ")}`,
           output: [noOutput]
@@ -342,6 +341,7 @@ export const useTerminalCommandProcessor = () => {
         //   checkAndAdvanceScenario();
         // }
 
+        checkAndAdvanceScenario(TaskType.REBASE);
         return {
           input: `git rebase ${args.join(" ")}`,
           output: [{ value: `Successfully rebased and updated ${currentBranch}.` }]
