@@ -1,9 +1,10 @@
 import axios from "axios";
 import { NotificationResponse } from "../types/NotificationTypes";
-import {ScenarioResponse, ScenarioDetailsResponse} from "../types/ScenarioTypes";
+import { ScenarioResponse, ScenarioDetailsResponse } from "../types/ScenarioTypes";
 import { Author, CommitResponse, StageResponse, StatusResponse } from "../types/GitTypes";
 import { GitHubResponse } from "../types/GitHubTypes";
 import { File } from "../types/FileTypes";
+import { DBUser, DBUserResponse, User } from "../types/UserTypes";
 
 const API_ENDPOINT = `${process.env.REACT_APP_BACKEND_ENDPOINT}`;
 
@@ -11,7 +12,7 @@ export const getNotificationByName = async (notificationName: string) =>
   await axios.get<NotificationResponse>(`${API_ENDPOINT}/api/notification/${notificationName}`);
 
 export const getScenarioDetails = async () =>
-    await axios.get<ScenarioDetailsResponse>(`${API_ENDPOINT}/api/scenario`);
+  await axios.get<ScenarioDetailsResponse>(`${API_ENDPOINT}/api/scenario`);
 
 export const getScenarioByNameId = async (scenarioNameId: string) =>
   await axios.get<ScenarioResponse>(`${API_ENDPOINT}/api/scenario/${scenarioNameId}`);
@@ -100,7 +101,14 @@ export const checkPR = async (pullNumber: string, username: string) =>
 export const inviteToOrganization = async (username: string) =>
   await axios.get<GitHubResponse>(`${API_ENDPOINT}/api/github/invite/${username}`);
 
-export const checkCompletedPreTest = async (username: string) =>
-  await axios.post<void>(`${API_ENDPOINT}/api/user/check-completed-pre-test`, {
-    username
+export const completePreTest = async (username: string) =>
+  await axios.post<void>(`${API_ENDPOINT}/api/user/complete-pre-test`, {
+    gitHubUsername: username
+  });
+
+export const createUser = async (username: string, email: string, name: string) =>
+  await axios.post<DBUserResponse>(`${API_ENDPOINT}/api/user/create`, {
+    githubUsername: username,
+    email,
+    displayName: name,
   });
