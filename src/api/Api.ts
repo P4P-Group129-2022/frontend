@@ -32,10 +32,10 @@ export const initRepoForScenario = async (username: string, scenarioNameId: stri
   });
 
 export const addRemote = async (username: string, remoteUrl: string) =>
-    await axios.post(`${API_ENDPOINT}/api/git/add-remote`, {
-        username,
-        remoteUrl
-    });
+  await axios.post(`${API_ENDPOINT}/api/git/add-remote`, {
+    username,
+    remoteUrl
+  });
 
 export const getRepoStatusForScenario = async (username: string) =>
   await axios.get<StatusResponse>(`${API_ENDPOINT}/api/git/status/${username}`);
@@ -84,6 +84,15 @@ export const checkout = async (username: string, branch: string) =>
     username,
     branch
   });
+
+export const rebase = async (username: string, branch: string) =>
+  await axios.post<void>(`${API_ENDPOINT}/api/git/rebase`, {
+    username,
+    branch
+  });
+
+export const getCurrentBranch = async (username: string, fullname?: boolean) =>
+  await axios.get<string>(`${API_ENDPOINT}/api/git/currentBranch/${username}${fullname ? `?fullname=${fullname}` : ""}`);
 
 export const checkPR = async (pullNumber: string, username: string) =>
   await axios.get<GitHubResponse>(`${API_ENDPOINT}/api/github/${username}/${pullNumber}`);
