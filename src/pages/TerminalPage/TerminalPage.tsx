@@ -102,9 +102,9 @@ function TerminalPage() {
 
   const handleOnInputKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter" && input.length > 0) {
+      setInput("");
       const print = await processCommands(input);
       addConsolePrint(print);
-      setInput("");
     }
   };
 
