@@ -1,6 +1,6 @@
 import axios from "axios";
 import { NotificationResponse } from "../types/NotificationTypes";
-import { ScenarioResponse } from "../types/ScenarioTypes";
+import {ScenarioResponse, ScenarioDetailsResponse} from "../types/ScenarioTypes";
 import { Author, CommitResponse, StageResponse, StatusResponse } from "../types/GitTypes";
 import { GitHubResponse } from "../types/GitHubTypes";
 import { File } from "../types/FileTypes";
@@ -9,6 +9,9 @@ const API_ENDPOINT = `${process.env.REACT_APP_BACKEND_ENDPOINT}`;
 
 export const getNotificationByName = async (notificationName: string) =>
   await axios.get<NotificationResponse>(`${API_ENDPOINT}/api/notification/${notificationName}`);
+
+export const getScenarioDetails = async () =>
+    await axios.get<ScenarioDetailsResponse>(`${API_ENDPOINT}/api/scenario`);
 
 export const getScenarioByNameId = async (scenarioNameId: string) =>
   await axios.get<ScenarioResponse>(`${API_ENDPOINT}/api/scenario/${scenarioNameId}`);

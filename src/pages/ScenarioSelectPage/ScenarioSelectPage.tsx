@@ -1,12 +1,13 @@
-import React, { useContext } from "react";
+import React, {useContext, useState} from "react";
 import { Box, Button, Card, CardActionArea, CardContent, Skeleton, Typography } from "@mui/material";
 import useGet from "../../hooks/useGet";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { ScenarioContext } from "../../contexts/ScenarioContextProvider";
-import {addRemote, getScenarioByNameId, initRepoForScenario} from "../../api/Api";
+import {addRemote, getScenarioDetails, getScenarioByNameId, initRepoForScenario, retrieveFile} from "../../api/Api";
 import { MessageContext } from "../../contexts/MessageContextProvider";
 import {UserContext} from "../../contexts/UserContextProvider";
+import {ScenarioDetailsContent, ScenarioDetailsResponse} from "../../types/ScenarioTypes";
 
 const ScenarioBoxSkeleton = styled((props) => <Skeleton
     variant={"rectangular"}
@@ -37,39 +38,21 @@ const ScenarioContainer = styled(Box)({
 
 const RemoteUrl = "https://github.com/P4P-Group129-2022/";
 
-type Scenarios = { name: string, nameId: string, description: string }[]
-
 function ScenarioSelectPage() {
-  const [scenarioList, setScenarioList] = React.useState<Scenarios>([]);
-  const { isLoading, data } = useGet<Scenarios>("http://localhost:8080/api/scenario");
+  const [scenarioList, setScenarioList] = React.useState<ScenarioDetailsContent[]>([]);
+  const { isLoading, data } = useGet<ScenarioDetailsResponse>("http://localhost:8080/api/scenario");
   const navigate = useNavigate();
   const { setScenario } = useContext(ScenarioContext);
   const { clearMessage } = useContext(MessageContext);
   const { user: { username } } = useContext(UserContext);
 
   React.useEffect(() => {
-    // setScenarioList(data ?? []);
-    setScenarioList([
-      {
-        name: "Scenario 1 - The Beginning",
-        nameId: "scenario-1",
-        description: `
-        You are starting as a new software developer intern at LGI Inc. 
-        You are given a task to complete and various git commands to complete alongside it.
-        
-        Git commands taught: git status, add, commit, push`
-      },
-      {
-        name: "Scenario 2 - Interruptions",
-        nameId: "test",
-        description: `
-        Developing in a team often means your teammate has pushed a change while you were working on your branch.
-        You need to handle this interruptions and make sure you merge to the main branch without any problem.
-        
-        Git commands taught: git checkout, branch, rebase
-        `
-      }
-    ]);
+    if (data) {
+      setScenarioList(data.scenarioDetailsFromDB);
+      console.log(scenarioList);
+    } else {
+      console.log("Failed to fetch the scenario details from the DB.");
+    }
   }, [data]);
 
   const handleSelectScenario = async (nameId: string) => {
