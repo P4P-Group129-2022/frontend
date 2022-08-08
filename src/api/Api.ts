@@ -4,6 +4,7 @@ import {ScenarioResponse, ScenarioDetailsResponse} from "../types/ScenarioTypes"
 import {Author, CommitResponse, StageResponse, StatusResponse} from "../types/GitTypes";
 import {GitHubResponse} from "../types/GitHubTypes";
 import {File} from "../types/FileTypes";
+import {User} from "../types/UserTypes";
 
 const API_ENDPOINT = `${process.env.REACT_APP_BACKEND_ENDPOINT}`;
 
@@ -104,3 +105,6 @@ export const createUser = async (username: string) =>
     await axios.post<void>(`${API_ENDPOINT}/api/user/create`, {
         username,
     });
+
+export const getUserByUsername = async (username: string) =>
+    await axios.get<User>(`${API_ENDPOINT}/api/user/${username}`);
