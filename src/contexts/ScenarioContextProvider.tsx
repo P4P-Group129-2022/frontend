@@ -54,7 +54,6 @@ function ScenarioContextProvider({children}: Props) {
     async function checkIfPRIsCorrectlyMade(pullNumber: string) {
         const isPRCorrectlyMade = await checkPR(pullNumber, username);
         if (isPRCorrectlyMade.data.isPRmade) {
-            console.log("Do I enter here?");
             checkAndAdvanceScenarioSegment(TaskType.PR);
         }
     }

@@ -16,3 +16,13 @@ export type ScenarioContent = {
 export type ScenarioResponse = {
   scenarioFromDB: ScenarioContent
 }
+
+export type ScenarioDetailsContent = {
+  nameId: string;
+  name: string;
+  description: string;
+}
+
+export type ScenarioDetailsResponse = {
+  scenarioDetailsFromDB: ScenarioDetailsContent[]
+}
