@@ -6,6 +6,8 @@ import { useAccessTokenState, useUserState } from "../hooks/usePersistedState";
 type UserContextType = {
   user: User,
   accessToken: string | undefined,
+  loggedIn: boolean,
+  completePreTest: () => void,
   loginToContext: (user: GitHubUser, email: string, accessToken: string) => void,
   logoutFromContext: () => void,
 }
@@ -16,21 +18,40 @@ type Props = {
 
 type GitHubUser = RestEndpointMethodTypes["users"]["getAuthenticated"]["response"]["data"];
 
+const EMPTY_USER: User = {
+  email: "",
+  name: "",
+  username: "",
+  avatarUrl: "",
+  completedPreTest: false,
+};
+
 const UserContext = createContext<UserContextType>({
-  user: { email: "", name: "", username: "", avatarUrl: "" },
+  user: EMPTY_USER,
   accessToken: "",
+  loggedIn: false,
+  completePreTest: () => {},
   loginToContext: () => {},
   logoutFromContext: () => {},
 });
-
-const EMPTY_USER: User = { email: "", name: "", username: "", avatarUrl: "" };
 
 function UserContextProvider({ children }: Props) {
   const [user, setUser] = useUserState(EMPTY_USER);
   const [accessToken, setAccessToken] = useAccessTokenState();
 
   const extractUserInformation = ({ login, name, avatar_url }: GitHubUser, email: string): User =>
-    ({ email: email ?? "", name: name ?? login, username: login, avatarUrl: avatar_url });
+    ({
+      email: email ?? "",
+      name: name ?? login,
+      username: login,
+      avatarUrl: avatar_url,
+      completedPreTest: false
+    });
+
+  const completePreTest = () => {
+    setUser({ ...user, completedPreTest: true });
+    // send api call here.
+  };
 
   const loginToContext = (user: GitHubUser, email: string, accessToken: string) => {
     setAccessToken(accessToken);
@@ -45,6 +66,8 @@ function UserContextProvider({ children }: Props) {
   const context: UserContextType = {
     user,
     accessToken,
+    loggedIn: user.username !== "" && !!accessToken,
+    completePreTest,
     loginToContext,
     logoutFromContext,
   };
