@@ -34,6 +34,11 @@ function InstructionsDialog({ open, onClose }: Props) {
         <ol>
           <li>
             <InstructionLine>
+              Login using GitHub account.
+            </InstructionLine>
+          </li>
+          <li>
+            <InstructionLine>
               Complete a pre-test survey by clicking "START TESTS" button and selecting "pre-test" option.
             </InstructionLine>
           </li>
