@@ -4,7 +4,14 @@ import useGet from "../../hooks/useGet";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
 import { ScenarioContext } from "../../contexts/ScenarioContextProvider";
-import {addRemote, getScenarioDetails, getScenarioByNameId, initRepoForScenario, retrieveFile} from "../../api/Api";
+import {
+  addRemote,
+  getScenarioDetails,
+  getScenarioByNameId,
+  initRepoForScenario,
+  retrieveFile,
+  API_ENDPOINT
+} from "../../api/Api";
 import { MessageContext } from "../../contexts/MessageContextProvider";
 import {UserContext} from "../../contexts/UserContextProvider";
 import {ScenarioDetailsContent, ScenarioDetailsResponse} from "../../types/ScenarioTypes";
@@ -40,7 +47,7 @@ const RemoteUrl = "https://github.com/P4P-Group129-2022/";
 
 function ScenarioSelectPage() {
   const [scenarioList, setScenarioList] = React.useState<ScenarioDetailsContent[]>([]);
-  const { isLoading, data } = useGet<ScenarioDetailsResponse>("http://localhost:8080/api/scenario");
+  const { isLoading, data } = useGet<ScenarioDetailsResponse>(`${API_ENDPOINT}/api/scenario`);
   const navigate = useNavigate();
   const { setScenario } = useContext(ScenarioContext);
   const { clearMessage } = useContext(MessageContext);
