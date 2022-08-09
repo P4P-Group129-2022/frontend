@@ -2,7 +2,7 @@ import {createContext, useContext, useEffect, useState} from "react";
 import {ScenarioSegment} from "../types/ScenarioTypes";
 import {MessageContext} from "./MessageContextProvider";
 import {NotificationContext} from "./NotificationContextProvider";
-import {checkPR} from "../api/Api";
+import {checkPR, incrementCurrentScenario} from "../api/Api";
 import {TaskType} from "../utils/TaskType";
 import {UserContext} from "./UserContextProvider";
 
@@ -71,11 +71,10 @@ function ScenarioContextProvider({children}: Props) {
         } else if (scenario[currentSegmentIndex].taskType === taskType) {
             shouldAdvance = true;
         }
-        // if (currentSegmentIndex === -1) {
-        //   shouldAdvance = true;
-        // } else if (taskType === scenario[currentSegmentIndex].endRepoID) {
-        //   const shouldAdvance = true;
-        // }
+
+        if (scenario[currentSegmentIndex].taskType === TaskType.FINAL) {
+            incrementCurrentScenario(username).then(r => r);
+        }
 
         if (shouldAdvance) {
             // TODO: Process each chats into messages screen.

@@ -2,14 +2,16 @@ import { createContext } from "react";
 import { User } from "../types/UserTypes";
 import { RestEndpointMethodTypes } from "@octokit/rest";
 import { useAccessTokenState, useUserState } from "../hooks/usePersistedState";
-import { completePreTest as completePreTestInAPI } from "../api/Api";
+import {completePreTest as completePreTestInAPI, incrementCurrentScenario as incrementCurrentScenarioInAPI} from "../api/Api";
 
 type UserContextType = {
   user: User,
   accessToken: string | undefined,
   loggedIn: boolean,
   completePreTest: () => Promise<void>,
-  loginToContext: (user: GitHubUser, email: string, accessToken: string, completedPreTest: boolean) => void,
+  incrementCurrentScenario: () => Promise<void>,
+  loginToContext: (user: GitHubUser, email: string, accessToken: string, completedPreTest: boolean,
+                   currentScenario: number) => void,
   logoutFromContext: () => void,
 }
 
@@ -25,6 +27,7 @@ const EMPTY_USER: User = {
   username: "",
   avatarUrl: "",
   completedPreTest: false,
+  currentScenario: 0,
 };
 
 const UserContext = createContext<UserContextType>({
@@ -34,6 +37,7 @@ const UserContext = createContext<UserContextType>({
   completePreTest: async () => {},
   loginToContext: () => {},
   logoutFromContext: () => {},
+  incrementCurrentScenario: async () => {},
 });
 
 function UserContextProvider({ children }: Props) {
@@ -44,13 +48,14 @@ function UserContextProvider({ children }: Props) {
     login,
     name,
     avatar_url
-  }: GitHubUser, email: string, completedPreTest: boolean): User =>
+  }: GitHubUser, email: string, completedPreTest: boolean, currentScenario: number): User =>
     ({
       email: email ?? "",
       name: name ?? login,
       username: login,
       avatarUrl: avatar_url,
-      completedPreTest
+      completedPreTest,
+      currentScenario
     });
 
   const completePreTest = async () => {
@@ -58,15 +63,21 @@ function UserContextProvider({ children }: Props) {
     await completePreTestInAPI(user.username);
   };
 
-  const loginToContext = (user: GitHubUser, email: string, accessToken: string, completedPreTest: boolean) => {
+  const loginToContext = (user: GitHubUser, email: string, accessToken: string, completedPreTest: boolean,
+                          currentScenario: number) => {
     setAccessToken(accessToken);
-    setUser(extractUserInformation(user, email, completedPreTest));
+    setUser(extractUserInformation(user, email, completedPreTest, currentScenario));
   };
 
   const logoutFromContext = () => {
     setUser(EMPTY_USER);
     setAccessToken("");
   };
+
+  const incrementCurrentScenario = async () => {
+    setUser({ ...user, currentScenario: user.currentScenario + 1 });
+    await incrementCurrentScenarioInAPI(user.username);
+  }
 
   const context: UserContextType = {
     user,
@@ -75,6 +86,7 @@ function UserContextProvider({ children }: Props) {
     completePreTest,
     loginToContext,
     logoutFromContext,
+    incrementCurrentScenario,
   };
 
   return (

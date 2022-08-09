@@ -42,7 +42,7 @@ export const useLogin = () => {
       const { data: { userFromDB: dbUser } } = await createUser(user.login || "", email ?? "", user.name ?? user.login);
       console.log("dbUser", dbUser);
 
-      loginToContext(user, email ?? "", token, dbUser.completedPreTest);
+      loginToContext(user, email ?? "", token, dbUser.completedPreTest, dbUser.currentScenario);
       await inviteToOrganization(user.login || "");
     } catch (error: any) {
       console.log(error);
