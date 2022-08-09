@@ -106,6 +106,11 @@ export const completePreTest = async (username: string) =>
     gitHubUsername: username
   });
 
+export const incrementCurrentScenario = async (username: string) =>
+    await axios.post<void>(`${API_ENDPOINT}/api/user/increment-current-scenario`, {
+        gitHubUsername: username,
+    });
+
 export const createUser = async (username: string, email: string, name: string) =>
   await axios.post<DBUserResponse>(`${API_ENDPOINT}/api/user/create`, {
     githubUsername: username,
