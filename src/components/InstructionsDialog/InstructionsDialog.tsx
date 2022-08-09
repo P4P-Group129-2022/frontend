@@ -34,7 +34,8 @@ function InstructionsDialog({ open, onClose }: Props) {
         <ol>
           <li>
             <InstructionLine>
-              Login using GitHub account.
+              Login using GitHub account. This will prompt a GitHub Organisation invite email to be sent. Accept the
+              invite before attempting any of the scenarios.
             </InstructionLine>
           </li>
           <li>
