@@ -1,4 +1,4 @@
-import React, {useContext, useState} from "react";
+import React, {useContext} from "react";
 import { Box, Button, Card, CardActionArea, CardContent, Skeleton, Typography } from "@mui/material";
 import useGet from "../../hooks/useGet";
 import { styled } from "@mui/material/styles";
@@ -6,11 +6,9 @@ import { useNavigate } from "react-router-dom";
 import { ScenarioContext } from "../../contexts/ScenarioContextProvider";
 import {
   addRemote,
-  getScenarioDetails,
   getScenarioByNameId,
   initRepoForScenario,
-  retrieveFile,
-  API_ENDPOINT
+  API_ENDPOINT,
 } from "../../api/Api";
 import { MessageContext } from "../../contexts/MessageContextProvider";
 import {UserContext} from "../../contexts/UserContextProvider";
@@ -51,7 +49,7 @@ function ScenarioSelectPage() {
   const navigate = useNavigate();
   const { setScenario } = useContext(ScenarioContext);
   const { clearMessage } = useContext(MessageContext);
-  const { user: { username } } = useContext(UserContext);
+  const { user: { username, currentScenario } } = useContext(UserContext);
 
   React.useEffect(() => {
     if (data) {
