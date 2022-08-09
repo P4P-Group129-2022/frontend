@@ -74,6 +74,7 @@ type DockItem = {
 
 const dockItems: DockItem[] = [
   {
+    link: "/scenario-select",
     imgSrc: finderIcon,
   },
   {
