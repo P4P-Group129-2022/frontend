@@ -34,6 +34,12 @@ function InstructionsDialog({ open, onClose }: Props) {
         <ol>
           <li>
             <InstructionLine>
+              Login using GitHub account. This will prompt a GitHub Organisation invite email to be sent. Accept the
+              invite before attempting any of the scenarios.
+            </InstructionLine>
+          </li>
+          <li>
+            <InstructionLine>
               Complete a pre-test survey by clicking "START TESTS" button and selecting "pre-test" option.
             </InstructionLine>
           </li>
