@@ -4,6 +4,7 @@ export type User = {
   name: string,
   avatarUrl: string,
   completedPreTest: boolean,
+  currentScenario: number,
 }
 
 export type DBUserResponse = {
@@ -15,4 +16,5 @@ export type DBUser = {
   email: string,
   displayName: string,
   completedPreTest: boolean,
+  currentScenario: number,
 }
