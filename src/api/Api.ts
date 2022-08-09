@@ -6,7 +6,7 @@ import { GitHubResponse } from "../types/GitHubTypes";
 import { File } from "../types/FileTypes";
 import { DBUser, DBUserResponse, User } from "../types/UserTypes";
 
-const API_ENDPOINT = `${process.env.REACT_APP_BACKEND_ENDPOINT}`;
+export const API_ENDPOINT = `${process.env.REACT_APP_BACKEND_ENDPOINT}`;
 
 export const getNotificationByName = async (notificationName: string) =>
   await axios.get<NotificationResponse>(`${API_ENDPOINT}/api/notification/${notificationName}`);
