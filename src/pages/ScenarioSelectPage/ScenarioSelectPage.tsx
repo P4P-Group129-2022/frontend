@@ -34,8 +34,8 @@ const MainContainer = styled(Box)({
   alignItems: "center",
   justifyContent: "flex-start",
   padding: 2,
-  overflow: "auto",
-  margin: "1rem auto",
+  height: "100%",
+  overflowY: "scroll",
 });
 
 const ScenarioContainer = styled(Box)({
@@ -84,7 +84,8 @@ function ScenarioSelectPage() {
       <Typography sx={{
         fontSize: "2.5rem",
         fontWeight: "600",
-        marginTop: "8vh",
+        marginTop: "6vh",
+        marginBottom: "2rem",
       }}>Select a scenario to play</Typography>
       <ScenarioContainer>
         {isLoading ? (
@@ -132,6 +133,9 @@ function ScenarioSelectPage() {
         color={"secondary"}
         onClick={() => {
           navigate("/");
+        }}
+        sx={{
+          margin: "2rem 0",
         }}
       >
         Back to Main
