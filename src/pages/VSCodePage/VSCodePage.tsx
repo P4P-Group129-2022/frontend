@@ -22,7 +22,7 @@ function VSCodePage() {
   const [files, setFiles] = useState<File[]>([]);
   const [code, setCode] = useState<string>();
   const [fileName, setFileName] = useState<string>();
-  const { checkAndAdvanceScenario } = useContext(ScenarioContext);
+  const { checkAndAdvanceScenarioSegment } = useContext(ScenarioContext);
   const { user: { username } } = useContext(UserContext);
 
   useEffect(() => {
@@ -68,7 +68,7 @@ function VSCodePage() {
         }
       }
 
-      checkAndAdvanceScenario(TaskType.SAVE);
+      checkAndAdvanceScenarioSegment(TaskType.SAVE);
     }
   };
 
