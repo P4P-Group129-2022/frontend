@@ -24,8 +24,8 @@ function InstructionsDialog({ open, onClose }: Props) {
         <InstructionLine>
           If you haven't viewed our introduction video, please click this link:<br />
           {/* Change bottom link to the link of the actual video. */}
-          <a href="https://youtu.be/dQw4w9WgXcQ" target={"_blank"} style={{ color: "black", fontSize: "1rem" }}>
-            https://youtu.be/Q-Q-Q-Q-Q
+          <a href="https://youtu.be/18WX-hjiBi8" target={"_blank"} style={{ color: "black", fontSize: "1rem" }}>
+            https://youtu.be/18WX-hjiBi8
           </a>
         </InstructionLine>
         <InstructionLine>
