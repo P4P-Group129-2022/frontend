@@ -24,8 +24,9 @@ export const useTerminalCommandProcessor = () => {
   async function processGitStatus(): Promise<ConsolePrint> {
     console.log(username);
     const response = await getRepoStatusForScenario(username);
+    const { data: branch } = await getCurrentBranch(username);
 
-    const onBranchMain = `On branch main`;
+    const onBranchMain = `On branch ${branch}`;
     const nothingToCommit = `nothing to commit, working tree clean`;
     const changesNotStaged = `Changes not staged for commit:`;
     const changesToCommit = `Changes to be committed:`;
@@ -122,7 +123,7 @@ export const useTerminalCommandProcessor = () => {
   async function processGitCommit(args: string[]): Promise<ConsolePrint> {
     const [commitArgs, ...rest] = args;
     const author = { name, email };
-    const branchName = "main";
+    const { data: branchName } = await getCurrentBranch(username);
 
     if (commitArgs === "-m" || commitArgs === "-am") {
       // Automatically assume that the following argument is the commit message.
@@ -178,7 +179,7 @@ export const useTerminalCommandProcessor = () => {
     const total = `Total 3 (delta 1), reused 0 (delta 0), pack-reused 0`;
     const remoteResolving = `remote: Resolving deltas: 100% (1/1), completed with 1 local object.`;
     const ToRemote = `To https://github.com/P4P-Group129-2022/${username}.git`;
-    const commits = `   15c4907..a05853a  main -> main`;
+    const commits = `   15c4907..a05853a  ${branch} -> ${branch}`;
 
     if (!accessToken) {
       return {
@@ -197,7 +198,7 @@ export const useTerminalCommandProcessor = () => {
         output: [
           { value: "Unknown git push arguments." },
           { value: "Currently, the system only supports pushing to the 'origin' remote and existing branches." },
-          { value: "hint: Use 'git push origin main' to push to the main branch." },
+          { value: "hint: Use 'git push origin <branch>' to push to a branch, such as 'main'." },
         ]
       };
     }
@@ -416,5 +417,5 @@ export const useTerminalCommandProcessor = () => {
     }
   }
 
-  return { processCommands: processCommands };
+  return { processCommands };
 };
