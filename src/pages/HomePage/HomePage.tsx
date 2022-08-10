@@ -16,6 +16,11 @@ const GreetingBody = styled(Typography)({
   fontSize: "1.25rem",
 });
 
+const BoldSpan = styled("span")({
+  fontWeight: 400,
+  color: "black",
+});
+
 function HomePage() {
   const { user, loggedIn } = useContext(UserContext);
   const { login } = useLogin();
@@ -105,9 +110,13 @@ function HomePage() {
         }}>instruction</span> before you start!
         </GreetingBody>
         <GreetingBody sx={{ marginBottom: "10vh", fontSize: "1rem", color: "#00000080" }}>
-          FYI: Scenario will be enabled after you complete a pre-survey.<br />
-          If you didn't know what pre-survey was, perhaps it's good idea to <span
-          style={{ fontWeight: 400, color: "black" }}>READ THE INSTRUCTION!</span>
+          FYI: <BoldSpan>Scenario</BoldSpan> will be <BoldSpan>enabled after</BoldSpan> you complete
+          a <BoldSpan>pre-test</BoldSpan>.
+          <br />
+          If you didn't know what pre-test was, perhaps it's good idea to <BoldSpan> READ THE INSTRUCTION!</BoldSpan>
+          <br />
+          Also, please <BoldSpan>do</BoldSpan> the <BoldSpan>post-test after </BoldSpan>
+          you complete all the <BoldSpan>scenarios</BoldSpan>.
         </GreetingBody>
         <InstructionsDialog open={openInstructions} onClose={handleCloseInstruction} />
         <Box className={classes.ButtonContainer}>
