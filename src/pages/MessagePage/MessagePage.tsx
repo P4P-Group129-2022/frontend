@@ -72,11 +72,6 @@ function MessagePage() {
 
   const handleSend = (message: string) => {
     console.log("sending message: ", message);
-
-    if (checkIfPRMessage(message)) {
-      checkIfPRIsCorrectlyMade(message.substring(message.lastIndexOf("/") + 1));
-    }
-
     addMessages([{
       sender: {
         name: !!user ? user.name : "player",
@@ -86,6 +81,10 @@ function MessagePage() {
       content: message,
       timestamp: new Date()
     }]);
+
+    if (checkIfPRMessage(message)) {
+      checkIfPRIsCorrectlyMade(message.substring(message.lastIndexOf("/") + 1));
+    }
   };
 
   const checkIfPRMessage = (message: string) => message.includes(GitHubUrlSubstring) && message.includes(PRUrlSubstring);
