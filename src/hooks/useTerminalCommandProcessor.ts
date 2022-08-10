@@ -417,5 +417,5 @@ export const useTerminalCommandProcessor = () => {
     }
   }
 
-  return { processCommands: processCommands };
+  return { processCommands };
 };
