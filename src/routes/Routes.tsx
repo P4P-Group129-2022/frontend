@@ -18,7 +18,7 @@ function Routes() {
           <Route path="invite" element={<OrgInvitePage />} />
           <Route path="terminal" element={<TerminalPage />} />
           <Route path="vscode" element={<VSCodePage />} />
-          <Route path="slack" element={<MessagePage />} />
+          <Route path="message" element={<MessagePage />} />
           {/* All unregistered routes inside play direct to play page. */}
           <Route path="*" element={<Navigate to="/scenario" />} />
         </Route>
