@@ -19,7 +19,7 @@ import { ScenarioContext } from "../contexts/ScenarioContextProvider";
 export const useTerminalCommandProcessor = () => {
   const { user: { username, name, email }, accessToken } = useContext(UserContext);
   const noOutput = { value: "No output.", color: TERMINAL_COLORS.grey };
-  const { checkAndAdvanceScenario } = useContext(ScenarioContext);
+  const { checkAndAdvanceScenarioSegment } = useContext(ScenarioContext);
 
   async function processGitStatus(): Promise<ConsolePrint> {
     console.log(username);
@@ -205,7 +205,7 @@ export const useTerminalCommandProcessor = () => {
 
     const response = await pushRepo(username, remote, branch, accessToken);
     if (response.status === HTTPStatusCode.NO_CONTENT) {
-      checkAndAdvanceScenario(TaskType.PUSH);
+      checkAndAdvanceScenarioSegment(TaskType.PUSH);
     }
     return {
       input: `git push ${args.join(" ")}`,
@@ -295,7 +295,7 @@ export const useTerminalCommandProcessor = () => {
         //   checkAndAdvanceScenario();
         // }
 
-        checkAndAdvanceScenario(TaskType.CHECKOUT);
+        checkAndAdvanceScenarioSegment(TaskType.CHECKOUT);
         return {
           input: `git checkout ${args.join(" ")}`,
           output: [noOutput]
@@ -342,7 +342,7 @@ export const useTerminalCommandProcessor = () => {
         //   checkAndAdvanceScenario();
         // }
 
-        checkAndAdvanceScenario(TaskType.REBASE);
+        checkAndAdvanceScenarioSegment(TaskType.REBASE);
         return {
           input: `git rebase ${args.join(" ")}`,
           output: [{ value: `Successfully rebased and updated ${currentBranch}.` }]
@@ -379,7 +379,8 @@ export const useTerminalCommandProcessor = () => {
         input: "git rebase",
         output: [
           { value: "No branch specified to rebase. Please specify an existing branch to rebase." },
-          { value: "hint: Use 'git branch <branchName>' to first create a branch." },
+          { value: "hint: Perhaps you meant 'git rebase main' to rebase from the main branch?." },
+          { value: "hint: Otherwise, use 'git branch <branchName>' to first create a branch." },
         ]
       };
     }

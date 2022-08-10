@@ -1,6 +1,6 @@
 import { createContext } from "react";
 import { ChatDialog } from "../types/ChatTypes";
-import { useChatState } from "../hooks/usePersistedState";
+import useChatStateWithRef from "../hooks/useChatStateWithRef";
 
 type MessageContextType = {
   addMessages: (messages: ChatDialog[]) => void;
@@ -19,11 +19,11 @@ const MessageContext = createContext<MessageContextType>({
 });
 
 function MessageContextProvider({ children }: Props) {
-  const [messages, setMessages] = useChatState([]);
+  const [messages, setMessages, messagesRef] = useChatStateWithRef([]);
 
   const addMessages = (newMessages: ChatDialog[]) => {
     console.log("Message added", newMessages);
-    setMessages([...newMessages, ...messages]);
+    setMessages([...newMessages, ...messagesRef.current]);
   };
 
   console.log("messages in context", messages);
@@ -32,7 +32,7 @@ function MessageContextProvider({ children }: Props) {
     setMessages([]);
   };
 
-  const context = {
+  const context: MessageContextType = {
     addMessages,
     clearMessage,
     messages

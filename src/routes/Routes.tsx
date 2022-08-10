@@ -1,6 +1,5 @@
 import { Navigate, Route, Routes as Switch } from "react-router-dom";
 import Dock from "../components/Dock";
-import DemoPage from "../pages/DemoPage/DemoPage";
 import HomePage from "../pages/HomePage/HomePage";
 import MessagePage from "../pages/MessagePage/MessagePage";
 import TerminalPage from "../pages/TerminalPage/TerminalPage";
@@ -17,10 +16,9 @@ function Routes() {
 
         <Route path="scenario" element={<Dock />}>
           <Route path="invite" element={<OrgInvitePage />} />
-          <Route path="demo" element={<DemoPage />} />
           <Route path="terminal" element={<TerminalPage />} />
           <Route path="vscode" element={<VSCodePage />} />
-          <Route path="slack" element={<MessagePage />} />
+          <Route path="message" element={<MessagePage />} />
           {/* All unregistered routes inside play direct to play page. */}
           <Route path="*" element={<Navigate to="/scenario" />} />
         </Route>
