@@ -8,6 +8,7 @@ import ChevronLeftIcon from "@mui/icons-material/ChevronLeft";
 import { ConsolePrint } from "../../types/TerminalTypes";
 import { useTerminalCommandProcessor } from "../../hooks/useTerminalCommandProcessor";
 import { UserContext } from "../../contexts/UserContextProvider";
+import { getCurrentBranch } from "../../api/Api";
 
 const TerminalDivider = styled(Divider)({
   margin: "0.5rem 0",
@@ -88,6 +89,17 @@ function TerminalPage() {
   const { user } = useContext(UserContext);
   const [consolePrints, setConsolePrints] = React.useState<ConsolePrint[]>([]);
   const [input, setInput] = React.useState("");
+  const [branch, setBranch] = React.useState("...");
+
+  React.useEffect(() => {
+    getCurrentBranch(user.username)
+      .then(res => res.data)
+      .then(branch => setBranch(branch));
+  }, []);
+
+  // React.useEffect(() => {
+  //   console.log("branch changed: ", branch);
+  // }, [branch]);
 
   const userProfile = `${user?.name ?? "User"}@MacBook-Pro`;
   const cwd = "~/Documents/LGI-project";
@@ -104,6 +116,10 @@ function TerminalPage() {
     if (event.key === "Enter" && input.length > 0) {
       setInput("");
       const print = await processCommands(input);
+      if (input.startsWith("git checkout ")) {
+        const { data: branch } = await getCurrentBranch(user.username);
+        setBranch(branch);
+      }
       addConsolePrint(print);
     }
   };
@@ -114,8 +130,8 @@ function TerminalPage() {
         <InputContainer>
           <Typography fontSize={"1rem"} marginRight={"0.5rem"} fontFamily={"inherit"}>
             {/* This mimics the zsh shell that default Mac terminal comes with. */}
-            <span style={{ color: TERMINAL_COLORS.green }}>{userProfile}{" "}</span>
-            <span style={{ color: TERMINAL_COLORS.blue }}>{cwd}</span> %
+            <span style={{ color: TERMINAL_COLORS.blue }}>{cwd}{" "}</span>
+            <span style={{ color: TERMINAL_COLORS.green }}>on branch: {branch}</span> %
           </Typography>
           <Input
             placeholder={"Click here to enter..."}
