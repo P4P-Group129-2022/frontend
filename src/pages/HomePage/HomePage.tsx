@@ -7,14 +7,7 @@ import { useLogin } from "../../hooks/useLogin";
 import { useLogout } from "../../hooks/useLogout";
 import LinkToTestsDialog from "../../components/LinkToTestsDialog";
 import InstructionsDialog from "../../components/InstructionsDialog";
-
-const Button = styled((props: ButtonProps) => (
-  <MuiButton color={"secondary"} size={"large"} variant={"contained"} {...props} />
-))({
-  fontSize: "1.125rem",
-  margin: "4px 12px",
-  borderRadius: 1000,
-});
+import Button from "../../components/Button";
 
 const GreetingBody = styled(Typography)({
   textAlign: "center",

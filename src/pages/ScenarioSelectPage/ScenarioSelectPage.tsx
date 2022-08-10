@@ -1,5 +1,6 @@
-import React, {useContext, useState} from "react";
-import { Box, Button, Card, CardActionArea, CardContent, Skeleton, Typography } from "@mui/material";
+import React, { useContext, useState } from "react";
+import { Box, Card, CardActionArea, CardContent, Skeleton, Typography } from "@mui/material";
+import Button from "../../components/Button";
 import useGet from "../../hooks/useGet";
 import { styled } from "@mui/material/styles";
 import { useNavigate } from "react-router-dom";
@@ -13,10 +14,11 @@ import {
   API_ENDPOINT
 } from "../../api/Api";
 import { MessageContext } from "../../contexts/MessageContextProvider";
-import {UserContext} from "../../contexts/UserContextProvider";
-import {ScenarioDetailsContent, ScenarioDetailsResponse} from "../../types/ScenarioTypes";
+import { UserContext } from "../../contexts/UserContextProvider";
+import { ScenarioDetailsContent, ScenarioDetailsResponse } from "../../types/ScenarioTypes";
 
-const ScenarioBoxSkeleton = styled((props) => <Skeleton
+const ScenarioBoxSkeleton = styled(
+  (props) => <Skeleton
     variant={"rectangular"}
     width={"20rem"}
     height={"5rem"}
@@ -30,17 +32,17 @@ const MainContainer = styled(Box)({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  justifyContent: "center",
-  height: "100vh",
+  justifyContent: "flex-start",
   padding: 2,
+  height: "100%",
+  overflowY: "scroll",
 });
 
 const ScenarioContainer = styled(Box)({
   display: "flex",
   flexDirection: "column",
   alignItems: "center",
-  width: "fit-content",
-  margin: "2rem auto",
+  width: "60vw",
 });
 
 const RemoteUrl = "https://github.com/P4P-Group129-2022/";
@@ -79,7 +81,12 @@ function ScenarioSelectPage() {
 
   return (
     <MainContainer>
-      <Typography variant={"h2"}>Select a scenario to play</Typography>
+      <Typography sx={{
+        fontSize: "2.5rem",
+        fontWeight: "600",
+        marginTop: "6vh",
+        marginBottom: "2rem",
+      }}>Select a scenario to play</Typography>
       <ScenarioContainer>
         {isLoading ? (
           <>
@@ -92,7 +99,9 @@ function ScenarioSelectPage() {
             <Card
               key={`scenario_${index}`}
               sx={{
+                width: "100%",
                 margin: "1rem 0",
+                border: "1px solid #00000050",
               }}
             >
               <CardActionArea
@@ -102,7 +111,13 @@ function ScenarioSelectPage() {
                 }}
               >
                 <CardContent>
-                  <Typography variant={"h4"}>
+                  <Typography
+                    sx={{
+                      fontSize: "1.75rem",
+                      fontWeight: "500",
+                      marginBottom: "0.25rem",
+                    }}
+                  >
                     {scenario.name}
                   </Typography>
                   <Typography variant={"body1"} sx={{ whiteSpace: "pre-line" }}>
@@ -115,8 +130,12 @@ function ScenarioSelectPage() {
       </ScenarioContainer>
       <Button
         variant={"contained"}
+        color={"secondary"}
         onClick={() => {
           navigate("/");
+        }}
+        sx={{
+          margin: "2rem 0",
         }}
       >
         Back to Main
