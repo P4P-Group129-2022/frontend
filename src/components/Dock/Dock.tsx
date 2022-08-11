@@ -1,5 +1,5 @@
 import { styled } from "@mui/material/styles";
-import { Box, Divider } from "@mui/material";
+import { Box, Divider, Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
 import { Link, Outlet } from "react-router-dom";
 
 import backgroundImage from "../../assets/wallpaper.png";
@@ -67,33 +67,55 @@ const DockDivider = styled(Divider)({
   margin: "1vh 20px"
 });
 
+const DockTooltip = styled(({ className, ...props }: TooltipProps) => (
+  <Tooltip {...props} arrow classes={{ popper: className }} />
+))({
+  [`& .${tooltipClasses.arrow}`]: {
+    color: "#EAEAEA",
+  },
+  [`& .${tooltipClasses.tooltip}`]: {
+    backgroundColor: "#EAEAEA",
+    backdropFilter: "blur(12px)",
+    color: "#000000",
+    fontSize: "0.9rem",
+    fontWeight: 400,
+  },
+});
+
 type DockItem = {
   link?: string;
   imgSrc: string;
+  name: string;
 };
 
 const dockItems: DockItem[] = [
   {
     link: "/scenario-select",
     imgSrc: finderIcon,
+    name: "Finder",
   },
   {
     imgSrc: launchpadIcon,
+    name: "Launchpad",
   },
   {
     imgSrc: chromeIcon,
+    name: "Chrome",
   },
   {
     link: "slack",
     imgSrc: slackIcon,
+    name: "Slack",
   },
   {
     link: "vscode",
     imgSrc: vscodeIcon,
+    name: "Visual Studio Code",
   },
   {
     link: "terminal",
     imgSrc: terminalIcon,
+    name: "Terminal",
   },
 ];
 
@@ -103,16 +125,17 @@ function Dock() {
     <MainPageContainer>
       <DockContainer>
         {dockItems.map((item, index) =>
-          item.link ? (
-            <DockItemLink
-              key={`dockItem-${index}-${item.link}`}
-              to={item.link}
-            >
-              <DockItemImage alt={item.link} src={item.imgSrc} />
-            </DockItemLink>
-          ) : (
-            <DockItemImage key={`dockItem-${index}`} alt={item.link} src={item.imgSrc} />
-          )
+          <DockTooltip title={item.name} key={`dockItem-${index}-${item.link}`}>
+            {item.link ? (
+              <DockItemLink
+                to={item.link}
+              >
+                <DockItemImage alt={item.link} src={item.imgSrc} />
+              </DockItemLink>
+            ) : (
+              <DockItemImage key={`dockItem-${index}`} alt={item.link} src={item.imgSrc} />
+            )}
+          </DockTooltip>
         )}
 
         <DockDivider
@@ -120,7 +143,9 @@ function Dock() {
           flexItem
         />
 
-        <DockItemImage alt="trash" src={trashIcon} />
+        <DockTooltip title="Trash">
+          <DockItemImage alt="trash" src={trashIcon} />
+        </DockTooltip>
       </DockContainer>
 
       <WindowContainer>
