@@ -94,6 +94,7 @@ export const useTerminalCommandProcessor = () => {
     } else if (fileNames.length === 1 && fileNames[0] === ".") {
       const response = await stageAllFilesInRepo(username);
 
+      checkAndAdvanceScenarioSegment(TaskType.ADD);
       return {
         input,
         output: response.status === HTTPStatusCode.NO_CONTENT ? [noOutput] : [{
@@ -142,6 +143,7 @@ export const useTerminalCommandProcessor = () => {
         statsString.push(`${stats.minus} deletion${plural(stats.minus)}(-)`);
       }
 
+      checkAndAdvanceScenarioSegment(TaskType.COMMIT);
       return {
         input: `git commit ${args.join(" ")}`,
         output: response.status === HTTPStatusCode.CREATED ? [
@@ -248,6 +250,7 @@ export const useTerminalCommandProcessor = () => {
         //   checkAndAdvanceScenario();
         // }
 
+        checkAndAdvanceScenarioSegment(TaskType.BRANCH);
         return {
           input: `git branch ${args.join(" ")}`,
           output: [noOutput]
