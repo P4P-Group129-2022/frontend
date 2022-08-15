@@ -128,7 +128,16 @@ export const useTerminalCommandProcessor = () => {
 
     if (commitArgs === "-m" || commitArgs === "-am") {
       // Automatically assume that the following argument is the commit message.
-      const message = rest[0].slice(1, -1);
+      const message = rest[0]?.slice(1, -1);
+      if (!message || message.length === 0) {
+        return {
+          input: "git commit -m",
+          output: [
+            { value: "No commit message specified." },
+            { value: `hint: Use 'git commit -m "<message>"' with <message> inside double quotes replaced with your message to include a commit message.` },
+          ]
+        };
+      }
       const request = commitArgs === "-m" ? commitRepo : stageAllAndCommitRepo;
       const response = await request(username, message, author);
 
@@ -144,6 +153,7 @@ export const useTerminalCommandProcessor = () => {
       }
 
       checkAndAdvanceScenarioSegment(TaskType.COMMIT);
+
       return {
         input: `git commit ${args.join(" ")}`,
         output: response.status === HTTPStatusCode.CREATED ? [
@@ -157,11 +167,11 @@ export const useTerminalCommandProcessor = () => {
       return {
         input: "git commit",
         output: [
-          commitArgs.includes("-") || commitArgs.includes("--")
+          commitArgs && (commitArgs.includes("-") || commitArgs.includes("--"))
             ? { value: "Unknown commit argument." }
             : { value: "No commit option specified." },
-          { value: "hint: Use 'git commit -m' followed by a commit message to commit." },
-          { value: "hint: Use 'git commit -am' followed by a commit message to stage all files and commit." },
+          { value: `hint: Use 'git commit -m "<message>"' with commit message inside double quotes to commit.` },
+          { value: `hint: Use 'git commit -am "<message>"' followed by a commit message to stage all files and commit.` },
         ]
       };
     }
