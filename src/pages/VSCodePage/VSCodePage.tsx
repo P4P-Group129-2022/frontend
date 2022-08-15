@@ -157,7 +157,7 @@ function VSCodePage() {
             fontSize: "14px",
           }}
           height="100%"
-          defaultLanguage="python"
+          defaultLanguage="html"
           theme="vs-dark"
           defaultValue={code}
           value={code}
