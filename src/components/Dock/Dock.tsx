@@ -2,7 +2,7 @@ import { styled } from "@mui/material/styles";
 import { Box, Divider, Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
 import { Link, Outlet } from "react-router-dom";
 
-import backgroundImage from "../../assets/wallpaper.png";
+import backgroundImage from "../../assets/wallpaper.webp";
 import finderIcon from "../../assets/icons/finder.png";
 import launchpadIcon from "../../assets/icons/launchpad.png";
 import slackIcon from "../../assets/icons/slack.png";
