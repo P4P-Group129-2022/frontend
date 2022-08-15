@@ -137,6 +137,15 @@ export const useTerminalCommandProcessor = () => {
             { value: `hint: Use 'git commit -m "<message>"' with <message> inside double quotes replaced with your message to include a commit message.` },
           ]
         };
+      } else if (message === "<message>") {
+        return {
+          input: `git commit ${args.join(" ")}`,
+          output: [
+            { value: "No commit message specified." },
+            { value: `hint: Replace <message> from 'git commit -m "<message>"' to your own message.` },
+            { value: `hint: Example: 'git commit -m "this is a sample commit message"'` },
+          ]
+        };
       }
       const request = commitArgs === "-m" ? commitRepo : stageAllAndCommitRepo;
       const response = await request(username, message, author);
