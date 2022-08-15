@@ -3,13 +3,13 @@ import { Box, Divider, Tooltip, tooltipClasses, TooltipProps } from "@mui/materi
 import { Link, Outlet } from "react-router-dom";
 
 import backgroundImage from "../../assets/wallpaper.webp";
-import finderIcon from "../../assets/icons/finder.png";
-import launchpadIcon from "../../assets/icons/launchpad.png";
-import slackIcon from "../../assets/icons/slack.png";
-import vscodeIcon from "../../assets/icons/vscode.png";
-import terminalIcon from "../../assets/icons/terminal.png";
-import chromeIcon from "../../assets/icons/chrome.png";
-import trashIcon from "../../assets/icons/trash.png";
+import finderIcon from "../../assets/icons/finder.webp";
+import launchpadIcon from "../../assets/icons/launchpad.webp";
+import slackIcon from "../../assets/icons/slack.webp";
+import vscodeIcon from "../../assets/icons/vscode.webp";
+import terminalIcon from "../../assets/icons/terminal.webp";
+import chromeIcon from "../../assets/icons/chrome.webp";
+import trashIcon from "../../assets/icons/trash.webp";
 
 const MainPageContainer = styled("div")({
   display: "flex",
