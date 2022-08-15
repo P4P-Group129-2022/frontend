@@ -10,7 +10,7 @@ import {
   tooltipClasses,
   TooltipProps
 } from "@mui/material";
-import { Link, Outlet, useNavigate } from "react-router-dom";
+import { Outlet, useNavigate } from "react-router-dom";
 import { useContext, useState } from "react";
 import { NotificationContext } from "../../contexts/NotificationContextProvider";
 
@@ -65,13 +65,6 @@ const DockItemImage = styled("img")({
   width: "8vh",
   height: "8vh",
   margin: "0 5px",
-});
-
-const DockItemLink = styled(Link)({
-  textDecoration: "none",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
 });
 
 const DockDivider = styled(Divider)({
@@ -158,12 +151,15 @@ function Dock() {
       <DockContainer>
         {dockItems.map((item, index) =>
           <DockTooltip title={item.name} key={`dockItem-${index}`}>
-            <div
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
               style={item.onClick ? { cursor: "pointer" } : undefined}
               onClick={item.onClick}
             >
               <DockItemImage alt={item.name} src={item.imgSrc} />
-            </div>
+            </Box>
           </DockTooltip>
         )}
 

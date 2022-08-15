@@ -1,7 +1,6 @@
 import { createContext, useState, useEffect } from "react";
 import Notification from "../components/Notification/Notification";
 import { NotificationContent } from "../types/NotificationTypes";
-import { getNotificationByName } from "../api/Api";
 
 const AUTO_HIDE_DURATION = 30000;  // when snackbar will auto hide; 30 seconds
 // const AUTO_HIDE_DURATION = 1000000000; // for debug purposes

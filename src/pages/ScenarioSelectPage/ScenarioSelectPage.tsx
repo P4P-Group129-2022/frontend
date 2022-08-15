@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import { useContext, useEffect, useState } from "react";
 import { Box, Card, CardActionArea, CardContent, Skeleton, Typography } from "@mui/material";
 import Button from "../../components/Button";
 import useGet from "../../hooks/useGet";
@@ -7,10 +7,8 @@ import { useNavigate } from "react-router-dom";
 import { ScenarioContext } from "../../contexts/ScenarioContextProvider";
 import {
   addRemote,
-  getScenarioDetails,
   getScenarioByNameId,
   initRepoForScenario,
-  retrieveFile,
   API_ENDPOINT
 } from "../../api/Api";
 import { MessageContext } from "../../contexts/MessageContextProvider";
@@ -48,14 +46,14 @@ const ScenarioContainer = styled(Box)({
 const RemoteUrl = "https://github.com/P4P-Group129-2022/";
 
 function ScenarioSelectPage() {
-  const [scenarioList, setScenarioList] = React.useState<ScenarioDetailsContent[]>([]);
+  const [scenarioList, setScenarioList] = useState<ScenarioDetailsContent[]>([]);
   const { isLoading, data } = useGet<ScenarioDetailsResponse>(`${API_ENDPOINT}/api/scenario`);
   const navigate = useNavigate();
   const { setScenario } = useContext(ScenarioContext);
   const { clearMessage } = useContext(MessageContext);
   const { user: { username } } = useContext(UserContext);
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (data) {
       setScenarioList(data.scenarioDetailsFromDB);
       console.log(scenarioList);
