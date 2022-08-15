@@ -22,7 +22,7 @@ function Notification({ title, message, imageSrc }: NotificationContent) {
   console.log("notification open: ", { title, message, imageSrc });
 
   const closeNotification = () => setOpen(false);
-  const imageUrl = (name: string) => `${process.env.PUBLIC_URL}/assets/icons/${name}.png`;
+  const imageUrl = (name: string) => `${process.env.PUBLIC_URL}/assets/icons/${name}.webp`;
 
   return (
     <Snackbar
