@@ -9,11 +9,13 @@ const DISMISS_DURATION = AUTO_HIDE_DURATION + 200;  // when notification will be
 
 type NotificationContextType = {
   showNotification: (content: NotificationContent) => void;
+  clearNotifications: () => void;
   AUTO_HIDE_DURATION: number;
 };
 
 const NotificationContext = createContext<NotificationContextType>({
   showNotification: () => {},
+  clearNotifications: () => {},
   AUTO_HIDE_DURATION
 });
 
@@ -39,8 +41,13 @@ function NotificationContextProvider({ children }: Props) {
     setNotifications([...notifications, newNotificationContent]);
   };
 
+  const clearNotifications = () => {
+    setNotifications([]);
+  }
+
   const context = {
     showNotification,
+    clearNotifications,
     AUTO_HIDE_DURATION
   };
 
