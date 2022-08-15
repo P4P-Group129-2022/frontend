@@ -1,5 +1,5 @@
 import { Box, Divider, InputBase, SxProps, Theme, Typography } from "@mui/material";
-import React, { useContext } from "react";
+import { KeyboardEvent, ChangeEvent, useContext, useEffect, useRef, useState } from "react";
 import AppWindowFrame from "../../components/AppWindowFrame";
 import { TERMINAL_COLORS } from "../../theme/colors";
 import { styled } from "@mui/material/styles";
@@ -76,7 +76,7 @@ const ConsoleLineText = styled(Typography)({
 });
 
 const ConsoleOutputLineText = styled(ConsoleLineText)({
-  whiteSpace: "pre",
+  whiteSpace: "pre-line",
 });
 
 const ConsoleIOIcons: SxProps<Theme> = {
@@ -87,19 +87,16 @@ const ConsoleIOIcons: SxProps<Theme> = {
 function TerminalPage() {
   const { processCommands } = useTerminalCommandProcessor();
   const { user } = useContext(UserContext);
-  const [consolePrints, setConsolePrints] = React.useState<ConsolePrint[]>([]);
-  const [input, setInput] = React.useState("");
-  const [branch, setBranch] = React.useState("...");
+  const [consolePrints, setConsolePrints] = useState<ConsolePrint[]>([]);
+  const [input, setInput] = useState("");
+  const [branch, setBranch] = useState("...");
+  const consoleRef = useRef<HTMLDivElement>(null);
 
-  React.useEffect(() => {
+  useEffect(() => {
     getCurrentBranch(user.username)
       .then(res => res.data)
       .then(branch => setBranch(branch));
   }, []);
-
-  // React.useEffect(() => {
-  //   console.log("branch changed: ", branch);
-  // }, [branch]);
 
   const userProfile = `${user?.name ?? "User"}@MacBook-Pro`;
   const cwd = "~/Documents/LGI-project";
@@ -108,11 +105,11 @@ function TerminalPage() {
     setConsolePrints([...consolePrints, print]);
   };
 
-  const handleOnInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleOnInputChange = (event: ChangeEvent<HTMLInputElement>) => {
     setInput(event.target.value);
   };
 
-  const handleOnInputKeyDown = async (event: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleOnInputKeyDown = async (event: KeyboardEvent<HTMLInputElement>) => {
     if (event.key === "Enter" && input.length > 0) {
       setInput("");
       const print = await processCommands(input);
@@ -121,6 +118,7 @@ function TerminalPage() {
         setBranch(branch);
       }
       addConsolePrint(print);
+      consoleRef.current && consoleRef.current.scroll({ top: 10000000, behavior: "smooth" });
     }
   };
 
@@ -144,7 +142,7 @@ function TerminalPage() {
 
         <TerminalDivider />
 
-        <ConsoleOutputsContainer>
+        <ConsoleOutputsContainer ref={consoleRef}>
           {consolePrints.map((consolePrint, index) => (
             <ConsoleOutputContainer key={index}>
               <ConsoleInputLineContainer>
@@ -180,6 +178,7 @@ function TerminalPage() {
               </ConsoleOutputLineContainer>
             </ConsoleOutputContainer>
           ))}
+          <Box height={"10rem"} />
         </ConsoleOutputsContainer>
       </MainContainer>
     </AppWindowFrame>

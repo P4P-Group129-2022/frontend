@@ -22,146 +22,207 @@ export const useTerminalCommandProcessor = () => {
   const { checkAndAdvanceScenarioSegment } = useContext(ScenarioContext);
 
   async function processGitStatus(): Promise<ConsolePrint> {
-    console.log(username);
-    const response = await getRepoStatusForScenario(username);
-    const { data: branch } = await getCurrentBranch(username);
+    try {
+      console.log(username);
+      const response = await getRepoStatusForScenario(username);
+      const { data: branch } = await getCurrentBranch(username);
 
-    const onBranchMain = `On branch ${branch}`;
-    const nothingToCommit = `nothing to commit, working tree clean`;
-    const changesNotStaged = `Changes not staged for commit:`;
-    const changesToCommit = `Changes to be committed:`;
-    const useGitAdd = `  (use "git add <file>..." to update what will be committed)`;
-    const useGitRestoreUnstaged = `  (use "git restore <file>..." to discard changes in working directory)`;
-    const useGitRestoreStaged = `  (use "git restore --staged <file>..." to unstage)`;
-    const modifiedMain = `        modified:   index.html`;
-    const noChangesAddedToCommit = `\nno changes added to commit (use "git add" and/or "git commit -a")`;
+      const onBranchMain = `On branch ${branch}`;
+      const nothingToCommit = `nothing to commit, working tree clean`;
+      const changesNotStaged = `Changes not staged for commit:`;
+      const changesToCommit = `Changes to be committed:`;
+      const useGitAdd = `  (use "git add <file>..." to update what will be committed)`;
+      const useGitRestoreUnstaged = `  (use "git restore <file>..." to discard changes in working directory)`;
+      const useGitRestoreStaged = `  (use "git restore --staged <file>..." to unstage)`;
+      const modifiedMain = `        modified:   index.html`;
+      const noChangesAddedToCommit = `\nno changes added to commit (use "git add" and/or "git commit -a")`;
 
-    switch (response.data.status) {
-      case "modified":
-        return {
-          input: "git status",
-          output: [
-            { value: onBranchMain },
-            { value: changesToCommit },
-            { value: useGitRestoreStaged },
-            { value: modifiedMain, color: TERMINAL_COLORS.green },
-          ]
-        };
-      case "*modified":
-        return {
-          input: "git status",
-          output: [
-            { value: onBranchMain },
-            { value: changesNotStaged },
-            { value: useGitAdd },
-            { value: useGitRestoreUnstaged },
-            { value: modifiedMain, color: TERMINAL_COLORS.red },
-            { value: noChangesAddedToCommit },
-          ]
-        };
-      case "unmodified":
-        return {
-          input: "git status",
-          output: [
-            { value: onBranchMain },
-            { value: nothingToCommit },
-          ]
-        };
-      default:
-        return {
-          input: "git status",
-          output: [
-            { value: "Unknown isomorphic git status return value:" },
-            { value: `Value: ${response.data.status}` },
-          ]
-        };
+      switch (response.data.status) {
+        case "modified":
+          return {
+            input: "git status",
+            output: [
+              { value: onBranchMain },
+              { value: changesToCommit },
+              { value: useGitRestoreStaged },
+              { value: modifiedMain, color: TERMINAL_COLORS.green },
+            ]
+          };
+        case "*modified":
+          return {
+            input: "git status",
+            output: [
+              { value: onBranchMain },
+              { value: changesNotStaged },
+              { value: useGitAdd },
+              { value: useGitRestoreUnstaged },
+              { value: modifiedMain, color: TERMINAL_COLORS.red },
+              { value: noChangesAddedToCommit },
+            ]
+          };
+        case "unmodified":
+          return {
+            input: "git status",
+            output: [
+              { value: onBranchMain },
+              { value: nothingToCommit },
+            ]
+          };
+        default:
+          return {
+            input: "git status",
+            output: [
+              { value: "Unknown isomorphic git status return value:" },
+              { value: `Value: ${response.data.status}` },
+            ]
+          };
+      }
+    } catch (e: any) {
+      console.log(e);
+      return {
+        input: "git status",
+        output: [
+          { value: "Error running git status. Please try again." },
+          ...(e.response.data.message === "NotFoundError" ? [{
+            value: "Error Message: Current branch not found.",
+            color: TERMINAL_COLORS.yellow
+          }] : []),
+        ]
+      };
     }
   }
 
   async function processGitAdd(fileNames: string[]): Promise<ConsolePrint> {
-    const input = `git add ${fileNames.join(" ")}`;
+    try {
+      const input = `git add ${fileNames.join(" ")}`;
 
-    if (fileNames.length === 0) {
+      if (fileNames.length === 0) {
+        return {
+          input,
+          output: [
+            { value: "Nothing specified, nothing added." },
+            { value: "hint: Maybe you wanted to say 'git add .'?" },
+            { value: "hint: Turn this message off by running" },
+            { value: "hint: \"git config advice.addEmptyPathspec false\"" },
+          ]
+        };
+      } else if (fileNames.length === 1 && fileNames[0] === ".") {
+        const response = await stageAllFilesInRepo(username);
+
+        checkAndAdvanceScenarioSegment(TaskType.ADD);
+        return {
+          input,
+          output: response.status === HTTPStatusCode.NO_CONTENT ? [noOutput] : [{
+            value: "Error staging files.",
+            color: TERMINAL_COLORS.red
+          }]
+        };
+      } else {
+        const responses = await Promise.all(fileNames.map(async (fileName) => stageFileInRepo(username, fileName)));
+        const failedRequests = responses.filter(response => response.status !== HTTPStatusCode.NO_CONTENT);
+
+        return {
+          input,
+          output: failedRequests.length === 0 ? [noOutput] : [{
+            value: "Error staging files.",
+            color: TERMINAL_COLORS.red
+          }, {
+            value: `Failed to stage ${failedRequests.length} files.`,
+            color: TERMINAL_COLORS.red
+          }, {
+            value: `Failed files: ${failedRequests.map(response => response.data?.fileName).join(", ")}`,
+          }]
+        };
+      }
+    } catch (e: any) {
+      console.log(e);
       return {
-        input,
+        input: "git add",
         output: [
-          { value: "Nothing specified, nothing added." },
-          { value: "hint: Maybe you wanted to say 'git add .'?" },
-          { value: "hint: Turn this message off by running" },
-          { value: "hint: \"git config advice.addEmptyPathspec false\"" },
+          { value: "Error staging files. Please try again." },
+          ...(e.response.data.message === "NotFoundError" ? [{
+            value: "Error Message: Current branch not found.",
+            color: TERMINAL_COLORS.yellow
+          }] : []),
         ]
-      };
-    } else if (fileNames.length === 1 && fileNames[0] === ".") {
-      const response = await stageAllFilesInRepo(username);
-
-      checkAndAdvanceScenarioSegment(TaskType.ADD);
-      return {
-        input,
-        output: response.status === HTTPStatusCode.NO_CONTENT ? [noOutput] : [{
-          value: "Error staging files.",
-          color: TERMINAL_COLORS.red
-        }]
-      };
-    } else {
-      const responses = await Promise.all(fileNames.map(async (fileName) => stageFileInRepo(username, fileName)));
-      const failedRequests = responses.filter(response => response.status !== HTTPStatusCode.NO_CONTENT);
-
-      return {
-        input,
-        output: failedRequests.length === 0 ? [noOutput] : [{
-          value: "Error staging files.",
-          color: TERMINAL_COLORS.red
-        }, {
-          value: `Failed to stage ${failedRequests.length} files.`,
-          color: TERMINAL_COLORS.red
-        }, {
-          value: `Failed files: ${failedRequests.map(response => response.data?.fileName).join(", ")}`,
-        }]
       };
     }
   }
 
   async function processGitCommit(args: string[]): Promise<ConsolePrint> {
-    const [commitArgs, ...rest] = args;
-    const author = { name, email };
-    const { data: branchName } = await getCurrentBranch(username);
+    try {
+      const [commitArgs, ...rest] = args;
+      const author = { name, email };
+      const { data: branchName } = await getCurrentBranch(username);
 
-    if (commitArgs === "-m" || commitArgs === "-am") {
-      // Automatically assume that the following argument is the commit message.
-      const message = rest[0].slice(1, -1);
-      const request = commitArgs === "-m" ? commitRepo : stageAllAndCommitRepo;
-      const response = await request(username, message, author);
+      if (commitArgs === "-m" || commitArgs === "-am") {
+        // Automatically assume that the following argument is the commit message.
+        const message = rest[0]?.slice(1, -1);
+        if (!message || message.length === 0) {
+          return {
+            input: "git commit -m",
+            output: [
+              { value: "No commit message specified." },
+              { value: `hint: Use 'git commit -m "<message>"' with <message> inside double quotes replaced with your message to include a commit message.` },
+            ]
+          };
+        } else if (message === "<message>") {
+          return {
+            input: `git commit ${args.join(" ")}`,
+            output: [
+              { value: "No commit message specified." },
+              { value: `hint: Replace <message> from 'git commit -m "<message>"' to your own message.` },
+              { value: `hint: Example: 'git commit -m "this is a sample commit message"'` },
+            ]
+          };
+        }
+        const request = commitArgs === "-m" ? commitRepo : stageAllAndCommitRepo;
+        const response = await request(username, message, author);
 
-      const { commitId, stats } = response.data;
-      const shortCommitId = commitId.substring(0, 7);
-      const plural = (n: number) => n === 1 ? "" : "s";
-      const statsString = [" " + stats.file + " file" + plural(stats.file)];
-      if (stats.plus) {
-        statsString.push(`${stats.plus} insertion${plural(stats.plus)}(+)`);
+        const { commitId, stats } = response.data;
+        const shortCommitId = commitId.substring(0, 7);
+        const plural = (n: number) => n === 1 ? "" : "s";
+        const statsString = [" " + stats.file + " file" + plural(stats.file)];
+        if (stats.plus) {
+          statsString.push(`${stats.plus} insertion${plural(stats.plus)}(+)`);
+        }
+        if (stats.minus) {
+          statsString.push(`${stats.minus} deletion${plural(stats.minus)}(-)`);
+        }
+
+        checkAndAdvanceScenarioSegment(TaskType.COMMIT);
+
+        return {
+          input: `git commit ${args.join(" ")}`,
+          output: response.status === HTTPStatusCode.CREATED ? [
+            { value: `[${branchName} ${shortCommitId}] ${message}` },
+            { value: statsString.join(", ") },
+          ] : [
+            { value: "Error committing files." }
+          ]
+        };
+      } else {
+        return {
+          input: "git commit",
+          output: [
+            commitArgs && (commitArgs.includes("-") || commitArgs.includes("--"))
+              ? { value: "Unknown commit argument." }
+              : { value: "No commit option specified." },
+            { value: `hint: Use 'git commit -m "<message>"' with commit message inside double quotes to commit.` },
+            { value: `hint: Use 'git commit -am "<message>"' followed by a commit message to stage all files and commit.` },
+          ]
+        };
       }
-      if (stats.minus) {
-        statsString.push(`${stats.minus} deletion${plural(stats.minus)}(-)`);
-      }
-
-      checkAndAdvanceScenarioSegment(TaskType.COMMIT);
-      return {
-        input: `git commit ${args.join(" ")}`,
-        output: response.status === HTTPStatusCode.CREATED ? [
-          { value: `[${branchName} ${shortCommitId}] ${message}` },
-          { value: statsString.join(", ") },
-        ] : [
-          { value: "Error committing files." }
-        ]
-      };
-    } else {
+    } catch (e: any) {
+      console.log(e);
       return {
         input: "git commit",
         output: [
-          commitArgs.includes("-") || commitArgs.includes("--")
-            ? { value: "Unknown commit argument." }
-            : { value: "No commit option specified." },
-          { value: "hint: Use 'git commit -m' followed by a commit message to commit." },
-          { value: "hint: Use 'git commit -am' followed by a commit message to stage all files and commit." },
+          { value: "Error committing files. Please try again." },
+          ...(e.response.data?.message === "NotFoundError" ? [{
+            value: "Error Message: Current branch not found.",
+            color: TERMINAL_COLORS.yellow
+          }] : []),
         ]
       };
     }
@@ -173,15 +234,16 @@ export const useTerminalCommandProcessor = () => {
     console.log("remote", remote);
     console.log("branch", branch);
 
-    const enumeratingObjects = `Enumerating objects: 5, done.`;
-    const countingObjects = `Counting objects: 100% (5/5), done.`;
-    const deltaCompression = `Delta compression using up to 8 threads`;
-    const compressingObjects = `Compressing objects: 100% (2/2), done.`;
-    const writingObjects = `Writing objects: 100% (3/3), 309 bytes | 309.00 KiB/s, done.`;
-    const total = `Total 3 (delta 1), reused 0 (delta 0), pack-reused 0`;
-    const remoteResolving = `remote: Resolving deltas: 100% (1/1), completed with 1 local object.`;
-    const ToRemote = `To https://github.com/P4P-Group129-2022/${username}.git`;
-    const commits = `   15c4907..a05853a  ${branch} -> ${branch}`;
+    if (remote.startsWith("-") || branch.startsWith("--")) {
+      return {
+        input: `git push ${args.join(" ")}`,
+        output: [
+          { value: "Unsupported push argument." },
+          { value: "Currently, the app does not support git push arguments, such as -u for setting the upstream." },
+          { value: `hint: Use 'git push <remote> <branch>' to push to a remote repository.` },
+        ]
+      };
+    }
 
     if (!accessToken) {
       return {
@@ -205,26 +267,48 @@ export const useTerminalCommandProcessor = () => {
       };
     }
 
-    const response = await pushRepo(username, remote, branch, accessToken);
-    if (response.status === HTTPStatusCode.NO_CONTENT) {
-      checkAndAdvanceScenarioSegment(TaskType.PUSH);
+    const enumeratingObjects = `Enumerating objects: 5, done.`;
+    const countingObjects = `Counting objects: 100% (5/5), done.`;
+    const deltaCompression = `Delta compression using up to 8 threads`;
+    const compressingObjects = `Compressing objects: 100% (2/2), done.`;
+    const writingObjects = `Writing objects: 100% (3/3), 309 bytes | 309.00 KiB/s, done.`;
+    const total = `Total 3 (delta 1), reused 0 (delta 0), pack-reused 0`;
+    const remoteResolving = `remote: Resolving deltas: 100% (1/1), completed with 1 local object.`;
+    const ToRemote = `To https://github.com/P4P-Group129-2022/${username}.git`;
+    const commits = `   15c4907..a05853a  ${branch} -> ${branch}`;
+
+    try {
+      const response = await pushRepo(username, remote, branch, accessToken);
+
+      if (response.status === HTTPStatusCode.NO_CONTENT) {
+        checkAndAdvanceScenarioSegment(TaskType.PUSH);
+      }
+
+      return {
+        input: `git push ${args.join(" ")}`,
+        output: [
+          { value: enumeratingObjects },
+          { value: countingObjects },
+          { value: deltaCompression },
+          { value: compressingObjects },
+          { value: writingObjects },
+          { value: total },
+          { value: remoteResolving },
+          { value: ToRemote },
+          { value: commits },
+        ]
+      };
+    } catch {
+      // Reaching here means that the push failed.
+      return {
+        input: `git push ${args.join(" ")}`,
+        output: [
+          { value: "Error pushing files.", color: TERMINAL_COLORS.red },
+          { value: "Currently, only push to origin is allowed." },
+          { value: "hint: Use 'git push origin <branch>' to push to a branch, such as 'main'." },
+        ]
+      };
     }
-    return {
-      input: `git push ${args.join(" ")}`,
-      output: response.status === HTTPStatusCode.NO_CONTENT ? [
-        { value: enumeratingObjects },
-        { value: countingObjects },
-        { value: deltaCompression },
-        { value: compressingObjects },
-        { value: writingObjects },
-        { value: total },
-        { value: remoteResolving },
-        { value: ToRemote },
-        { value: commits },
-      ] : [
-        { value: "Error pushing files.", color: TERMINAL_COLORS.red },
-      ]
-    };
   }
 
   async function processGitBranch(args: string[]) {
@@ -244,11 +328,6 @@ export const useTerminalCommandProcessor = () => {
 
       try {
         await branch(username, branchName);
-
-        // Not sure whether branching should advance scenario.
-        // if (response.status === HTTPStatusCode.CREATED) {
-        //   checkAndAdvanceScenario();
-        // }
 
         checkAndAdvanceScenarioSegment(TaskType.BRANCH);
         return {
@@ -293,11 +372,6 @@ export const useTerminalCommandProcessor = () => {
       try {
         await checkout(username, branchName);
 
-        // Not sure whether branching should advance scenario.
-        // if (response.status === HTTPStatusCode.OK) {
-        //   checkAndAdvanceScenario();
-        // }
-
         checkAndAdvanceScenarioSegment(TaskType.CHECKOUT);
         return {
           input: `git checkout ${args.join(" ")}`,
@@ -340,11 +414,6 @@ export const useTerminalCommandProcessor = () => {
       try {
         await rebase(username, branchName);
         const { data: currentBranch } = await getCurrentBranch(username, true);
-        // Not sure whether branching should advance scenario.
-        // if (response.status === HTTPStatusCode.OK) {
-        //   checkAndAdvanceScenario();
-        // }
-
         checkAndAdvanceScenarioSegment(TaskType.REBASE);
         return {
           input: `git rebase ${args.join(" ")}`,
@@ -356,13 +425,9 @@ export const useTerminalCommandProcessor = () => {
           input: `git rebase ${args.join(" ")}`,
           output: [
             { value: "Error rebasing branch.", color: TERMINAL_COLORS.red },
-            // // @ts-ignore - temporary fix, it could possibly return a message if on error.
-            ...(e.response.status === HTTPStatusCode.INTERNAL_SERVER_ERROR && e.response.data.message === "NotFoundError" ? [
-              { value: `Branch ${branchName} not found.`, color: TERMINAL_COLORS.red },
-              {
-                value: `hint: Use "git branch <branchName>" to first create a branch.`,
-                color: TERMINAL_COLORS.red
-              },
+            ...(e.response.status === HTTPStatusCode.INTERNAL_SERVER_ERROR && e.response.data?.message === "NotFoundError" ? [
+              { value: `Branch ${branchName} not found.` },
+              { value: `hint: Use "git branch <branchName>" to first create a branch.` },
             ] : [{
               value: "Unknown error occurred. Please try again."
             }])
