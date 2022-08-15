@@ -192,15 +192,19 @@ export const useTerminalCommandProcessor = () => {
     console.log("remote", remote);
     console.log("branch", branch);
 
-    const enumeratingObjects = `Enumerating objects: 5, done.`;
-    const countingObjects = `Counting objects: 100% (5/5), done.`;
-    const deltaCompression = `Delta compression using up to 8 threads`;
-    const compressingObjects = `Compressing objects: 100% (2/2), done.`;
-    const writingObjects = `Writing objects: 100% (3/3), 309 bytes | 309.00 KiB/s, done.`;
-    const total = `Total 3 (delta 1), reused 0 (delta 0), pack-reused 0`;
-    const remoteResolving = `remote: Resolving deltas: 100% (1/1), completed with 1 local object.`;
-    const ToRemote = `To https://github.com/P4P-Group129-2022/${username}.git`;
-    const commits = `   15c4907..a05853a  ${branch} -> ${branch}`;
+    if (remote.startsWith("-") || branch.startsWith("--")) {
+      return {
+        input: `git push ${args.join(" ")}`,
+        output: [
+          { value: "Unsupported push argument.", color: TERMINAL_COLORS.yellow },
+          {
+            value: "Currently, the app does not support git push arguments, such as -u for setting the upstream.",
+            color: TERMINAL_COLORS.yellow
+          },
+          { value: `hint: Use 'git push <remote> <branch>' to push to a remote repository.` },
+        ]
+      };
+    }
 
     if (!accessToken) {
       return {
@@ -223,6 +227,16 @@ export const useTerminalCommandProcessor = () => {
         ]
       };
     }
+
+    const enumeratingObjects = `Enumerating objects: 5, done.`;
+    const countingObjects = `Counting objects: 100% (5/5), done.`;
+    const deltaCompression = `Delta compression using up to 8 threads`;
+    const compressingObjects = `Compressing objects: 100% (2/2), done.`;
+    const writingObjects = `Writing objects: 100% (3/3), 309 bytes | 309.00 KiB/s, done.`;
+    const total = `Total 3 (delta 1), reused 0 (delta 0), pack-reused 0`;
+    const remoteResolving = `remote: Resolving deltas: 100% (1/1), completed with 1 local object.`;
+    const ToRemote = `To https://github.com/P4P-Group129-2022/${username}.git`;
+    const commits = `   15c4907..a05853a  ${branch} -> ${branch}`;
 
     const response = await pushRepo(username, remote, branch, accessToken);
     if (response.status === HTTPStatusCode.NO_CONTENT) {
