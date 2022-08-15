@@ -3,7 +3,7 @@ import Notification from "../components/Notification/Notification";
 import { NotificationContent } from "../types/NotificationTypes";
 import { getNotificationByName } from "../api/Api";
 
-const AUTO_HIDE_DURATION = 60000;  // when snackbar will auto hide; 1 minute
+const AUTO_HIDE_DURATION = 30000;  // when snackbar will auto hide; 30 seconds
 // const AUTO_HIDE_DURATION = 1000000000; // for debug purposes
 const DISMISS_DURATION = AUTO_HIDE_DURATION + 200;  // when notification will be removed from queue. + 200ms necessary for animation and queue clearing.
 
@@ -28,8 +28,7 @@ function NotificationContextProvider({ children }: Props) {
   useEffect(() => {
     if (activeNotificationIds.length > 0) {
       const timer = setTimeout(() =>
-          setNotifications(
-            (notifications) => notifications.slice(0, notifications.length - 1)),
+          setNotifications((notifications) => notifications.slice(0, notifications.length - 1)),
         DISMISS_DURATION
       );
       return () => clearTimeout(timer);
@@ -45,14 +44,13 @@ function NotificationContextProvider({ children }: Props) {
     AUTO_HIDE_DURATION
   };
 
-  console.log("notifications in the list: ", notifications);
+  console.log("notifications in the context: ", notifications);
 
   return (
     <NotificationContext.Provider value={context}>
       {children}
       {notifications.map((notification, index) =>
-        (<Notification key={`notification_${index}`} {...notification} />))
-      }
+        (<Notification key={`notification_${index}`} {...notification} />))}
     </NotificationContext.Provider>
   );
 }
