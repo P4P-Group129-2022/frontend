@@ -1,6 +1,18 @@
 import { styled } from "@mui/material/styles";
-import { Box, Divider, Tooltip, tooltipClasses, TooltipProps } from "@mui/material";
-import { Link, Outlet } from "react-router-dom";
+import {
+  Box,
+  Dialog, DialogActions,
+  DialogContent,
+  DialogContentText,
+  DialogTitle,
+  Divider,
+  Tooltip,
+  tooltipClasses,
+  TooltipProps
+} from "@mui/material";
+import { Outlet, useNavigate } from "react-router-dom";
+import { useContext, useState } from "react";
+import { NotificationContext } from "../../contexts/NotificationContextProvider";
 
 import backgroundImage from "../../assets/wallpaper.webp";
 import finderIcon from "../../assets/icons/finder.webp";
@@ -10,6 +22,7 @@ import vscodeIcon from "../../assets/icons/vscode.webp";
 import terminalIcon from "../../assets/icons/terminal.webp";
 import chromeIcon from "../../assets/icons/chrome.webp";
 import trashIcon from "../../assets/icons/trash.webp";
+import Button from "../Button";
 
 const MainPageContainer = styled("div")({
   display: "flex",
@@ -54,13 +67,6 @@ const DockItemImage = styled("img")({
   margin: "0 5px",
 });
 
-const DockItemLink = styled(Link)({
-  textDecoration: "none",
-  display: "flex",
-  justifyContent: "center",
-  alignItems: "center",
-});
-
 const DockDivider = styled(Divider)({
   backgroundColor: "#FFFFFF30",
   width: "1.5px",
@@ -83,58 +89,77 @@ const DockTooltip = styled(({ className, ...props }: TooltipProps) => (
 });
 
 type DockItem = {
-  link?: string;
+  onClick?: () => void;
   imgSrc: string;
   name: string;
 };
 
-const dockItems: DockItem[] = [
-  {
-    link: "/scenario-select",
-    imgSrc: finderIcon,
-    name: "Finder",
-  },
-  {
-    imgSrc: launchpadIcon,
-    name: "Launchpad",
-  },
-  {
-    imgSrc: chromeIcon,
-    name: "Chrome",
-  },
-  {
-    link: "slack",
-    imgSrc: slackIcon,
-    name: "Slack",
-  },
-  {
-    link: "vscode",
-    imgSrc: vscodeIcon,
-    name: "Visual Studio Code",
-  },
-  {
-    link: "terminal",
-    imgSrc: terminalIcon,
-    name: "Terminal",
-  },
-];
+enum ExitDialogAction {
+  EXIT, CANCEL
+}
 
 function Dock() {
+  const [open, setOpen] = useState(false);
+  const navigate = useNavigate();
+  const { clearNotifications } = useContext(NotificationContext);
+
+  const handleExit = (value: ExitDialogAction) => {
+    setOpen(false);
+    if (value === ExitDialogAction.EXIT) {
+      clearNotifications();
+      navigate("/scenario-select");
+    }
+  };
+
+  const onFinderClick = () => setOpen(true);
+  const onClickNavigate = (link: string) => () => navigate(link);
+
+  const dockItems: DockItem[] = [
+    {
+      imgSrc: finderIcon,
+      name: "Finder",
+      onClick: onFinderClick,
+    },
+    {
+      imgSrc: launchpadIcon,
+      name: "Launchpad",
+    },
+    {
+      imgSrc: chromeIcon,
+      name: "Chrome",
+    },
+    {
+      onClick: onClickNavigate("slack"),
+      imgSrc: slackIcon,
+      name: "Slack",
+    },
+    {
+      onClick: onClickNavigate("vscode"),
+      imgSrc: vscodeIcon,
+      name: "Visual Studio Code",
+    },
+    {
+      onClick: onClickNavigate("terminal"),
+      imgSrc: terminalIcon,
+      name: "Terminal",
+    },
+  ];
+
   return (
     // order is bottom-up due to "column-reverse" styling.
     <MainPageContainer>
       <DockContainer>
         {dockItems.map((item, index) =>
-          <DockTooltip title={item.name} key={`dockItem-${index}-${item.link}`}>
-            {item.link ? (
-              <DockItemLink
-                to={item.link}
-              >
-                <DockItemImage alt={item.link} src={item.imgSrc} />
-              </DockItemLink>
-            ) : (
-              <DockItemImage key={`dockItem-${index}`} alt={item.link} src={item.imgSrc} />
-            )}
+          <DockTooltip title={item.name} key={`dockItem-${index}`}>
+            <Box
+              display="flex"
+              alignItems="center"
+              justifyContent="center"
+              style={item.onClick ? { cursor: "pointer" } : undefined}
+              onClick={item.onClick}
+            >
+              <DockItemImage alt={item.name} src={item.imgSrc} />
+            </Box>
           </DockTooltip>
         )}
 
@@ -147,6 +172,34 @@ function Dock() {
           <DockItemImage alt="trash" src={trashIcon} />
         </DockTooltip>
       </DockContainer>
+
+      <Dialog
+        open={open}
+        onClose={() => handleExit(ExitDialogAction.CANCEL)}
+      >
+        <DialogTitle fontSize={"1.5rem"}>{"Exit Scenario?"}</DialogTitle>
+        <DialogContent>
+          <DialogContentText fontSize={"1rem"}>
+            Scenario will only replay from the start. Are you sure you want to exit?
+          </DialogContentText>
+        </DialogContent>
+        <DialogActions>
+          <Button
+            size={"small"}
+            onClick={() => handleExit(ExitDialogAction.CANCEL)}
+            sx={{ width: "7rem" }}
+          >
+            Cancel
+          </Button>
+          <Button
+            size={"small"}
+            onClick={() => handleExit(ExitDialogAction.EXIT)}
+            sx={{ width: "7rem" }}
+          >
+            Exit
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       <WindowContainer>
         <Outlet />
