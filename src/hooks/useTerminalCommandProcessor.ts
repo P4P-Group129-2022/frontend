@@ -33,7 +33,7 @@ export const useTerminalCommandProcessor = () => {
     const useGitAdd = `  (use "git add <file>..." to update what will be committed)`;
     const useGitRestoreUnstaged = `  (use "git restore <file>..." to discard changes in working directory)`;
     const useGitRestoreStaged = `  (use "git restore --staged <file>..." to unstage)`;
-    const modifiedMain = `        modified:   main.py`;
+    const modifiedMain = `        modified:   index.html`;
     const noChangesAddedToCommit = `\nno changes added to commit (use "git add" and/or "git commit -a")`;
 
     switch (response.data.status) {

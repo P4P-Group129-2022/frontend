@@ -71,7 +71,7 @@ function VSCodeExplorer({ files }: Props) {
       </ExplorerSectionSummary>
 
       {/*  source folder contents  */}
-      <VSCodeExplorerFiles files={files}/>
+      <VSCodeExplorerFiles files={files} />
 
       {/*  outline  */}
       <ExplorerSectionSummary>
