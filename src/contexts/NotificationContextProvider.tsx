@@ -3,7 +3,7 @@ import Notification from "../components/Notification/Notification";
 import { NotificationContent } from "../types/NotificationTypes";
 import { getNotificationByName } from "../api/Api";
 
-const AUTO_HIDE_DURATION = 3000 * 20;  // when snackbar will auto hide
+const AUTO_HIDE_DURATION = 60000;  // when snackbar will auto hide; 1 minute
 // const AUTO_HIDE_DURATION = 1000000000; // for debug purposes
 const DISMISS_DURATION = AUTO_HIDE_DURATION + 200;  // when notification will be removed from queue. + 200ms necessary for animation and queue clearing.
 
