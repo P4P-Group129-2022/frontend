@@ -22,6 +22,7 @@ export const useTerminalCommandProcessor = () => {
   const { checkAndAdvanceScenarioSegment } = useContext(ScenarioContext);
 
   async function processGitStatus(): Promise<ConsolePrint> {
+    const input = "git status";
     try {
       console.log(username);
       const response = await getRepoStatusForScenario(username);
@@ -40,7 +41,7 @@ export const useTerminalCommandProcessor = () => {
       switch (response.data.status) {
         case "modified":
           return {
-            input: "git status",
+            input,
             output: [
               { value: onBranchMain },
               { value: changesToCommit },
@@ -50,7 +51,7 @@ export const useTerminalCommandProcessor = () => {
           };
         case "*modified":
           return {
-            input: "git status",
+            input,
             output: [
               { value: onBranchMain },
               { value: changesNotStaged },
@@ -62,7 +63,7 @@ export const useTerminalCommandProcessor = () => {
           };
         case "unmodified":
           return {
-            input: "git status",
+            input,
             output: [
               { value: onBranchMain },
               { value: nothingToCommit },
@@ -70,7 +71,7 @@ export const useTerminalCommandProcessor = () => {
           };
         default:
           return {
-            input: "git status",
+            input,
             output: [
               { value: "Unknown isomorphic git status return value:" },
               { value: `Value: ${response.data.status}` },
@@ -80,7 +81,7 @@ export const useTerminalCommandProcessor = () => {
     } catch (e: any) {
       console.log(e);
       return {
-        input: "git status",
+        input,
         output: [
           { value: "Error running git status. Please try again." },
           ...(e.response.data.message === "NotFoundError" ? [{
@@ -93,9 +94,9 @@ export const useTerminalCommandProcessor = () => {
   }
 
   async function processGitAdd(fileNames: string[]): Promise<ConsolePrint> {
-    try {
-      const input = `git add ${fileNames.join(" ")}`;
+    const input = `git add ${fileNames.join(" ")}`;
 
+    try {
       if (fileNames.length === 0) {
         return {
           input,
@@ -137,7 +138,7 @@ export const useTerminalCommandProcessor = () => {
     } catch (e: any) {
       console.log(e);
       return {
-        input: "git add",
+        input,
         output: [
           { value: "Error staging files. Please try again." },
           ...(e.response.data.message === "NotFoundError" ? [{
@@ -150,9 +151,11 @@ export const useTerminalCommandProcessor = () => {
   }
 
   async function processGitCommit(args: string[]): Promise<ConsolePrint> {
+    const input = `git commit ${args.join(" ")}`;
+    const [commitArgs, ...rest] = args;
+    const author = { name, email };
+
     try {
-      const [commitArgs, ...rest] = args;
-      const author = { name, email };
       const { data: branchName } = await getCurrentBranch(username);
 
       if (commitArgs === "-m" || commitArgs === "-am") {
@@ -160,7 +163,7 @@ export const useTerminalCommandProcessor = () => {
         const message = rest[0]?.slice(1, -1);
         if (!message || message.length === 0) {
           return {
-            input: "git commit -m",
+            input,
             output: [
               { value: "No commit message specified." },
               { value: `hint: Use 'git commit -m "<message>"' with <message> inside double quotes replaced with your message to include a commit message.` },
@@ -168,7 +171,7 @@ export const useTerminalCommandProcessor = () => {
           };
         } else if (message === "<message>") {
           return {
-            input: `git commit ${args.join(" ")}`,
+            input,
             output: [
               { value: "No commit message specified." },
               { value: `hint: Replace <message> from 'git commit -m "<message>"' to your own message.` },
@@ -193,7 +196,7 @@ export const useTerminalCommandProcessor = () => {
         checkAndAdvanceScenarioSegment(TaskType.COMMIT);
 
         return {
-          input: `git commit ${args.join(" ")}`,
+          input,
           output: response.status === HTTPStatusCode.CREATED ? [
             { value: `[${branchName} ${shortCommitId}] ${message}` },
             { value: statsString.join(", ") },
@@ -203,7 +206,7 @@ export const useTerminalCommandProcessor = () => {
         };
       } else {
         return {
-          input: "git commit",
+          input,
           output: [
             commitArgs && (commitArgs.includes("-") || commitArgs.includes("--"))
               ? { value: "Unknown commit argument." }
@@ -216,7 +219,7 @@ export const useTerminalCommandProcessor = () => {
     } catch (e: any) {
       console.log(e);
       return {
-        input: "git commit",
+        input,
         output: [
           { value: "Error committing files. Please try again." },
           ...(e.response.data?.message === "NotFoundError" ? [{
@@ -229,6 +232,7 @@ export const useTerminalCommandProcessor = () => {
   }
 
   async function processGitPush(args: string[], accessToken?: string): Promise<ConsolePrint> {
+    const input = `git push ${args.join(" ")}`;
     const [remote, branch] = args;
     console.log("args", args);
     console.log("remote", remote);
@@ -236,17 +240,17 @@ export const useTerminalCommandProcessor = () => {
 
     if (!remote || !branch) {
       return {
-        input: "git push",
+        input,
         output: [
           { value: "No remote or branch specified." },
           { value: "hint: Use 'git push <remote> <branch>' to push to a remote repository." },
         ]
       };
     }
-    
+
     if (remote.startsWith("-") || branch.startsWith("--")) {
       return {
-        input: `git push ${args.join(" ")}`,
+        input,
         output: [
           { value: "Unsupported push argument." },
           { value: "Currently, the app does not support git push arguments, such as -u for setting the upstream." },
@@ -257,7 +261,7 @@ export const useTerminalCommandProcessor = () => {
 
     if (!accessToken) {
       return {
-        input: `git push ${args.join(" ")}`,
+        input,
         output: [
           { value: "An error has occurred while authenticating you." },
           { value: "Please go to the main website to re-login and resume scenarios." },
@@ -268,7 +272,7 @@ export const useTerminalCommandProcessor = () => {
 
     if (!branch || !remote) {
       return {
-        input: `git push ${args.join(" ")}`,
+        input,
         output: [
           { value: "Unknown git push arguments." },
           { value: "Currently, the system only supports pushing to the 'origin' remote and existing branches." },
@@ -295,7 +299,7 @@ export const useTerminalCommandProcessor = () => {
       }
 
       return {
-        input: `git push ${args.join(" ")}`,
+        input,
         output: [
           { value: enumeratingObjects },
           { value: countingObjects },
@@ -311,7 +315,7 @@ export const useTerminalCommandProcessor = () => {
     } catch {
       // Reaching here means that the push failed.
       return {
-        input: `git push ${args.join(" ")}`,
+        input,
         output: [
           { value: "Error pushing files.", color: TERMINAL_COLORS.red },
           { value: "Currently, only push to origin is allowed." },
@@ -322,12 +326,13 @@ export const useTerminalCommandProcessor = () => {
   }
 
   async function processGitBranch(args: string[]) {
+    const input = `git branch ${args.join(" ")}`;
     const [branchName] = args;
 
     if (branchName) {
       if (branchName.startsWith("-") || branchName.startsWith("--")) {
         return {
-          input: "git branch",
+          input,
           output: [
             { value: "Unknown git branch argument." },
             { value: "Currently, the system only supports creating branches." },
@@ -341,13 +346,13 @@ export const useTerminalCommandProcessor = () => {
 
         checkAndAdvanceScenarioSegment(TaskType.BRANCH);
         return {
-          input: `git branch ${args.join(" ")}`,
+          input,
           output: [noOutput]
         };
       } catch (e: any) {
         console.log(e);
         return {
-          input: `git branch ${args.join(" ")}`,
+          input,
           output: [
             { value: "Error creating branch.", color: TERMINAL_COLORS.red },
             // // @ts-ignore - temporary fix, it could possibly return a message if on error.
@@ -365,7 +370,7 @@ export const useTerminalCommandProcessor = () => {
       }
     } else {
       return {
-        input: "git branch",
+        input,
         output: [
           { value: "In actual git interface, this would result in listing out currently available branches." },
           { value: "However, this feature is not implemented in this program." },
@@ -376,6 +381,7 @@ export const useTerminalCommandProcessor = () => {
   }
 
   async function processGitCheckout(args: string[]) {
+    const input = `git checkout ${args.join(" ")}`;
     const [branchName] = args;
 
     if (branchName) {
@@ -384,13 +390,13 @@ export const useTerminalCommandProcessor = () => {
 
         checkAndAdvanceScenarioSegment(TaskType.CHECKOUT);
         return {
-          input: `git checkout ${args.join(" ")}`,
+          input,
           output: [noOutput]
         };
       } catch (e: any) {
         console.log(e.response.data.message);
         return {
-          input: `git checkout ${args.join(" ")}`,
+          input,
           output: [
             { value: "Error checking out branch.", color: TERMINAL_COLORS.red },
             // // @ts-ignore - temporary fix, it could possibly return a message if on error.
@@ -408,7 +414,7 @@ export const useTerminalCommandProcessor = () => {
       }
     } else {
       return {
-        input: "git checkout",
+        input,
         output: [
           { value: "No branch specified to checkout. Please specify an existing branch to checkout." },
           { value: "hint: Use 'git branch <branchName>' to first create a branch." },
@@ -418,6 +424,7 @@ export const useTerminalCommandProcessor = () => {
   }
 
   async function processGitRebase(args: string[]) {
+    const input = `git rebase ${args.join(" ")}`;
     const [branchName] = args;
 
     if (branchName === "main") {
@@ -426,13 +433,13 @@ export const useTerminalCommandProcessor = () => {
         const { data: currentBranch } = await getCurrentBranch(username, true);
         checkAndAdvanceScenarioSegment(TaskType.REBASE);
         return {
-          input: `git rebase ${args.join(" ")}`,
+          input,
           output: [{ value: `Successfully rebased and updated ${currentBranch}.` }]
         };
       } catch (e: any) {
         console.log(e.response.data.message);
         return {
-          input: `git rebase ${args.join(" ")}`,
+          input,
           output: [
             { value: "Error rebasing branch.", color: TERMINAL_COLORS.red },
             ...(e.response.status === HTTPStatusCode.INTERNAL_SERVER_ERROR && e.response.data?.message === "NotFoundError" ? [
@@ -446,7 +453,7 @@ export const useTerminalCommandProcessor = () => {
       }
     } else if (branchName) {
       return {
-        input: `git rebase ${args.join(" ")}`,
+        input,
         output: [
           { value: "Currently, only rebase to main is supported. Please select main branch to rebase." },
           { value: "hint: Use 'git rebase main' to rebase from a main branch." },
@@ -454,7 +461,7 @@ export const useTerminalCommandProcessor = () => {
       };
     } else {
       return {
-        input: "git rebase",
+        input,
         output: [
           { value: "No branch specified to rebase. Please specify an existing branch to rebase." },
           { value: "hint: Perhaps you meant 'git rebase main' to rebase from the main branch?." },
