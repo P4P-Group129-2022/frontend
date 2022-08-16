@@ -243,7 +243,7 @@ export const useTerminalCommandProcessor = () => {
         ]
       };
     }
-
+    
     if (remote.startsWith("-") || branch.startsWith("--")) {
       return {
         input: `git push ${args.join(" ")}`,
