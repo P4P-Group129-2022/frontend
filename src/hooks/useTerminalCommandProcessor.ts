@@ -292,9 +292,10 @@ export const useTerminalCommandProcessor = () => {
     const commits = `   15c4907..a05853a  ${branch} -> ${branch}`;
 
     try {
+      const { data: currentBranch } = await getCurrentBranch(username);
       const response = await pushRepo(username, remote, branch, accessToken);
 
-      if (response.status === HTTPStatusCode.NO_CONTENT) {
+      if (branch === currentBranch && response.status === HTTPStatusCode.NO_CONTENT) {
         checkAndAdvanceScenarioSegment(TaskType.PUSH);
       }
 
@@ -310,6 +311,16 @@ export const useTerminalCommandProcessor = () => {
           { value: remoteResolving },
           { value: ToRemote },
           { value: commits },
+          ...(branch === currentBranch ? [] : [
+            {
+              value: "\nhint: you've made a push to a different branch than your current branch.",
+              color: TERMINAL_COLORS.yellow
+            },
+            {
+              value: `Don't forget to push currently working branch, "${currentBranch}", to advance scenarios.`,
+              color: TERMINAL_COLORS.yellow
+            },
+          ]),
         ]
       };
     } catch {
@@ -465,7 +476,6 @@ export const useTerminalCommandProcessor = () => {
         output: [
           { value: "No branch specified to rebase. Please specify an existing branch to rebase." },
           { value: "hint: Perhaps you meant 'git rebase main' to rebase from the main branch?." },
-          { value: "hint: Otherwise, use 'git branch <branchName>' to first create a branch." },
         ]
       };
     }
