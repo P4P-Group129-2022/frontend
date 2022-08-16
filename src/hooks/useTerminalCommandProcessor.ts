@@ -234,6 +234,16 @@ export const useTerminalCommandProcessor = () => {
     console.log("remote", remote);
     console.log("branch", branch);
 
+    if (!remote || !branch) {
+      return {
+        input: "git push",
+        output: [
+          { value: "No remote or branch specified." },
+          { value: "hint: Use 'git push <remote> <branch>' to push to a remote repository." },
+        ]
+      };
+    }
+    
     if (remote.startsWith("-") || branch.startsWith("--")) {
       return {
         input: `git push ${args.join(" ")}`,
