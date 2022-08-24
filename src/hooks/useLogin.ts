@@ -7,10 +7,10 @@ import { Octokit } from "@octokit/rest";
 import { UserContext } from "../contexts/UserContextProvider";
 import { createUser, inviteToOrganization } from "../api/Api";
 
-export const useLogin = () => {
+export const useLogin = (onError: (error: Error) => void) => {
   const [error, setError] = useState<string>();
   const [isPending, setIsPending] = useState(false);
-  const { loginToContext, completePreTest } = useContext(UserContext);
+  const { loginToContext } = useContext(UserContext);
   const provider = new GithubAuthProvider();
 
   const login = async () => {
@@ -46,6 +46,7 @@ export const useLogin = () => {
       await inviteToOrganization(user.login || "");
     } catch (error: any) {
       console.log(error);
+      onError(error);
       setError(error.message);
     } finally {
       setIsPending(false);

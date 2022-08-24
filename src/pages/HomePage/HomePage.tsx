@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { Avatar, Box, Typography, Button as MuiButton, styled, ButtonProps } from "@mui/material";
+import React, { useContext, useState } from "react";
+import { Avatar, Box, Typography, styled, Snackbar, Alert } from "@mui/material";
 import classes from "./HomePage.module.css";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContextProvider";
@@ -23,11 +23,17 @@ const BoldSpan = styled("span")({
 
 function HomePage() {
   const { user, loggedIn } = useContext(UserContext);
-  const { login } = useLogin();
+  const [openTestLinkDialog, setOpenTestLinkDialog] = useState(false);
+  const [openError, setOpenError] = useState(false);
+  const [openInstructions, setOpenInstructions] = useState(false);
+  const [isHovering, setIsHovering] = useState(false);
+  const onError = (error: Error) => {
+    console.log("error occurred while logging in: ", error.message);
+    console.log("Full error log: ", error);
+    setOpenError(true);
+  };
+  const { login } = useLogin(onError);
   const { logout } = useLogout();
-  const [open, setOpen] = React.useState(false);
-  const [openInstructions, setOpenInstructions] = React.useState(false);
-  const [isHovering, setIsHovering] = React.useState(false);
 
   const navigate = useNavigate();
 
@@ -36,11 +42,11 @@ function HomePage() {
   };
 
   const handleStartTests = () => {
-    setOpen(true);
+    setOpenTestLinkDialog(true);
   };
 
   const handleClose = () => {
-    setOpen(false);
+    setOpenTestLinkDialog(false);
   };
 
   const handleOpenInstruction = () => {
@@ -126,9 +132,21 @@ function HomePage() {
           <Button variant={"contained"} disabled={!loggedIn} onClick={handleStartTests}>
             Start Tests
           </Button>
-          <LinkToTestsDialog open={open} onClose={handleClose} />
+          <LinkToTestsDialog open={openTestLinkDialog} onClose={handleClose} />
         </Box>
       </Box>
+      <Snackbar
+        open={openError}
+        autoHideDuration={12000}
+        onClose={() => setOpenError(false)}
+        anchorOrigin={{ "vertical": "bottom", "horizontal": "right" }}
+      >
+        <Alert severity={"warning"} variant={"filled"}>
+          <Typography variant={"body1"}>
+            An error has occurred while logging in. Please try again in a minute.
+          </Typography>
+        </Alert>
+      </Snackbar>
     </Box>
   );
 }
