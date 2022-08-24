@@ -1,5 +1,5 @@
 import React, { useContext, useState } from "react";
-import { Avatar, Box, Typography, styled, Snackbar, Alert } from "@mui/material";
+import { Avatar, Box, Typography, styled, Snackbar, Alert, CircularProgress } from "@mui/material";
 import classes from "./HomePage.module.css";
 import { useNavigate } from "react-router-dom";
 import { UserContext } from "../../contexts/UserContextProvider";
@@ -32,7 +32,7 @@ function HomePage() {
     console.log("Full error log: ", error);
     setOpenError(true);
   };
-  const { login } = useLogin(onError);
+  const { login, isPending } = useLogin(onError);
   const { logout } = useLogout();
 
   const navigate = useNavigate();
@@ -83,6 +83,12 @@ function HomePage() {
               Logout
             </Button>
           </>
+        ) : isPending ? (
+          <CircularProgress
+            size={"2.5rem"}
+            color={"secondary"}
+            style={{ marginRight: "2rem", marginTop: "0.5rem" }}
+          />
         ) : (
           <Button variant={"contained"} size={"medium"} onClick={login}>
             Login
