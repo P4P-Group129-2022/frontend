@@ -40,7 +40,7 @@ function InstructionsDialog({ open, onClose }: Props) {
           </li>
           <li>
             <InstructionLine>
-              Complete a pre-test survey by clicking "START TESTS" button and selecting "pre-test" option.
+              Complete a pre-survey by clicking "START SURVEYS" button and selecting "pre-survey" option.
             </InstructionLine>
           </li>
           <li>
@@ -51,7 +51,7 @@ function InstructionsDialog({ open, onClose }: Props) {
           </li>
           <li>
             <InstructionLine>
-              Complete a post-test survey by clicking "START TESTS" button and selecting "post-test" option.
+              Complete a post-survey by clicking "START SURVEY" button and selecting "post-survey" option.
             </InstructionLine>
           </li>
         </ol>

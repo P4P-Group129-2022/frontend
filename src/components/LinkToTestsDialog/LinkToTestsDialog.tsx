@@ -37,7 +37,7 @@ function LinkToTestsDialog({ open, onClose }: Props) {
           onClick={handleCompletePreTest}
           href={"https://forms.gle/sqdtQKdtJd1d5TjS8"}
         >
-          Pre-test
+          Pre-survey
         </Button>
         <Button
           variant={"contained"}
@@ -47,7 +47,7 @@ function LinkToTestsDialog({ open, onClose }: Props) {
           onClick={handleCompletePostTest}
           href={"https://forms.gle/CCBWppvFWhVwuZi46"}
         >
-          Post-test
+          Post-survey
         </Button>
       </Box>
     </Dialog>
