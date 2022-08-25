@@ -2,9 +2,11 @@ import { ConsolePrint } from "../types/TerminalTypes";
 import {
   branch,
   checkout,
-  commitRepo, getCurrentBranch,
+  commitRepo,
+  getCurrentBranch,
   getRepoStatusForScenario,
-  pushRepo, rebase,
+  pushRepo,
+  rebase,
   stageAllAndCommitRepo,
   stageAllFilesInRepo,
   stageFileInRepo
@@ -179,7 +181,9 @@ export const useTerminalCommandProcessor = () => {
             ]
           };
         }
-        const request = commitArgs === "-m" ? commitRepo : stageAllAndCommitRepo;
+        const isAddCommit = commitArgs === "-am";
+
+        const request = isAddCommit ? stageAllAndCommitRepo : commitRepo;
         const response = await request(username, message, author);
 
         const { commitId, stats } = response.data;
@@ -193,13 +197,19 @@ export const useTerminalCommandProcessor = () => {
           statsString.push(`${stats.minus} deletion${plural(stats.minus)}(-)`);
         }
 
-        checkAndAdvanceScenarioSegment(TaskType.COMMIT);
+        checkAndAdvanceScenarioSegment(isAddCommit ? TaskType.ADDCOMMIT : TaskType.COMMIT);
 
         return {
           input,
           output: response.status === HTTPStatusCode.CREATED ? [
             { value: `[${branchName} ${shortCommitId}] ${message}` },
             { value: statsString.join(", ") },
+            ...(isAddCommit ? [] : [
+              {
+                value: `hint: In the future, you can also stage all files and commit at the same time, by using: 'git commit -am "<message>"'`,
+                color: TERMINAL_COLORS.yellow
+              },
+            ]),
           ] : [
             { value: "Error committing files." }
           ]
@@ -234,6 +244,7 @@ export const useTerminalCommandProcessor = () => {
   async function processGitPush(args: string[], accessToken?: string): Promise<ConsolePrint> {
     const input = `git push ${args.join(" ")}`;
     const [remote, branch] = args;
+    const pushHint = "hint: Use 'git push origin <branch>' to push a branch to a remote repository, such as 'main'.";
     console.log("args", args);
     console.log("remote", remote);
     console.log("branch", branch);
@@ -243,7 +254,7 @@ export const useTerminalCommandProcessor = () => {
         input,
         output: [
           { value: "No remote or branch specified." },
-          { value: "hint: Use 'git push <remote> <branch>' to push to a remote repository." },
+          { value: pushHint },
         ]
       };
     }
@@ -254,7 +265,7 @@ export const useTerminalCommandProcessor = () => {
         output: [
           { value: "Unsupported push argument." },
           { value: "Currently, the app does not support git push arguments, such as -u for setting the upstream." },
-          { value: `hint: Use 'git push <remote> <branch>' to push to a remote repository.` },
+          { value: pushHint },
         ]
       };
     }
@@ -266,17 +277,6 @@ export const useTerminalCommandProcessor = () => {
           { value: "An error has occurred while authenticating you." },
           { value: "Please go to the main website to re-login and resume scenarios." },
           { value: "Or contact the administrator for assistance, through the email here: hpar461@aucklanduni.ac.nz" },
-        ]
-      };
-    }
-
-    if (!branch || !remote) {
-      return {
-        input,
-        output: [
-          { value: "Unknown git push arguments." },
-          { value: "Currently, the system only supports pushing to the 'origin' remote and existing branches." },
-          { value: "hint: Use 'git push origin <branch>' to push to a branch, such as 'main'." },
         ]
       };
     }
@@ -330,7 +330,7 @@ export const useTerminalCommandProcessor = () => {
         output: [
           { value: "Error pushing files.", color: TERMINAL_COLORS.red },
           { value: "Currently, only push to origin is allowed." },
-          { value: "hint: Use 'git push origin <branch>' to push to a branch, such as 'main'." },
+          { value: pushHint },
         ]
       };
     }

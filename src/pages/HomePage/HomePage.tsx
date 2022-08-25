@@ -125,7 +125,7 @@ function HomePage() {
           FYI: <BoldSpan>Scenario</BoldSpan> will be <BoldSpan>enabled after</BoldSpan> you complete
           a <BoldSpan>pre-test</BoldSpan>.
           <br />
-          If you didn't know what pre-test was, perhaps it's good idea to <BoldSpan> READ THE INSTRUCTION!</BoldSpan>
+          If you have no idea what pre-test is, please <BoldSpan>read over the instructions</BoldSpan> on the home page.
           <br />
           Also, please <BoldSpan>do</BoldSpan> the <BoldSpan>post-test after </BoldSpan>
           you complete all the <BoldSpan>scenarios</BoldSpan>.
