@@ -53,30 +53,33 @@ function ScenarioContextProvider({ children }: Props) {
   function checkAndAdvanceScenarioSegment(taskType: TaskType): boolean {
     if (!scenario) return false;
 
-    const nextSegmentIndex = currentSegmentIndex + 1;
-    const nextScenarioSegment = scenario[nextSegmentIndex];
-
-    let shouldAdvance = false;
+    let numSegmentAdvance = 0;
     if (taskType === TaskType.INITIAL) {
-      shouldAdvance = true;
+      numSegmentAdvance = 1;
+    } else if (scenario[currentSegmentIndex].taskType === TaskType.ADD && taskType === TaskType.ADDCOMMIT) {
+      numSegmentAdvance = 2;
     } else if (scenario[currentSegmentIndex].taskType === taskType) {
-      shouldAdvance = true;
+      numSegmentAdvance = 1;
     }
 
-    if (shouldAdvance) {
-      // TODO: Process each chats into messages screen.
-      console.log("chats to add", nextScenarioSegment.chats);
-      const newMessages = nextScenarioSegment.chats.map((chat) => ({ ...chat, timestamp: new Date() })).reverse();
-      addMessages(newMessages);
+    if (numSegmentAdvance > 0) {
+      let nextSegmentIndex = currentSegmentIndex + numSegmentAdvance;
+      const nextScenarioSegment = scenario[nextSegmentIndex];
 
-      nextScenarioSegment.notifications.forEach(({ message, title, imageSrc }) => {
-        showNotification({ message, title, imageSrc });
-      });
+      for (let i = 0; i < numSegmentAdvance; i++) {
+        console.log("chats to add", nextScenarioSegment.chats);
+        const newMessages = nextScenarioSegment.chats.map((chat) => ({ ...chat, timestamp: new Date() })).reverse();
+        addMessages(newMessages);
 
-      setCurrentSegmentIndex(nextSegmentIndex);
+        nextScenarioSegment.notifications.forEach(({ message, title, imageSrc }) => {
+          showNotification({ message, title, imageSrc });
+        });
+      }
+
+      setCurrentSegmentIndex(() => nextSegmentIndex);
     }
 
-    return shouldAdvance;
+    return numSegmentAdvance > 0;
   }
 
   const setScenarioContext = (scenario: ScenarioSegment[]) => {
