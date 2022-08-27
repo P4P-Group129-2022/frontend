@@ -87,7 +87,7 @@ function MessageSidebar() {
           marginY={"1rem"}
         >
           <MessageSidebarItem icon={<KeyboardArrowDownOutlinedIcon />} title={"Direct Messages"} />
-          <MessageSidebarItem icon={<TagOutlinedIcon />} title={"George Clooney"} sx={{
+          <MessageSidebarItem icon={<TagOutlinedIcon />} title={"Jorge Mlooney"} sx={{
             color: "#FFFFFF"
           }} titleSx={{
             fontWeight: 700
