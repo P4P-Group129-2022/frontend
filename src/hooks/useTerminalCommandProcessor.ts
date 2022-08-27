@@ -105,8 +105,6 @@ export const useTerminalCommandProcessor = () => {
           output: [
             { value: "Nothing specified, nothing added." },
             { value: "hint: Maybe you wanted to say 'git add .'?" },
-            { value: "hint: Turn this message off by running" },
-            { value: "hint: \"git config advice.addEmptyPathspec false\"" },
           ]
         };
       } else if (fileNames.length === 1 && fileNames[0] === ".") {
