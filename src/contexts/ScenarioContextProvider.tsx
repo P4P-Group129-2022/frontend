@@ -5,6 +5,7 @@ import { NotificationContext } from "./NotificationContextProvider";
 import { checkPR } from "../api/Api";
 import { TaskType } from "../utils/TaskType";
 import { UserContext } from "./UserContextProvider";
+import { ChatDialog } from "../types/ChatTypes";
 
 type ScenarioContextType = {
   currentSegment?: ScenarioSegment;
@@ -69,7 +70,13 @@ function ScenarioContextProvider({ children }: Props) {
       for (let i = 0; i < numSegmentAdvance; i++) {
         console.log("chats to add", nextScenarioSegment.chats);
         const newMessages = nextScenarioSegment.chats.map((chat) => ({ ...chat, timestamp: new Date() })).reverse();
-        addMessages(newMessages);
+        const notification = nextScenarioSegment.notifications?.[0];
+        const notificationMessage: ChatDialog[] = !!notification ? [{
+          sender: { name: "[NOTIFICATION]", nameId: "[NOTIFICATION]", profileImgUrl: "" },
+          content: `${notification?.title} — ${notification?.message}`,
+          timestamp: new Date()
+        }] : [];
+        addMessages([...notificationMessage, ...newMessages]);
 
         nextScenarioSegment.notifications.forEach(({ message, title, imageSrc }) => {
           showNotification({ message, title, imageSrc });

@@ -87,13 +87,13 @@ function MessageSidebar() {
           marginY={"1rem"}
         >
           <MessageSidebarItem icon={<KeyboardArrowDownOutlinedIcon />} title={"Direct Messages"} />
-          <MessageSidebarItem icon={<TagOutlinedIcon />} title={"George Clooney"} sx={{
+          <MessageSidebarItem icon={<TagOutlinedIcon />} title={"Jorge Mlooney"} sx={{
             color: "#FFFFFF"
           }} titleSx={{
             fontWeight: 700
           }} />
-          <MessageSidebarItem icon={<TagOutlinedIcon />} title={"Chris Pratt"} />
-          <MessageSidebarItem icon={<TagOutlinedIcon />} title={"Emma Stone"} />
+          <MessageSidebarItem icon={<TagOutlinedIcon />} title={"Christ Bratt"} />
+          <MessageSidebarItem icon={<TagOutlinedIcon />} title={"Emmy Rock"} />
           <MessageSidebarItem icon={<AddBoxOutlinedIcon />} title={"Add teammates"} />
         </Box>
       </Box>

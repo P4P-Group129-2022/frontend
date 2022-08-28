@@ -17,6 +17,7 @@ import { TaskType } from "../utils/TaskType";
 import { useContext } from "react";
 import { UserContext } from "../contexts/UserContextProvider";
 import { ScenarioContext } from "../contexts/ScenarioContextProvider";
+import { AxiosError } from "axios";
 
 export const useTerminalCommandProcessor = () => {
   const { user: { username, name, email }, accessToken } = useContext(UserContext);
@@ -80,13 +81,13 @@ export const useTerminalCommandProcessor = () => {
             ]
           };
       }
-    } catch (e: any) {
-      console.log(e);
+    } catch (e) {
+      console.log("Error occurred while running git status", e);
       return {
         input,
         output: [
-          { value: "Error running git status. Please try again." },
-          ...(e.response.data.message === "NotFoundError" ? [{
+          { value: "Error running git status. Please try again.", color: TERMINAL_COLORS.red },
+          ...(e instanceof AxiosError && !!e.response && e.response.data?.message === "NotFoundError" ? [{
             value: "Error Message: Current branch not found.",
             color: TERMINAL_COLORS.yellow
           }] : []),
@@ -105,8 +106,6 @@ export const useTerminalCommandProcessor = () => {
           output: [
             { value: "Nothing specified, nothing added." },
             { value: "hint: Maybe you wanted to say 'git add .'?" },
-            { value: "hint: Turn this message off by running" },
-            { value: "hint: \"git config advice.addEmptyPathspec false\"" },
           ]
         };
       } else if (fileNames.length === 1 && fileNames[0] === ".") {
@@ -130,22 +129,20 @@ export const useTerminalCommandProcessor = () => {
             value: "Error staging files.",
             color: TERMINAL_COLORS.red
           }, {
-            value: `Failed to stage ${failedRequests.length} files.`,
-            color: TERMINAL_COLORS.red
+            value: `Failed to stage ${failedRequests.length} files.`
           }, {
             value: `Failed files: ${failedRequests.map(response => response.data?.fileName).join(", ")}`,
           }]
         };
       }
-    } catch (e: any) {
-      console.log(e);
+    } catch (e) {
+      console.log("Error occurred while running git add", e);
       return {
         input,
         output: [
-          { value: "Error staging files. Please try again." },
-          ...(e.response.data.message === "NotFoundError" ? [{
-            value: "Error Message: Current branch not found.",
-            color: TERMINAL_COLORS.yellow
+          { value: "Error staging files. Please try again.", color: TERMINAL_COLORS.red },
+          ...(e instanceof AxiosError && !!e.response && e.response.data?.message === "NotFoundError" ? [{
+            value: "Error Message: Current branch not found."
           }] : []),
         ]
       };
@@ -167,7 +164,7 @@ export const useTerminalCommandProcessor = () => {
           return {
             input,
             output: [
-              { value: "No commit message specified." },
+              { value: "No commit message specified.", color: TERMINAL_COLORS.yellow },
               { value: `hint: Use 'git commit -m "<message>"' with <message> inside double quotes replaced with your message to include a commit message.` },
             ]
           };
@@ -175,7 +172,7 @@ export const useTerminalCommandProcessor = () => {
           return {
             input,
             output: [
-              { value: "No commit message specified." },
+              { value: "No commit message specified.", color: TERMINAL_COLORS.yellow },
               { value: `hint: Replace <message> from 'git commit -m "<message>"' to your own message.` },
               { value: `hint: Example: 'git commit -m "this is a sample commit message"'` },
             ]
@@ -206,12 +203,12 @@ export const useTerminalCommandProcessor = () => {
             { value: statsString.join(", ") },
             ...(isAddCommit ? [] : [
               {
-                value: `hint: In the future, you can also stage all files and commit at the same time, by using: 'git commit -am "<message>"'`,
+                value: `\nhint: In the future, you can also stage all files and commit at the same time, by using: 'git commit -am "<message>"'`,
                 color: TERMINAL_COLORS.yellow
               },
             ]),
           ] : [
-            { value: "Error committing files." }
+            { value: "Error committing files.", color: TERMINAL_COLORS.red },
           ]
         };
       } else {
@@ -219,22 +216,21 @@ export const useTerminalCommandProcessor = () => {
           input,
           output: [
             commitArgs && (commitArgs.includes("-") || commitArgs.includes("--"))
-              ? { value: "Unknown commit argument." }
-              : { value: "No commit option specified." },
+              ? { value: "Unknown commit argument.", color: TERMINAL_COLORS.yellow }
+              : { value: "No commit option specified.", color: TERMINAL_COLORS.yellow },
             { value: `hint: Use 'git commit -m "<message>"' with commit message inside double quotes to commit.` },
             { value: `hint: Use 'git commit -am "<message>"' followed by a commit message to stage all files and commit.` },
           ]
         };
       }
-    } catch (e: any) {
-      console.log(e);
+    } catch (e) {
+      console.log("Error occurred while running git commit", e);
       return {
         input,
         output: [
-          { value: "Error committing files. Please try again." },
-          ...(e.response.data?.message === "NotFoundError" ? [{
+          { value: "Error committing files. Please try again.", color: TERMINAL_COLORS.red },
+          ...(e instanceof AxiosError && !!e.response && e.response.data?.message === "NotFoundError" ? [{
             value: "Error Message: Current branch not found.",
-            color: TERMINAL_COLORS.yellow
           }] : []),
         ]
       };
@@ -325,11 +321,15 @@ export const useTerminalCommandProcessor = () => {
       };
     } catch {
       // Reaching here means that the push failed.
+      // TODO: fix here to a more generic error message.
       return {
         input,
         output: [
-          { value: "Error pushing files.", color: TERMINAL_COLORS.red },
-          { value: "Currently, only push to origin is allowed." },
+          { value: "Error pushing files. Please try again", color: TERMINAL_COLORS.red },
+          ...(remote !== "origin" ? [
+            { value: "Currently, only push to origin is allowed." },
+          ] : []),
+          { value: "hint: In order to push to a remote repository, you MUST have accepted GitHub organisation invite." },
           { value: pushHint },
         ]
       };
@@ -360,22 +360,16 @@ export const useTerminalCommandProcessor = () => {
           input,
           output: [noOutput]
         };
-      } catch (e: any) {
-        console.log(e);
+      } catch (e) {
+        console.log("Error occurred while running git branch", e);
         return {
           input,
           output: [
             { value: "Error creating branch.", color: TERMINAL_COLORS.red },
-            // // @ts-ignore - temporary fix, it could possibly return a message if on error.
-            ...(e.response.status === HTTPStatusCode.INTERNAL_SERVER_ERROR && e.response.data.message === "AlreadyExistsError" ? [
-              { value: `Branch already exists.`, color: TERMINAL_COLORS.red },
-              {
-                value: `hint: Use "git checkout ${branchName}" to check out to that branch or try again with a different name.`,
-                color: TERMINAL_COLORS.red
-              },
-            ] : [{
-              value: "Unknown error occurred. Please try again.", color: TERMINAL_COLORS.red
-            }])
+            ...(e instanceof AxiosError && !!e.response && e.response.status === HTTPStatusCode.INTERNAL_SERVER_ERROR && e.response.data?.message === "AlreadyExistsError" ? [
+              { value: `Branch already exists.` },
+              { value: `hint: Use "git checkout ${branchName}" to check out to that branch or try again with a different name.` },
+            ] : [{ value: "Unknown error occurred. Please try again." }]),
           ]
         };
       }
@@ -404,22 +398,16 @@ export const useTerminalCommandProcessor = () => {
           input,
           output: [noOutput]
         };
-      } catch (e: any) {
-        console.log(e.response.data.message);
+      } catch (e) {
+        console.log("Error occurred while running git checkout", e);
         return {
           input,
           output: [
             { value: "Error checking out branch.", color: TERMINAL_COLORS.red },
-            // // @ts-ignore - temporary fix, it could possibly return a message if on error.
-            ...(e.response.status === HTTPStatusCode.INTERNAL_SERVER_ERROR && e.response.data.message === "NotFoundError" ? [
-              { value: `Branch ${branchName} not found.`, color: TERMINAL_COLORS.red },
-              {
-                value: `hint: Use "git branch <branchName>" to first create a branch.`,
-                color: TERMINAL_COLORS.red
-              },
-            ] : [{
-              value: "Unknown error occurred. Please try again."
-            }])
+            ...(e instanceof AxiosError && !!e.response && e.response.status === HTTPStatusCode.INTERNAL_SERVER_ERROR && e.response.data?.message === "NotFoundError" ? [
+              { value: `Branch ${branchName} not found.` },
+              { value: `hint: Use "git branch <branchName>" to first create a branch.`, },
+            ] : [{ value: "Unknown error occurred. Please try again." }]),
           ]
         };
       }
@@ -447,13 +435,13 @@ export const useTerminalCommandProcessor = () => {
           input,
           output: [{ value: `Successfully rebased and updated ${currentBranch}.` }]
         };
-      } catch (e: any) {
-        console.log(e.response.data.message);
+      } catch (e) {
+        console.log("Error occurred while running git rebase", e);
         return {
           input,
           output: [
             { value: "Error rebasing branch.", color: TERMINAL_COLORS.red },
-            ...(e.response.status === HTTPStatusCode.INTERNAL_SERVER_ERROR && e.response.data?.message === "NotFoundError" ? [
+            ...(e instanceof AxiosError && !!e.response && e.response.status === HTTPStatusCode.INTERNAL_SERVER_ERROR && e.response.data?.message === "NotFoundError" ? [
               { value: `Branch ${branchName} not found.` },
               { value: `hint: Use "git branch <branchName>" to first create a branch.` },
             ] : [{
