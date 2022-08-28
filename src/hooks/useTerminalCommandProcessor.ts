@@ -326,9 +326,10 @@ export const useTerminalCommandProcessor = () => {
         input,
         output: [
           { value: "Error pushing files. Please try again", color: TERMINAL_COLORS.red },
-          ...(remote === "origin" ? [
+          ...(remote !== "origin" ? [
             { value: "Currently, only push to origin is allowed." },
           ] : []),
+          { value: "hint: In order to push to a remote repository, you MUST have accepted GitHub organisation invite." },
           { value: pushHint },
         ]
       };
