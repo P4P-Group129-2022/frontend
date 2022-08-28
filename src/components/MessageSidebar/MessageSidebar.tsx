@@ -92,8 +92,8 @@ function MessageSidebar() {
           }} titleSx={{
             fontWeight: 700
           }} />
-          <MessageSidebarItem icon={<TagOutlinedIcon />} title={"Chris Pratt"} />
-          <MessageSidebarItem icon={<TagOutlinedIcon />} title={"Emma Stone"} />
+          <MessageSidebarItem icon={<TagOutlinedIcon />} title={"Christ Bratt"} />
+          <MessageSidebarItem icon={<TagOutlinedIcon />} title={"Emmy Rock"} />
           <MessageSidebarItem icon={<AddBoxOutlinedIcon />} title={"Add teammates"} />
         </Box>
       </Box>
