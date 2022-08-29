@@ -387,13 +387,50 @@ export const useTerminalCommandProcessor = () => {
 
   async function processGitCheckout(args: string[]) {
     const input = `git checkout ${args.join(" ")}`;
-    const [branchName] = args;
+    const [branchOrArg, newBranchName] = args;
+    let branchName = "";
+    let isCreateBranch = false;
+
+    if (branchOrArg.startsWith("-") || branchOrArg.startsWith("--")) {
+      if (branchOrArg === "-b" || branchOrArg === "--branch") {
+        try {
+          await branch(username, newBranchName);
+        } catch (e) {
+          console.log("Error occurred while making a new branch for git checkout -b", e);
+          return {
+            input,
+            output: [
+              { value: "Error creating branch.", color: TERMINAL_COLORS.red },
+              ...(e instanceof AxiosError && !!e.response && e.response.status === HTTPStatusCode.INTERNAL_SERVER_ERROR && e.response.data?.message === "AlreadyExistsError" ? [
+                { value: `Branch already exists.` },
+                { value: `hint: Use "git checkout ${newBranchName}" to check out to that branch or try again with a different branch name.` },
+              ] : [{ value: "Unknown error occurred while creating a new branch. Please try again." }]),
+            ]
+          };
+        }
+
+        branchName = newBranchName;
+        isCreateBranch = true;
+      } else {
+        return {
+          input,
+          output: [
+            { value: "Unknown git checkout argument.", color: TERMINAL_COLORS.red },
+            { value: "Currently, the system only supports checking out to a new or an existing branch." },
+            { value: "hint: Use 'git checkout -b <branchName>' to create a new branch and check out to that branch." },
+            { value: "hint: Use 'git checkout <branchName>' to check out to an existing branch." },
+          ]
+        };
+      }
+    } else {
+      branchName = branchOrArg;
+    }
 
     if (branchName) {
       try {
         await checkout(username, branchName);
 
-        checkAndAdvanceScenarioSegment(TaskType.CHECKOUT);
+        checkAndAdvanceScenarioSegment(isCreateBranch ? TaskType.BRANCH_CHECKOUT : TaskType.CHECKOUT);
         return {
           input,
           output: [noOutput]
