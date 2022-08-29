@@ -9,5 +9,6 @@ export enum TaskType {
     PR = "PR",
     BRANCH = "BRANCH",
     CHECKOUT = "CHECKOUT",
+    BRANCH_CHECKOUT = "BRANCH_CHECKOUT",
     REBASE = "REBASE",
 }
