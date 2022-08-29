@@ -54,12 +54,15 @@ function ScenarioContextProvider({ children }: Props) {
   function checkAndAdvanceScenarioSegment(taskType: TaskType): boolean {
     if (!scenario) return false;
 
+    const currentTaskType = scenario[currentSegmentIndex]?.taskType;
     let numSegmentAdvance = 0;
     if (taskType === TaskType.INITIAL) {
       numSegmentAdvance = 1;
-    } else if (scenario[currentSegmentIndex].taskType === TaskType.ADD && taskType === TaskType.ADDCOMMIT) {
+    } else if (currentTaskType === TaskType.ADD && taskType === TaskType.ADDCOMMIT) {
       numSegmentAdvance = 2;
-    } else if (scenario[currentSegmentIndex].taskType === taskType) {
+    } else if (currentTaskType === TaskType.BRANCH && taskType === TaskType.BRANCH_CHECKOUT) {
+      numSegmentAdvance = 2;
+    } else if (currentTaskType === taskType) {
       numSegmentAdvance = 1;
     }
 
