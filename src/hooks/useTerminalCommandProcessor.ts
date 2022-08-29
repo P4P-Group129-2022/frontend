@@ -392,7 +392,7 @@ export const useTerminalCommandProcessor = () => {
     let isCreateBranch = false;
 
     if (branchOrArg.startsWith("-") || branchOrArg.startsWith("--")) {
-      if (branchOrArg === "-b" || branchOrArg === "--branch") {
+      if (branchOrArg === "-b") {
         try {
           await branch(username, newBranchName);
         } catch (e) {
