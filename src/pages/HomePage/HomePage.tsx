@@ -125,7 +125,7 @@ function HomePage() {
           FYI: <BoldSpan>Scenario</BoldSpan> will be <BoldSpan>enabled after</BoldSpan> you complete
           a <BoldSpan>pre-survey</BoldSpan>.
           <br />
-          If you have no idea what pre-survey is, please <BoldSpan>read over the instructions</BoldSpan> on the home page.
+          If you have no idea what pre-survey is, please <BoldSpan>read</BoldSpan> over the <BoldSpan>instructions</BoldSpan> on the home page.
           <br />
           Also, please <BoldSpan>do</BoldSpan> the <BoldSpan>post-survey after </BoldSpan>
           you complete all the <BoldSpan>scenarios</BoldSpan>.
