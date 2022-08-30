@@ -120,7 +120,10 @@ export const useTerminalCommandProcessor = () => {
       } else if (fileNames.length === 1 && fileNames[0] === ".") {
         const response = await stageAllFilesInRepo(username);
 
-        checkAndAdvanceScenarioSegment(TaskType.ADD);
+        if (response.status === HTTPStatusCode.NO_CONTENT) {
+          checkAndAdvanceScenarioSegment(TaskType.ADD);
+        }
+
         return {
           input,
           output:
@@ -140,6 +143,10 @@ export const useTerminalCommandProcessor = () => {
         const failedRequests = responses.filter(
           (response) => response.status !== HTTPStatusCode.NO_CONTENT
         );
+
+        if (failedRequests.length === 0) {
+          checkAndAdvanceScenarioSegment(TaskType.ADD);
+        }
 
         return {
           input,
