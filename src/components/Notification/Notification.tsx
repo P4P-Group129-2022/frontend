@@ -51,6 +51,7 @@ function Notification({ title, message, imageSrc }: NotificationContent) {
           backgroundColor: "#EAEAEAAA",
           maxWidth: "30rem",
           backdropFilter: "blur(18px)",
+          WebkitBackdropFilter: "blur(18px)",
         }}
         message={
           <Box
