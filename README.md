@@ -1,49 +1,74 @@
-# lets-git-it
-Codes for Part 4 Project.
+# Let's Git it - Frontend
 
-# Getting Started with Create React App
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
-## Available Scripts
+## Description
 
-In the project directory, you can run:
+This is the frontend codebase of Let's Git it, a scenario-based simulation tool for Group 129 on Part 4 Project.
 
-### `yarn start`
+For the backend codebase, please refer here: https://github.com/P4P-Group129-2022/backend
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in the browser.
+The deployment of this application is here: [https://p4p-project-lets-git-it-webapp.herokuapp.com/](https://p4p-project-lets-git-it-webapp.herokuapp.com/)
 
-The page will reload if you make edits.\
-You will also see any lint errors in the console.
 
-### `yarn test`
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+## Getting Started
 
-### `yarn build`
+### Dependencies
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+* Latest LTS version of Node.js
+* Latest version of Yarn
+* Web Browser to view the running application
+* **Running** backend of Let's Git it.
+  * While purely running the application is not dependent on having the backend running, in order to interact with the application, such as viewing the list of scenarios, you have to have the backend running. 
+  * For instructions on how to run the backend of Let's Git it, please refer to the README of our [backend repository](https://github.com/P4P-Group129-2022/backend).
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+### Installing
 
-### `yarn eject`
+* Clone the repository using your preferred method of repository cloning. 
+  * Otherwise, type `https://github.com/P4P-Group129-2022/frontend.git` in a directory to store the project.
 
-**Note: this is a one-way operation. Once you `eject`, you can’t go back!**
+* Go into the project directory.
+  * `cd frontend`
 
-If you aren’t satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
+* Download the required libraries by running `yarn` in the terminal.
+* Create an env file named `.env` in the project directory and paste the following line into the file.
+  * `REACT_APP_BACKEND_ENDPOINT="http://localhost:8080"`
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you’re on your own.
 
-You don’t have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn’t feel obligated to use this feature. However we understand that this tool wouldn’t be useful if you couldn’t customize it when you are ready for it.
+### Executing program
 
-## Learn More
+Run `yarn start` to run the application.
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+
+## Help
+
+If any errors arise in the set up procedure, please contact the contributors of this repository through our email.
+
+
+
+## Authors
+
+- Hyung Park
+  - GitHub: [hpar461](https://github.com/hpar461)
+  - Email: hpar461@aucklanduni.ac.nz
+- Dave Shin
+  - GitHub: [hiin3d55](https://github.com/hiin3d55)
+  - Email: jshi911@aucklanduni.ac.nz
+
+
+
+## License
+
+This project is licensed under the MIT License - see the LICENSE.md file for details
+
+
+
+## Acknowledgments
+
+- [React](https://reactjs.org/)
+- [MUI](https://mui.com/)
+
+- Dr. Paul Denny and Dr. Andrew Meads for supervising our project and guiding us on the development of this tool.
